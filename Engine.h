@@ -32,9 +32,9 @@ protected:
     void update();
     void init();
     
-    Physics physicsSystem;
-    Graphics graphicsSystem;
-    GameLogic gameLogicSystem;
+    Physics physics;
+    Graphics graphics;
+    GameLogic gameLogic;
     
     ServerGL server;
     

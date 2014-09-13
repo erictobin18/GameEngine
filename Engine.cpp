@@ -20,7 +20,7 @@ void Engine::mainloop()
     while (server.windowOpen) //animation loop
     {
         update();
-        server.mainLoop(); //last call in animation loop
+        server.mainLoop(); //Graphics must be last call in animation loop
     } //while
     cout << "Execution Terminated\n"; //Finish
 }
@@ -31,15 +31,20 @@ void Engine::update()
 
 void Engine::init()
 {
+    physics = Physics();
+    graphics = Graphics();
+    gameLogic = GameLogic();
+    
+    
     vector<GameObject> temp(2);
     objectTable = temp;
     
-    objectTable.at(0).addComponent(physics,0);
-    objectTable.at(1).addComponent(physics,1);
-    objectTable.at(0).addComponent(graphics,0);
-    objectTable.at(1).addComponent(graphics,1);
-    objectTable.at(0).addComponent(gamelogic,0);
-    objectTable.at(1).addComponent(gamelogic,1);
+    objectTable.at(0).addComponent(physicsType,0);
+    objectTable.at(1).addComponent(physicsType,1);
+    objectTable.at(0).addComponent(graphicsType,0);
+    objectTable.at(1).addComponent(graphicsType,1);
+    objectTable.at(0).addComponent(gamelogicType,0);
+    objectTable.at(1).addComponent(gamelogicType,1);
     
     
     objectTable.at(0).name = "cube1";

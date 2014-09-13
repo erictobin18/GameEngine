@@ -36,6 +36,9 @@ public:
     // This recieves any messages sent to the core engine in Engine.cpp
     //virtual void SendMessage( /*message *msg */ )=0;
     
+    virtual unsigned int newComponent();
+    virtual void removeComponent(unsigned int componentID);
+    
     virtual ~System()
     {
         
@@ -54,7 +57,11 @@ public:
     }
     void update( float dt);
     void init();
+    unsigned int newComponent();
+    void removeComponent(unsigned int componentID);
     ~Physics();
+protected:
+    vector<PhysicsComponent> components;
 };
 
 class Graphics : System
@@ -66,7 +73,11 @@ public:
     }
     void update( float dt);
     void init();
+    unsigned int newComponent();
+    void removeComponent(unsigned int componentID);
     ~Graphics();
+protected:
+    vector<GraphicsComponent> components;
 };
 
 class GameLogic : System
@@ -78,5 +89,9 @@ public:
     }
     void update( float dt);
     void init();
+    unsigned int newComponent();
+    void removeComponent(unsigned int componentID);
     ~GameLogic();
+protected:
+    vector<GameLogicComponent> components;
 };

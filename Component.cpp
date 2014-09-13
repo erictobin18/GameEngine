@@ -25,3 +25,13 @@ void PhysicsComponent::setState(state s)
 {
     entityState = s;
 }
+
+vector<face> GraphicsComponent::getFaces()
+{
+    return faces;
+}
+
+void GraphicsComponent::setFaces(vector<face> f)
+{
+    faces = f;
+}
