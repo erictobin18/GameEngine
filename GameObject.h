@@ -6,41 +6,40 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
-#ifndef __CppProgram__GameObject__
-#define __CppProgram__GameObject__
-
-#include <iostream>
-#include "Entity.h"
-#ifndef Included_Component_H
-#define Included_Component_H
-#include "Component.h"
+#ifndef GAMEOBJECT_H
+#define GAMEOBJECT_H
 #endif
-#include <vector>
 
-#endif /* defined(__CppProgram__GameObject__) */
+#ifndef IOSTREAM_H
+#define IOSTREAM_H
+#include <iostream>
+#endif
 
-using namespace std;
+#ifndef ENTITY_H
+#define ENTITY_H
+#include "Entity.h"
+#endif
 
 class GameObject : public Entity
 {
 public:
-    GameObject() : Entity(), components(0), name("NULL")
+    GameObject(entityID eid, Engine *gameEngine) : Entity(eid, gameEngine), identity(eid), gameEngine(gameEngine),components(0), name("NULL")
     {
-        
+        init();
     }
     
-    void addComponent(bit_field, unsigned int componentID);
-    void removeComponent(bit_field);
-    bool hasComponent(bit_field);
-    unsigned int getComponentID(bit_field);
+    void addComponent(bit_field type);
+    void removeComponent(bit_field type);
+    bool hasComponent(bit_field type);
+    componentID getComponentID(bit_field type);
     void init();
     
     bit_field components;
-    string name;
-    unsigned int identity; //index in the Master Object Table
+    std::string name;
     
 protected:
-    vector<Component> componentTable;
     int numComponents();
-    unsigned int componentIDs[];
+    componentID componentIDs[8];
+    entityID identity; //index in the Master Object Table
+    Engine *gameEngine;
 };

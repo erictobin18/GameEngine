@@ -6,28 +6,38 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
+#ifndef GAMEOBJECT_H
+#define GAMEOBJECT_H
 #include "GameObject.h"
+#endif
+
+#ifndef ENGINE_H
+#define ENGINE_H
+#include "Engine.h"
+#endif
+
+using namespace std;
 
 void GameObject::init()
 {
     
 }
 
-void GameObject::addComponent(bit_field type, unsigned int componentID)
+void GameObject::addComponent(bit_field type)
 {
-    if ((type & 0x1) > 0)
+    if ((type & physicsType) > 0)
     {
-        componentIDs[1] = componentID;
+        componentIDs[1] = gameEngine->newPhysicsComponent(identity);
     }
-    else if ((type & 0x2) > 0)
+    else if ((type & graphicsType) > 0)
     {
-        componentIDs[2] = componentID;
+        componentIDs[2] = gameEngine->newGraphicsComponent(identity);
     }
-    else if ((type & 0x4) > 0)
+    else if ((type & gameLogicType) > 0)
     {
-        componentIDs[4] = componentID;
+        componentIDs[4] = gameEngine->newGameLogicComponent(identity);
     }
-    components = components | type; //currently does not test that componentID is correct type of component
+    components = components | type;
 }
 
 void GameObject::removeComponent(bit_field type)
@@ -41,7 +51,7 @@ bool GameObject::hasComponent(bit_field type)
     return (components & type) > 0;
 }
 
-unsigned int GameObject::getComponentID(bit_field type)
+componentID GameObject::getComponentID(bit_field type)
 {
     if (!hasComponent(type))
         return -1;

@@ -6,7 +6,17 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
+#ifndef SERVER_GL
+#define SERVER_GL
 #include "ServerGL.h"
+#endif
+
+#ifndef SHADER_H
+#define SHADER_H
+#include "Shader.h"
+#endif
+
+using namespace std;
 
 void errorCallback(int error, const char *description)
 {

@@ -6,25 +6,31 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
-#ifndef __CppProgram__Entity__
-#define __CppProgram__Entity__
-
-#include <iostream>
-#ifndef Included_Component_H
-#define Included_Component_H
-#include "Component.h"
+#ifndef ENTITY_H
+#define ENTITY_H
 #endif
 
-#endif /* defined(__CppProgram__Entity__) */
+#ifndef IOSTREAM_H
+#define IOSTREAM_H
+#include <iostream>
+#endif
 
-typedef unsigned char bit_field;
+#ifndef GLOBAL_CONSTANTS_H
+#define GLOBAL_CONSTANTS_H
+#include "GlobalConstants.h"
+#endif
 
-using namespace std;
+
+class Engine;
 
 class Entity
 {
 public:
-    virtual void addComponent(bit_field, unsigned int componentID)=0;
+    Entity(entityID eid, Engine *gameEngine)
+    {
+        
+    }
+    virtual void addComponent(bit_field)=0;
     virtual void removeComponent(bit_field)=0;
     virtual bool hasComponent(bit_field)=0;
     virtual unsigned int getComponentID(bit_field)=0;

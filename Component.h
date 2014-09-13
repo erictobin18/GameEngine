@@ -6,50 +6,39 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
-#ifndef __CppProgram__Component__
-#define __CppProgram__Component__
+#ifndef COMPONENT_H
+#define COMPONENT_H
+#endif
 
+#ifndef IOSTREAM_H
+#define IOSTREAM_H
 #include <iostream>
-#include <vector>
+#endif
 
-#endif /* defined(__CppProgram__Component__) */
-
-using namespace std;
-
-typedef enum componentType {noneType = 0, physicsType = 1, graphicsType = 2, physics_and_graphicsType = 3, gamelogicType = 4, physics_and_gamelogicType = 5, graphics_and_gamelogicType = 6, all = 7} componentType;
-typedef struct position{double x; double y; double z;} position;
-typedef struct velocity{double dx; double dy; double dz;}velocity;
-typedef struct orientation{double alpha; double beta; double gamma;}orientation;
-typedef struct angularVelocity{double dthetaX; double dthetaY; double dthetaZ;}angularVelocity;
-
-typedef struct state{position pos; velocity vel; orientation theta; angularVelocity omega;}state;
-
-typedef struct vertex{double x; double y; double z; double texX; double texY;}vertex;
-
-typedef struct face{vector<vertex> vtx; int texID;}face;
-
-
-using namespace std;
+#ifndef GLOBAL_CONSTANTS_H
+#define GLOBAL_CONSTANTS_H
+#include "GlobalConstants.h"
+#endif
 
 class Component
 {
 public:
-    Component(unsigned int ident) : identity(ident), entityIdentity(-1)
+    Component(componentID cid, entityID eid) : identity(cid), entityIdentity(eid)
     {
         
     }
-    unsigned int getIdentity();
-    unsigned int getEntity();
+    componentID getIdentity();
+    entityID getEntity();
     
 protected:
-    unsigned int identity;
-    unsigned int entityIdentity;
+    componentID identity;
+    entityID entityIdentity;
 };
 
 class PhysicsComponent : public Component
 {
 public:
-    PhysicsComponent(unsigned int ident, state s) : Component(ident), entityState(s)
+    PhysicsComponent(componentID cid, entityID eid, state s) : Component(cid, eid), entityState(s)
     {
         
     }
@@ -62,20 +51,20 @@ protected:
 class GraphicsComponent : public Component
 {
 public:
-    GraphicsComponent(unsigned int ident) : Component(ident)
+    GraphicsComponent(componentID cid, entityID eid) : Component(cid, eid)
     {
         
     }
-    vector<face> getFaces();
-    void setFaces(vector<face> f);
+    std::vector<face> getFaces();
+    void setFaces(std::vector<face> f);
 protected:
-    vector<face> faces;
+    std::vector<face> faces;
 };
 
 class GameLogicComponent : public Component
 {
 public:
-    GameLogicComponent(unsigned int ident) : Component(ident)
+    GameLogicComponent(componentID cid, entityID eid) : Component(cid, eid)
     {
         
     }

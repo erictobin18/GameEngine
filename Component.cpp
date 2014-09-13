@@ -6,12 +6,18 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
+#ifndef COMPONENT_H
+#define COMPONENT_H
 #include "Component.h"
-unsigned int Component::getIdentity()
+#endif
+
+using namespace std;
+
+componentID Component::getIdentity()
 {
     return identity;
 }
-unsigned int Component::getEntity()
+entityID Component::getEntity()
 {
     return entityIdentity;
 }

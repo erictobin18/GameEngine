@@ -6,37 +6,61 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
-#ifndef __CppProgram__Engine__
-#define __CppProgram__Engine__
-
-#include <iostream>
-#include "GameObject.h"
-#include "System.h"
-#ifndef Included_Component_H
-#define Included_Component_H
-#include "Component.h"
+#ifndef ENGINE_H
+#define ENGINE_H
 #endif
-#include "ServerGL.h"
-#include <vector>
 
-#endif /* defined(__CppProgram__Engine__) */
+#ifndef IOSTREAM_H
+#define IOSTREAM_H
+#include <iostream>
+#endif
+
+#ifndef GLOBAL_CONSTANTS_H
+#define GLOBAL_CONSTANTS_H
+#include "GlobalConstants.h"
+#endif
+
+#ifndef GAMEOBJECT_H
+#define GAMEOBJECT_H
+#include "GameObject.h"
+#endif
+
+#ifndef SYSTEM_H
+#define SYSTEM_H
+#include "System.h"
+#endif
 
 
-using namespace std;
+class ServerGL;
+class Physics;
+class Graphics;
+class GameLogic;
 
 class Engine
 {
 public:
+    Engine()
+    {
+        
+    }
     void mainloop();
+    double time;
+    
+    componentID newPhysicsComponent(entityID eid);
+    componentID newGraphicsComponent(entityID eid);
+    componentID newGameLogicComponent(entityID eid);
+    
+    static Engine *gameEngine;
+    
 protected:
-    void update();
     void init();
+    void createRotatingCube(entityID eid);
     
-    Physics physics;
-    Graphics graphics;
-    GameLogic gameLogic;
+    Physics *physics;
+    Graphics *graphics;
+    GameLogic *gameLogic;
     
-    ServerGL server;
+    ServerGL *server;
     
-    vector<GameObject> objectTable;
+    std::vector<GameObject> objectTable;
 };
