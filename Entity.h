@@ -26,7 +26,7 @@ class Engine;
 class Entity
 {
 public:
-    Entity(entityID eid, Engine *gameEngine)
+    Entity(entityID eid)
     {
         
     }

@@ -27,15 +27,15 @@ void GameObject::addComponent(bit_field type)
 {
     if ((type & physicsType) > 0)
     {
-        componentIDs[1] = gameEngine->newPhysicsComponent(identity);
+        componentIDs[1] = Engine::gameEngine->newPhysicsComponent(identity);
     }
     else if ((type & graphicsType) > 0)
     {
-        componentIDs[2] = gameEngine->newGraphicsComponent(identity);
+        componentIDs[2] = Engine::gameEngine->newGraphicsComponent(identity);
     }
     else if ((type & gameLogicType) > 0)
     {
-        componentIDs[4] = gameEngine->newGameLogicComponent(identity);
+        componentIDs[4] = Engine::gameEngine->newGameLogicComponent(identity);
     }
     components = components | type;
 }

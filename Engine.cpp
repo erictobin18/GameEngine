@@ -42,8 +42,8 @@ void Engine::mainloop()
 
 void Engine::init()
 {
-    objectTable = vector<GameObject>(1, GameObject(0, this));
-    objectTable.push_back(GameObject(1, this));
+    objectTable = vector<GameObject>(1, GameObject(0));
+    objectTable.push_back(GameObject(1));
     
     physics = new Physics();
     graphics = new Graphics();

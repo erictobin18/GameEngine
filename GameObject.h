@@ -23,7 +23,7 @@
 class GameObject : public Entity
 {
 public:
-    GameObject(entityID eid, Engine *gameEngine) : Entity(eid, gameEngine), identity(eid), gameEngine(gameEngine),components(0), name("NULL")
+    GameObject(entityID eid) : Entity(eid), identity(eid),components(0), name("NULL")
     {
         init();
     }
@@ -41,5 +41,4 @@ protected:
     int numComponents();
     componentID componentIDs[8];
     entityID identity; //index in the Master Object Table
-    Engine *gameEngine;
 };
