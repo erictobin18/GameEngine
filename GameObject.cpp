@@ -33,9 +33,9 @@ void GameObject::addComponent(bit_field type)
     {
         componentIDs[2] = Engine::gameEngine->newGraphicsComponent(identity);
     }
-    else if ((type & gameLogicType) > 0)
+    else if ((type & logicType) > 0)
     {
-        componentIDs[4] = Engine::gameEngine->newGameLogicComponent(identity);
+        componentIDs[4] = Engine::gameEngine->newLogicComponent(identity);
     }
     components = components | type;
 }

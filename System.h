@@ -32,7 +32,7 @@
 
 class PhysicsComponent;
 class GraphicsComponent;
-class GameLogicComponent;
+class LogicComponent;
 
 class System
 {
@@ -73,6 +73,8 @@ public:
     void init();
     componentID newComponent(entityID eid);
     componentID newComponent(entityID eid, state s);
+    static Physics *gamePhysics;
+    
     ~Physics();
     Physics& operator=(Physics other);
 protected:
@@ -89,16 +91,18 @@ public:
     void update( double dt);
     void init();
     componentID newComponent(entityID eid);
+    static Graphics *gameGraphics;
+    
     ~Graphics();
     Graphics& operator=(Graphics other);
 protected:
     std::vector<GraphicsComponent> components;
 };
 
-class GameLogic : System
+class Logic : System
 {
 public:
-    GameLogic() : System()
+    Logic() : System()
     {
         
     }
@@ -106,8 +110,10 @@ public:
     void update( double dt);
     void init();
     componentID newComponent(entityID eid);
-    ~GameLogic();
-    GameLogic& operator=(GameLogic other);
+    static Logic *gameLogic;
+    
+    ~Logic();
+    Logic& operator=(Logic other);
 protected:
-    std::vector<GameLogicComponent> components;
+    std::vector<LogicComponent> components;
 };

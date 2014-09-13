@@ -18,7 +18,7 @@
 #endif
 
 
-typedef enum componentType {noneType = 0, physicsType = 1, graphicsType = 2, physics_and_graphicsType = 3, gameLogicType = 4, physics_and_gamelogicType = 5, graphics_and_gamelogicType = 6, all = 7} componentType;
+typedef enum componentType {noneType = 0, physicsType = 1, graphicsType = 2, physics_and_graphicsType = 3, logicType = 4, physics_and_logicType = 5, graphics_and_logicType = 6, all = 7} componentType;
 typedef struct quaternion{double s; double i; double j; double k;}quaternion;
 
 typedef struct vect{double x; double y; double z;} vect;

@@ -17,6 +17,11 @@
 #endif
 
 using namespace std;
+Physics *Physics::gamePhysics = new Physics();
+Graphics *Graphics::gameGraphics = new Graphics();
+Logic *Logic::gameLogic = new Logic();
+
+
 
 quaternion hMultiply(quaternion left, quaternion right)
 {
@@ -132,26 +137,26 @@ Graphics& Graphics::operator=(Graphics other)
     return *this;
 }
 
-void GameLogic::update(double dt)
+void Logic::update(double dt)
 {
     //no gamelogic
 }
-void GameLogic::init()
+void Logic::init()
 {
     
 }
-componentID GameLogic::newComponent(entityID eid)
+componentID Logic::newComponent(entityID eid)
 {
     componentID cid = (componentID)components.size();
-    GameLogicComponent newComp = GameLogicComponent(cid, eid);
+    LogicComponent newComp = LogicComponent(cid, eid);
     components.push_back(newComp);
     return cid;
 }
-GameLogic::~GameLogic()
+Logic::~Logic()
 {
     
 }
-GameLogic& GameLogic::operator=(GameLogic other)
+Logic& Logic::operator=(Logic other)
 {
     swap(components, other.components);
     return *this;

@@ -32,9 +32,9 @@ void Engine::mainloop()
     {
         double dt = glfwGetTime() - time;
         time = glfwGetTime();
-        physics->update(dt);
-        gameLogic->update(dt);
-        graphics->update(dt);
+        Physics::gamePhysics->update(dt);
+        Logic::gameLogic->update(dt);
+        Graphics::gameGraphics->update(dt);
         server.mainLoop(); //Graphics must be last call in animation loop
     } //while
     cout << "Execution Terminated\n"; //Finish
@@ -45,9 +45,9 @@ void Engine::init()
     objectTable = vector<GameObject>(1, GameObject(0));
     objectTable.push_back(GameObject(1));
     
-    physics = new Physics();
-    graphics = new Graphics();
-    gameLogic = new GameLogic();
+    //physics = new Physics();
+    //graphics = new Graphics();
+    //logic = new Logic();
     
     createRotatingCube(0);
     createRotatingCube(1);
@@ -59,20 +59,20 @@ void Engine::createRotatingCube(entityID eid)
     
     obj.addComponent(physicsType);
     obj.addComponent(graphicsType);
-    obj.addComponent(gameLogicType);
+    obj.addComponent(logicType);
     
     obj.name = string("cube:") + to_string(eid);
 }
 
 componentID Engine::newPhysicsComponent(entityID eid)
 {
-    return physics->newComponent(eid);
+    return Physics::gamePhysics->newComponent(eid);
 }
 componentID Engine::newGraphicsComponent(entityID eid)
 {
-    return graphics->newComponent(eid);
+    return Graphics::gameGraphics->newComponent(eid);
 }
-componentID Engine::newGameLogicComponent(entityID eid)
+componentID Engine::newLogicComponent(entityID eid)
 {
-    return gameLogic->newComponent(eid);
+    return Logic::gameLogic->newComponent(eid);
 }

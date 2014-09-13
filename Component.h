@@ -61,10 +61,10 @@ protected:
     std::vector<face> faces;
 };
 
-class GameLogicComponent : public Component
+class LogicComponent : public Component
 {
 public:
-    GameLogicComponent(componentID cid, entityID eid) : Component(cid, eid)
+    LogicComponent(componentID cid, entityID eid) : Component(cid, eid)
     {
         
     }

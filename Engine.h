@@ -34,7 +34,7 @@
 class ServerGL;
 class Physics;
 class Graphics;
-class GameLogic;
+class Logic;
 
 class Engine
 {
@@ -48,7 +48,7 @@ public:
     
     componentID newPhysicsComponent(entityID eid);
     componentID newGraphicsComponent(entityID eid);
-    componentID newGameLogicComponent(entityID eid);
+    componentID newLogicComponent(entityID eid);
     
     static Engine *gameEngine;
     
@@ -56,9 +56,9 @@ protected:
     void init();
     void createRotatingCube(entityID eid);
     
-    Physics *physics;
-    Graphics *graphics;
-    GameLogic *gameLogic;
+    //Physics *physics;
+    //Graphics *graphics;
+    //Logic *Logic;
     
     ServerGL *server;
     
