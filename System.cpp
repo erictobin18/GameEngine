@@ -114,7 +114,24 @@ Physics& Physics::operator=(Physics other)
 
 void Graphics::update(double dt)
 {
-    //graphics are static
+    for (int i = 0; i < components.size(); i++)
+    {
+        componentID phys = Engine::gameEngine->getPhysicsComponent(components.at(i).getIdentity());
+        PhysicsComponent physComp = Physics::gamePhysics->getComponent(phys);
+        vect p = physComp.getState().pos;
+        quaternion q = physComp.getState().orientation;
+        
+        vector<face> faces = components.at(i).getFaces();
+        for (int j = 0; j < components.size(); j++)
+        {
+            drawFace(faces.at(j), p, q);
+        }
+    }
+}
+
+void Graphics::drawFace(face f, vect pos, quaternion rot)
+{
+    
 }
 void Graphics::init()
 {

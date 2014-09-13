@@ -45,10 +45,6 @@ void Engine::init()
     objectTable = vector<GameObject>(1, GameObject(0));
     objectTable.push_back(GameObject(1));
     
-    //physics = new Physics();
-    //graphics = new Graphics();
-    //logic = new Logic();
-    
     createRotatingCube(0);
     createRotatingCube(1);
 }

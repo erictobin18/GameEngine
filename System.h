@@ -71,6 +71,8 @@ public:
     }
     void update( double dt);
     void init();
+    PhysicsComponent getComponent(componentID cid);
+    
     componentID newComponent(entityID eid);
     componentID newComponent(entityID eid, state s);
     static Physics *gamePhysics;
@@ -90,6 +92,9 @@ public:
     }
     void update( double dt);
     void init();
+    void drawFace(face f, vect pos, quaternion rotation);
+    GraphicsComponent getComponent(componentID cid);
+    
     componentID newComponent(entityID eid);
     static Graphics *gameGraphics;
     
@@ -109,6 +114,8 @@ public:
     
     void update( double dt);
     void init();
+    LogicComponent getComponent(componentID cid);
+    
     componentID newComponent(entityID eid);
     static Logic *gameLogic;
     

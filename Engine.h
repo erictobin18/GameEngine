@@ -50,6 +50,10 @@ public:
     componentID newGraphicsComponent(entityID eid);
     componentID newLogicComponent(entityID eid);
     
+    componentID getPhysicsComponent(entityID eid);
+    componentID getGraphicsComponent(entityID eid);
+    componentID getLogicComponent(entityID eid);
+    
     static Engine *gameEngine;
     
 protected:
