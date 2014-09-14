@@ -60,10 +60,18 @@ public:
     {
         
     }
-    std::vector<face> getFaces();
-    void setFaces(std::vector<face> f);
+    
+    std::vector<vertex> getVertices();
+    void setVertices(std::vector<vertex> v);
+    std::vector<unsigned int> getIndices();
+    void setIndices(std::vector<unsigned int> i);
+    
+    
 protected:
-    std::vector<face> faces;
+    std::vector<vertex> vertices;
+    std::vector<unsigned int> indices;
+    GraphicsObject obj;
+    
     
 };
 

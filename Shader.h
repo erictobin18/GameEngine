@@ -34,10 +34,7 @@
 class Shader
 {
 public:
-    Shader(std::string filename) : filename(filename)
-    {
-        
-    }
+    Shader(std::string filename);
     
     GLuint getProgramObject();
 protected:

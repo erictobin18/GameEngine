@@ -18,10 +18,6 @@
 
 using namespace std;
 
-void GameObject::init()
-{
-    
-}
 
 void GameObject::addComponent(bit_field type)
 {

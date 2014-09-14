@@ -27,10 +27,10 @@ typedef struct state{vect pos; vect vel; quaternion orientation; vect omega;}sta
 
 typedef struct vertex{double x; double y; double z; double texX; double texY;}vertex;
 
-typedef struct face{std::vector<vertex> vtx; int texID;}face;
-
 typedef unsigned int componentID;
 
 typedef unsigned int entityID;
 
 typedef unsigned char bit_field;
+
+typedef unsigned int textureID;

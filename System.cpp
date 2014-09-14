@@ -86,10 +86,6 @@ void Physics::update(double dt)
         s.orientation = hMultiply(padVector(scalarMultiply(unit, dt), 1.0), s.orientation);
     }
 }
-void Physics::init()
-{
-    
-}
 componentID Physics::newComponent(entityID eid)
 {
     state s = {0.0,0.0,0.0, 0.0,0.0,0.0, 0.0,0.0,0.0,0.0, 0.0,0.0,0.0};
@@ -132,14 +128,6 @@ void Graphics::update(double dt)
     }
 }
 
-void Graphics::drawFace(face f, vect pos, quaternion rot)
-{
-    
-}
-void Graphics::init()
-{
-    
-}
 componentID Graphics::newComponent(entityID eid)
 {
     componentID cid = (componentID)components.size();
@@ -167,10 +155,7 @@ void Logic::update(double dt)
 {
     //no gamelogic
 }
-void Logic::init()
-{
-    
-}
+
 componentID Logic::newComponent(entityID eid)
 {
     componentID cid = (componentID)components.size();

@@ -13,7 +13,7 @@
 
 using namespace std;
 
-void Shader::init()
+Shader::Shader(string filename): filename(filename)
 {
     bool loadedShaders = true;
     

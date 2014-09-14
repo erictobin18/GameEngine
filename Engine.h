@@ -31,7 +31,6 @@
 #endif
 
 
-//class ServerGL;
 class Physics;
 class Graphics;
 class Logic;
@@ -39,10 +38,7 @@ class Logic;
 class Engine
 {
 public:
-    Engine()
-    {
-        
-    }
+    Engine();
     void mainloop();
     double time;
     
@@ -57,7 +53,6 @@ public:
     static Engine *gameEngine;
     
 protected:
-    void init();
     void createRotatingCube(entityID eid);
     
     std::vector<GameObject> objectTable;

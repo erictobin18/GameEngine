@@ -32,13 +32,11 @@
 class ServerGL
 {
 public:
-    ServerGL() : windowOpen(false), verbose(false)
-    {
-        
-    }
+    ServerGL();
     ~ServerGL();
-    void mainLoop();
-    void serverInit();
+    
+    void prepareForDrawing();
+    void draw();
     bool windowOpen;
     
     static ServerGL *graphicsServer;
@@ -52,9 +50,12 @@ protected:
 class GraphicsObject
 {
 public:
-    GraphicsObject(std::vector<face> faces)
-    {
-        
-    }
+    GraphicsObject();
+    void draw();
+
+protected:
     GLuint vertexArrayObject;
-};
+    GLuint buffer;
+    GLuint texture;
+    
+    };

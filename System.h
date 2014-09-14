@@ -44,9 +44,6 @@ public:
     // All systems must update each game loop
     virtual void update( double dt )=0;
     
-    // It's good practice to separate the construction and initialization code.
-    virtual void init( void )=0;
-    
     // This recieves any messages sent to the core engine in Engine.cpp
     //virtual void SendMessage( /*message *msg */ )=0;
     
@@ -70,7 +67,6 @@ public:
         
     }
     void update( double dt);
-    void init();
     PhysicsComponent getComponent(componentID cid);
     
     componentID newComponent(entityID eid);
@@ -91,8 +87,6 @@ public:
         
     }
     void update( double dt);
-    void init();
-    void drawFace(face f, vect pos, quaternion rotation);
     GraphicsComponent getComponent(componentID cid);
     
     componentID newComponent(entityID eid);
@@ -113,7 +107,6 @@ public:
     }
     
     void update( double dt);
-    void init();
     LogicComponent getComponent(componentID cid);
     
     componentID newComponent(entityID eid);

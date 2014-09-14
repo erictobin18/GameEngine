@@ -32,12 +32,12 @@ void PhysicsComponent::setState(state s)
     entityState = s;
 }
 
-vector<face> GraphicsComponent::getFaces()
+vector<vertex> GraphicsComponent::getVertices()
 {
-    return faces;
+    return vertices;
 }
 
-void GraphicsComponent::setFaces(vector<face> f)
+void GraphicsComponent::setVertices(vector<vertex> v)
 {
-    faces = f;
+    vertices = v;
 }

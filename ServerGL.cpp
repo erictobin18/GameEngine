@@ -26,6 +26,19 @@ void errorCallback(int error, const char *description)
     cout << '\n';
 } //errorCallback
 
+GraphicsObject::GraphicsObject()
+{
+    glGenVertexArrays(1, &vertexArrayObject);
+    glBindVertexArray(vertexArrayObject);
+    
+    glGenBuffers(1, &buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    
+    
+}
+
+
+
 
 ServerGL::~ServerGL()
 {
@@ -38,7 +51,7 @@ ServerGL::~ServerGL()
     glfwTerminate();
 
 }
-void ServerGL::serverInit()
+ServerGL::ServerGL(): windowOpen(false), verbose(false)
 {
     glfwSetErrorCallback(errorCallback);
     if (verbose)
@@ -90,18 +103,19 @@ void ServerGL::serverInit()
     if (verbose)
         cout << "Running...\n";
 }
-    
-void ServerGL::mainLoop()
+
+void ServerGL::prepareForDrawing()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    //reportError();
-    
-    
     windowOpen = !glfwWindowShouldClose(window);
+}
+
+void ServerGL::draw()
+{
     glfwSwapBuffers(window);
     glfwPollEvents();
 }
+
 
 void ServerGL::reportGLError()
 {

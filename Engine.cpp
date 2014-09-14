@@ -25,23 +25,21 @@ void Engine::mainloop()
     time = glfwGetTime();
     
     ServerGL server = ServerGL::ServerGL();
-    server.serverInit();
-    
-    init();
     
     while (server.windowOpen) //animation loop
     {
+        server.prepareForDrawing(); //clears display, checks if window should closes
         double dt = glfwGetTime() - time;
         time = glfwGetTime();
         Physics::gamePhysics->update(dt);
         Logic::gameLogic->update(dt);
-        Graphics::gameGraphics->update(dt);
-        server.mainLoop(); //Graphics must be last call in animation loop
+        Graphics::gameGraphics->update(dt); //draws
+        server.draw();//Graphics must be last call in animation loop
     } //while
     cout << "Execution Terminated\n"; //Finish
 }
 
-void Engine::init()
+Engine::Engine()
 {
     objectTable = vector<GameObject>(1, GameObject(0));
     objectTable.push_back(GameObject(1));

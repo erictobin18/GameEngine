@@ -25,14 +25,13 @@ class GameObject : public Entity
 public:
     GameObject(entityID eid) : Entity(eid), identity(eid),components(0), name("NULL")
     {
-        init();
+        
     }
     
     void addComponent(bit_field type);
     void removeComponent(bit_field type);
     bool hasComponent(bit_field type);
     componentID getComponentID(bit_field type);
-    void init();
     
     bit_field components;
     std::string name;
