@@ -44,15 +44,6 @@ public:
     void createObject();
     void createObject(std::string filename);
     
-    /*
-    componentID newPhysicsComponent(entityID eid);
-    componentID newGraphicsComponent(entityID eid);
-    componentID newLogicComponent(entityID eid);
-    */
-    void addPhysicsComponent(entityID eid);
-    void addGraphicsComponent(entityID eid);
-    void addLogicComponent(entityID eid);
-    
     componentID getPhysicsComponent(entityID eid);
     componentID getGraphicsComponent(entityID eid);
     componentID getLogicComponent(entityID eid);

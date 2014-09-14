@@ -93,8 +93,7 @@ void Physics::update(double dt)
 }
 componentID Physics::newComponent(entityID eid)
 {
-    state s = {0.0,0.0,0.0, 0.0,0.0,0.0, 0.0,0.0,0.0,0.0, 0.0,0.0,0.0};
-    return newComponent(eid, s);
+    return newComponent(eid, *new state);
 }
 
 componentID Physics::newComponent(entityID eid, state s)
@@ -140,8 +139,12 @@ void Graphics::update(double dt)
 
 componentID Graphics::newComponent(entityID eid)
 {
+    return newComponent(eid, *new mesh);
+}
+componentID Graphics::newComponent(entityID eid, mesh m)
+{
     componentID cid = (componentID)components.size();
-    GraphicsComponent newComp = GraphicsComponent(cid, eid);
+    GraphicsComponent newComp = *new GraphicsComponent(cid, eid, m);
     components.push_back(newComp);
     return cid;
 }

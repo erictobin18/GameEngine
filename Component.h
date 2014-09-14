@@ -54,25 +54,21 @@ protected:
 class GraphicsComponent : public Component
 {
 public:
-    GraphicsComponent(componentID cid, entityID eid, std::vector<vertex> vertices, std::vector<unsigned int> indices, std::vector<rgb_value> texture, unsigned int texWidth, unsigned int texHeight) : Component(cid, eid), vertices(vertices), indices(indices), texture(texture), texWidth(texWidth), texHeight(texHeight), obj(*new GraphicsObject(vertices, indices, texture, texWidth,texHeight)) {}
+    GraphicsComponent(componentID cid, entityID eid, mesh m) : Component(cid, eid), componentMesh(m), obj(*new GraphicsObject(m)) {}
     GraphicsComponent(componentID cid, entityID eid) : Component(cid, eid)
     {
-        GraphicsComponent(cid, eid, *new std::vector<vertex>, *new std::vector<unsigned int>, *new std::vector<rgb_value>, 0, 0);
+        GraphicsComponent(cid, eid, *new mesh);
     }
     
-    std::vector<vertex> getVertices();
-    void setVertices(std::vector<vertex> v);
+    mesh getMesh();
+    void setMesh(mesh newMesh);
     std::vector<unsigned int> getIndices();
     void setIndices(std::vector<unsigned int> i);
     void draw(vect position, quaternion orientation);
     
     
 protected:
-    std::vector<vertex> vertices;
-    std::vector<unsigned int> indices;
-    std::vector<rgb_value> texture;
-    unsigned int texWidth;
-    unsigned int texHeight;
+    mesh componentMesh;
     GraphicsObject obj;
     
     

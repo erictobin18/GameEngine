@@ -50,10 +50,10 @@ protected:
 class GraphicsObject
 {
 public:
-    GraphicsObject(std::vector<vertex> vertices, std::vector<unsigned int> indices, std::vector<rgb_value> texture, unsigned int texWidth, unsigned int texHeight);
+    GraphicsObject(mesh m);
     GraphicsObject()
     {
-        GraphicsObject(*new std::vector<vertex>, *new std::vector<unsigned int>, *new std::vector<rgb_value>, 0, 0);
+        GraphicsObject(*new mesh);
     }
     void draw(vect position, quaternion orientation);
 

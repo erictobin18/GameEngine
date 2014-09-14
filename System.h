@@ -84,7 +84,7 @@ public:
     GraphicsComponent getComponent(componentID cid);
     
     componentID newComponent(entityID eid);
-    //componentID newComponent(entityID eid, );
+    componentID newComponent(entityID eid, mesh m);
     static Graphics *gameGraphics;
     
     ~Graphics();

@@ -20,12 +20,15 @@
 using namespace std;
 Engine *Engine::gameEngine = new Engine();
 
+file readFile(string filename)
+{
+    return *new file;
+}
+
 
 Engine::Engine()
 {
     objectTable = *new vector<Entity>;
-    createObject("rotatingCube");
-    createObject("rotatingCube");
 }
 
 void Engine::mainloop()
@@ -57,32 +60,16 @@ void Engine::createObject(string filename)
     Entity obj = *new Entity(eid, filename + to_string(eid));
     objectTable.push_back(obj);
     
-    componentID physComp = Physics::gamePhysics->newComponent(eid, /**new state*/);
+    file f = readFile(filename);
+    
+    componentID physComp = Physics::gamePhysics->newComponent(eid, f.s);
     obj.addPhysicsComponent(physComp);
     
-    componentID graphComp = Graphics::gameGraphics->newComponent(eid);
+    componentID graphComp = Graphics::gameGraphics->newComponent(eid, f.m);
     obj.addGraphicsComponent(graphComp);
     
     componentID logComp = Logic::gameLogic->newComponent(eid);
     obj.addLogicComponent(logComp);
-    
-    
-    addPhysicsComponent(eid);
-    addGraphicsComponent(eid);
-    addLogicComponent(eid);
-}
-
-void Engine::addPhysicsComponent(entityID eid)
-{
-    
-}
-void Engine::addGraphicsComponent(entityID eid)
-{
-    
-}
-void Engine::addLogicComponent(entityID eid)
-{
-    
 }
 
 

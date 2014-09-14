@@ -25,6 +25,8 @@ using namespace std;
 
 int main(int argc, const char * argv[])
 {
+    Engine::gameEngine->createObject("rotatingCube");
+    Engine::gameEngine->createObject("rotatingCube");
     Engine::gameEngine->mainloop();
     return EXIT_SUCCESS;
 } //main

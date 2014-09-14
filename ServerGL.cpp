@@ -29,7 +29,7 @@ void errorCallback(int error, const char *description)
     cout << '\n';
 } //errorCallback
 
-GraphicsObject::GraphicsObject(vector<vertex> vertices, vector<unsigned int> indices, vector<rgb_value> texture, unsigned int texWidth, unsigned int texHeight)
+GraphicsObject::GraphicsObject(mesh m)
 {
     //--------------------------------------------------VERTEX-----------------------------------------------------------------
     glGenVertexArrays(1, &vertexArrayObject);
@@ -40,7 +40,7 @@ GraphicsObject::GraphicsObject(vector<vertex> vertices, vector<unsigned int> ind
     glGenBuffers(1, &buffer[0]); //I realize this is the same as glGenBuffers(1, buffer). Maybe I just like it this way alright
     glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
     
-    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(vertex), &vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m.vertices.size()*sizeof(vertex), &m.vertices, GL_STATIC_DRAW);
     
     glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, 5*sizeof(double), BUFFER_OFFSET(0));
     glVertexAttribPointer(1, 2, GL_DOUBLE, GL_FALSE, 5*sizeof(double), BUFFER_OFFSET(3));
@@ -49,9 +49,9 @@ GraphicsObject::GraphicsObject(vector<vertex> vertices, vector<unsigned int> ind
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer[1]);
     
-    numIndices = static_cast<unsigned int>(indices.size());
+    numIndices = static_cast<unsigned int>(m.indices.size());
     
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices*sizeof(unsigned int), &indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices*sizeof(unsigned int), &m.indices, GL_STATIC_DRAW);
     
     glVertexAttribPointer(2, 1, GL_UNSIGNED_INT, GL_FALSE, 0, BUFFER_OFFSET(0));
     
@@ -63,7 +63,7 @@ GraphicsObject::GraphicsObject(vector<vertex> vertices, vector<unsigned int> ind
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
     
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m.texWidth, m.texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &m.texture);
     
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

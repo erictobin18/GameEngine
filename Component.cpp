@@ -32,14 +32,14 @@ void PhysicsComponent::setState(state s)
     entityState = s;
 }
 
-vector<vertex> GraphicsComponent::getVertices()
+mesh GraphicsComponent::getMesh()
 {
-    return vertices;
+    return componentMesh;
 }
 
-void GraphicsComponent::setVertices(vector<vertex> v)
+void GraphicsComponent::setMesh(mesh newMesh)
 {
-    vertices = v;
+    componentMesh = newMesh;
 }
 
 void GraphicsComponent::draw(vect position, quaternion orientation)
