@@ -1,0 +1,5 @@
+Notes:
+
+Write the Graphics System. On init, load all the face data into the GL server. DrawFaces method executes rendering commands on the server. Probably should be moved to ServerGL.cpp. On modification of GraphicsComponent data, reload the data into the GL server. On destruction of the component, clear the data in the GL server.
+
+Modify the cube creation method to allow instantiation at arbitary state.
