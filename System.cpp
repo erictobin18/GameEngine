@@ -76,6 +76,11 @@ void System::removeComponent(componentID cid)
 
 //---------------------------------------------------------------------------------------------------------------------
 
+Physics::Physics() : System()
+{
+    components = *new vector<PhysicsComponent>;
+}
+
 void Physics::update(double dt)
 {
     for (int i = 0; i < components.size(); i++)
@@ -107,13 +112,18 @@ Physics::~Physics()
 {
     
 }
-Physics& Physics::operator=(Physics other)
+/*Physics& Physics::operator=(Physics other)
 {
     swap(components, other.components);
     return *this;
-}
+}*/
 
 //---------------------------------------------------------------------------------------------------------------------
+
+Graphics::Graphics() : System()
+{
+    components = *new vector<GraphicsComponent>;
+}
 
 void Graphics::update(double dt)
 {
@@ -124,7 +134,7 @@ void Graphics::update(double dt)
         vect p = physComp.getState().pos;
         quaternion q = physComp.getState().orientation;
         
-        
+        components.at(i).draw(p, q);
     }
 }
 
@@ -143,14 +153,18 @@ Graphics::~Graphics()
 {
     
 }
-Graphics& Graphics::operator=(Graphics other)
+/*Graphics& Graphics::operator=(Graphics other)
 {
     swap(components, other.components);
     return *this;
-}
+}*/
 
 //---------------------------------------------------------------------------------------------------------------------
 
+Logic::Logic() : System()
+{
+    components = *new vector<LogicComponent>;
+}
 void Logic::update(double dt)
 {
     //no gamelogic
@@ -171,8 +185,8 @@ Logic::~Logic()
 {
     
 }
-Logic& Logic::operator=(Logic other)
+/*Logic& Logic::operator=(Logic other)
 {
     swap(components, other.components);
     return *this;
-}
+}*/

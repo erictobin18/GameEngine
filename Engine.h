@@ -20,9 +20,9 @@
 #include "GlobalConstants.h"
 #endif
 
-#ifndef GAMEOBJECT_H
-#define GAMEOBJECT_H
-#include "GameObject.h"
+#ifndef ENTITY_H
+#define ENTITY_H
+#include "Entity.h"
 #endif
 
 #ifndef SYSTEM_H
@@ -41,10 +41,17 @@ public:
     Engine();
     void mainloop();
     double time;
+    void createObject();
+    void createObject(std::string filename);
     
+    /*
     componentID newPhysicsComponent(entityID eid);
     componentID newGraphicsComponent(entityID eid);
     componentID newLogicComponent(entityID eid);
+    */
+    void addPhysicsComponent(entityID eid);
+    void addGraphicsComponent(entityID eid);
+    void addLogicComponent(entityID eid);
     
     componentID getPhysicsComponent(entityID eid);
     componentID getGraphicsComponent(entityID eid);
@@ -53,7 +60,5 @@ public:
     static Engine *gameEngine;
     
 protected:
-    void createRotatingCube(entityID eid);
-    
-    std::vector<GameObject> objectTable;
+    std::vector<Entity> objectTable;
 };

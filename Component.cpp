@@ -41,3 +41,8 @@ void GraphicsComponent::setVertices(vector<vertex> v)
 {
     vertices = v;
 }
+
+void GraphicsComponent::draw(vect position, quaternion orientation)
+{
+    obj.draw(position, orientation);
+}

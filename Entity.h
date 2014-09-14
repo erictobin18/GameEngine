@@ -26,15 +26,28 @@ class Engine;
 class Entity
 {
 public:
-    Entity(entityID eid)
+    Entity(entityID eid, std::string n) : identity(eid),components(0), name(n)
     {
         
     }
-    virtual void addComponent(bit_field)=0;
-    virtual void removeComponent(bit_field)=0;
-    virtual bool hasComponent(bit_field)=0;
-    virtual unsigned int getComponentID(bit_field)=0;
+    Entity(entityID eid)
+    {
+        Entity(eid, "NULL");
+    }
+    
+    void addPhysicsComponent(componentID cid);
+    void addGraphicsComponent(componentID cid);
+    void addLogicComponent(componentID cid);
+    
+    void removeComponent(bit_field type);
+    bool hasComponent(bit_field type);
+    componentID getComponentID(bit_field type);
+    
+    bit_field components;
     
 protected:
-    virtual int numComponents()=0;
+    int numComponents();
+    componentID componentIDs[8];
+    entityID identity; //index in the Master Object Table
+    std::string name;
 };

@@ -27,6 +27,8 @@ typedef struct state{vect pos; vect vel; quaternion orientation; vect omega;}sta
 
 typedef struct vertex{double x; double y; double z; double texX; double texY;}vertex;
 
+typedef struct rgb_value{unsigned char r; unsigned char g; unsigned char b;}rgb_value;
+
 typedef unsigned int componentID;
 
 typedef unsigned int entityID;

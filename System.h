@@ -62,10 +62,7 @@ protected:
 class Physics : System
 {
 public:
-    Physics() : System()
-    {
-        
-    }
+    Physics();
     void update( double dt);
     PhysicsComponent getComponent(componentID cid);
     
@@ -74,7 +71,7 @@ public:
     static Physics *gamePhysics;
     
     ~Physics();
-    Physics& operator=(Physics other);
+    //Physics& operator=(Physics other);
 protected:
     std::vector<PhysicsComponent> components;
 };
@@ -82,18 +79,16 @@ protected:
 class Graphics : System
 {
 public:
-    Graphics() : System()
-    {
-        
-    }
+    Graphics();
     void update( double dt);
     GraphicsComponent getComponent(componentID cid);
     
     componentID newComponent(entityID eid);
+    //componentID newComponent(entityID eid, );
     static Graphics *gameGraphics;
     
     ~Graphics();
-    Graphics& operator=(Graphics other);
+    //Graphics& operator=(Graphics other);
 protected:
     std::vector<GraphicsComponent> components;
 };
@@ -101,11 +96,7 @@ protected:
 class Logic : System
 {
 public:
-    Logic() : System()
-    {
-        
-    }
-    
+    Logic();
     void update( double dt);
     LogicComponent getComponent(componentID cid);
     
@@ -113,7 +104,7 @@ public:
     static Logic *gameLogic;
     
     ~Logic();
-    Logic& operator=(Logic other);
+    //Logic& operator=(Logic other);
 protected:
     std::vector<LogicComponent> components;
 };

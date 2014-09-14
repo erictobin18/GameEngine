@@ -16,6 +16,9 @@
 #include "Shader.h"
 #endif
 
+#define BUFFER_OFFSET(offset) ((void *)(offset))
+#define RESTART_CHAR 0xFFFFFFFF
+
 using namespace std;
 ServerGL *ServerGL::graphicsServer = new ServerGL();
 
@@ -26,15 +29,57 @@ void errorCallback(int error, const char *description)
     cout << '\n';
 } //errorCallback
 
-GraphicsObject::GraphicsObject()
+GraphicsObject::GraphicsObject(vector<vertex> vertices, vector<unsigned int> indices, vector<rgb_value> texture, unsigned int texWidth, unsigned int texHeight)
 {
+    //--------------------------------------------------VERTEX-----------------------------------------------------------------
     glGenVertexArrays(1, &vertexArrayObject);
     glBindVertexArray(vertexArrayObject);
     
-    glGenBuffers(1, &buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    unsigned int buffer[2];
     
+    glGenBuffers(1, &buffer[0]); //I realize this is the same as glGenBuffers(1, buffer). Maybe I just like it this way alright
+    glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
     
+    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(vertex), &vertices, GL_STATIC_DRAW);
+    
+    glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, 5*sizeof(double), BUFFER_OFFSET(0));
+    glVertexAttribPointer(1, 2, GL_DOUBLE, GL_FALSE, 5*sizeof(double), BUFFER_OFFSET(3));
+    
+    glGenBuffers(1, &buffer[1]);
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer[1]);
+    
+    numIndices = static_cast<unsigned int>(indices.size());
+    
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices*sizeof(unsigned int), &indices, GL_STATIC_DRAW);
+    
+    glVertexAttribPointer(2, 1, GL_UNSIGNED_INT, GL_FALSE, 0, BUFFER_OFFSET(0));
+    
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    
+    //--------------------------------------------------TEXTURE-----------------------------------------------------------------
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &texture);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+}
+void GraphicsObject::draw(vect position, quaternion orientation)
+{
+    glBindVertexArray(vertexArrayObject);
+    glVertexAttrib3d(3, position.x, position.y, position.z);
+    glVertexAttrib4d(4, orientation.s, orientation.i, orientation.j, orientation.k);
+    
+    glEnableVertexAttribArray(3);
+    glEnableVertexAttribArray(4);
+    
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    
+    glDrawElements(GL_TRIANGLE_STRIP, numIndices, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
 }
 
 

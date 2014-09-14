@@ -16,6 +16,11 @@
 #include "Engine.h"
 #endif
 
+#ifndef GLOBAL_CONSTANTS_H
+#define GLOBAL_CONSTANTS_H
+#include "GlobalConstants.h"
+#endif
+
 using namespace std;
 
 int main(int argc, const char * argv[])

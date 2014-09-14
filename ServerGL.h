@@ -50,12 +50,16 @@ protected:
 class GraphicsObject
 {
 public:
-    GraphicsObject();
-    void draw();
+    GraphicsObject(std::vector<vertex> vertices, std::vector<unsigned int> indices, std::vector<rgb_value> texture, unsigned int texWidth, unsigned int texHeight);
+    GraphicsObject()
+    {
+        GraphicsObject(*new std::vector<vertex>, *new std::vector<unsigned int>, *new std::vector<rgb_value>, 0, 0);
+    }
+    void draw(vect position, quaternion orientation);
 
 protected:
     GLuint vertexArrayObject;
-    GLuint buffer;
-    GLuint texture;
+    GLuint textureID;
+    GLuint numIndices;
     
     };

@@ -20,6 +20,14 @@
 using namespace std;
 Engine *Engine::gameEngine = new Engine();
 
+
+Engine::Engine()
+{
+    objectTable = *new vector<Entity>;
+    createObject("rotatingCube");
+    createObject("rotatingCube");
+}
+
 void Engine::mainloop()
 {
     time = glfwGetTime();
@@ -38,39 +46,46 @@ void Engine::mainloop()
     } //while
     cout << "Execution Terminated\n"; //Finish
 }
-
-Engine::Engine()
+void Engine::createObject()
 {
-    objectTable = vector<GameObject>(1, GameObject(0));
-    objectTable.push_back(GameObject(1));
-    
-    createRotatingCube(0);
-    createRotatingCube(1);
+    createObject("rotatingCube");
 }
 
-void Engine::createRotatingCube(entityID eid)
+void Engine::createObject(string filename)
 {
-    GameObject obj = objectTable.at(eid);
+    entityID eid = static_cast<entityID>(objectTable.size());
+    Entity obj = *new Entity(eid, filename + to_string(eid));
+    objectTable.push_back(obj);
     
-    obj.addComponent(physicsType);
-    obj.addComponent(graphicsType);
-    obj.addComponent(logicType);
+    componentID physComp = Physics::gamePhysics->newComponent(eid, /**new state*/);
+    obj.addPhysicsComponent(physComp);
     
-    obj.name = string("cube:") + to_string(eid);
+    componentID graphComp = Graphics::gameGraphics->newComponent(eid);
+    obj.addGraphicsComponent(graphComp);
+    
+    componentID logComp = Logic::gameLogic->newComponent(eid);
+    obj.addLogicComponent(logComp);
+    
+    
+    addPhysicsComponent(eid);
+    addGraphicsComponent(eid);
+    addLogicComponent(eid);
 }
 
-componentID Engine::newPhysicsComponent(entityID eid)
+void Engine::addPhysicsComponent(entityID eid)
 {
-    return Physics::gamePhysics->newComponent(eid);
+    
 }
-componentID Engine::newGraphicsComponent(entityID eid)
+void Engine::addGraphicsComponent(entityID eid)
 {
-    return Graphics::gameGraphics->newComponent(eid);
+    
 }
-componentID Engine::newLogicComponent(entityID eid)
+void Engine::addLogicComponent(entityID eid)
 {
-    return Logic::gameLogic->newComponent(eid);
+    
 }
+
+
 componentID Engine::getPhysicsComponent(entityID eid)
 {
     return objectTable.at(eid).getComponentID(physicsType);
