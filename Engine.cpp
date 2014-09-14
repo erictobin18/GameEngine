@@ -11,10 +11,11 @@
 #include "Engine.h"
 #endif
 
-#ifndef SERVERGL_H
-#define SERVERGL_H
+#ifndef SERVER_GL_H
+#define SERVER_GL_H
 #include "ServerGL.h"
 #endif
+
 
 using namespace std;
 Engine *Engine::gameEngine = new Engine();
@@ -71,4 +72,16 @@ componentID Engine::newGraphicsComponent(entityID eid)
 componentID Engine::newLogicComponent(entityID eid)
 {
     return Logic::gameLogic->newComponent(eid);
+}
+componentID Engine::getPhysicsComponent(entityID eid)
+{
+    return objectTable.at(eid).getComponentID(physicsType);
+}
+componentID Engine::getGraphicsComponent(entityID eid)
+{
+    return objectTable.at(eid).getComponentID(graphicsType);
+}
+componentID Engine::getLogicComponent(entityID eid)
+{
+    return objectTable.at(eid).getComponentID(logicType);
 }

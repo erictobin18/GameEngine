@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
-#ifndef SERVER_GL
-#define SERVER_GL
+#ifndef SERVER_GL_H
+#define SERVER_GL_H
 #include "ServerGL.h"
 #endif
 
@@ -17,6 +17,7 @@
 #endif
 
 using namespace std;
+ServerGL *ServerGL::graphicsServer = new ServerGL();
 
 void errorCallback(int error, const char *description)
 {

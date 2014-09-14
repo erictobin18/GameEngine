@@ -20,6 +20,11 @@
 #include "GlobalConstants.h"
 #endif
 
+#ifndef SERVER_GL_H
+#define SERVER_GL_H
+#include "ServerGL.h"
+#endif
+
 class Component
 {
 public:
@@ -59,6 +64,7 @@ public:
     void setFaces(std::vector<face> f);
 protected:
     std::vector<face> faces;
+    
 };
 
 class LogicComponent : public Component

@@ -31,7 +31,7 @@
 #endif
 
 
-class ServerGL;
+//class ServerGL;
 class Physics;
 class Graphics;
 class Logic;
@@ -59,12 +59,6 @@ public:
 protected:
     void init();
     void createRotatingCube(entityID eid);
-    
-    //Physics *physics;
-    //Graphics *graphics;
-    //Logic *Logic;
-    
-    ServerGL *server;
     
     std::vector<GameObject> objectTable;
 };

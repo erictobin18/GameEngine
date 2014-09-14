@@ -74,6 +74,8 @@ void System::removeComponent(componentID cid)
     components.erase(components.begin() + cid);
 }
 
+//---------------------------------------------------------------------------------------------------------------------
+
 void Physics::update(double dt)
 {
     for (int i = 0; i < components.size(); i++)
@@ -101,6 +103,10 @@ componentID Physics::newComponent(entityID eid, state s)
     components.push_back(newComp);
     return cid;
 }
+PhysicsComponent Physics::getComponent(componentID cid)
+{
+    return components.at(cid);
+}
 Physics::~Physics()
 {
     
@@ -111,6 +117,7 @@ Physics& Physics::operator=(Physics other)
     return *this;
 }
 
+//---------------------------------------------------------------------------------------------------------------------
 
 void Graphics::update(double dt)
 {
@@ -121,11 +128,7 @@ void Graphics::update(double dt)
         vect p = physComp.getState().pos;
         quaternion q = physComp.getState().orientation;
         
-        vector<face> faces = components.at(i).getFaces();
-        for (int j = 0; j < components.size(); j++)
-        {
-            drawFace(faces.at(j), p, q);
-        }
+        
     }
 }
 
@@ -144,6 +147,10 @@ componentID Graphics::newComponent(entityID eid)
     components.push_back(newComp);
     return cid;
 }
+GraphicsComponent Graphics::getComponent(componentID cid)
+{
+    return components.at(cid);
+}
 Graphics::~Graphics()
 {
     
@@ -153,6 +160,8 @@ Graphics& Graphics::operator=(Graphics other)
     swap(components, other.components);
     return *this;
 }
+
+//---------------------------------------------------------------------------------------------------------------------
 
 void Logic::update(double dt)
 {
@@ -168,6 +177,10 @@ componentID Logic::newComponent(entityID eid)
     LogicComponent newComp = LogicComponent(cid, eid);
     components.push_back(newComp);
     return cid;
+}
+LogicComponent Logic::getComponent(componentID cid)
+{
+    return components.at(cid);
 }
 Logic::~Logic()
 {
