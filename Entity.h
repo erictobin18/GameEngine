@@ -26,9 +26,12 @@ class Engine;
 class Entity
 {
 public:
-    Entity(entityID eid, std::string n) : identity(eid),components(0), name(n)
+    Entity(entityID eid, std::string n) : identity(eid),components(0x0), name(n)
     {
-        
+        for (int i = 0; i < 8; i++)
+        {
+            componentIDs[i] = 0;
+        }
     }
     Entity(entityID eid)
     {

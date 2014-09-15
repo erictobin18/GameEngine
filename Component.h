@@ -45,7 +45,7 @@ public:
     {
         PhysicsComponent(cid, eid, *new state);
     }
-    state getState();
+    state *getState();
     void setState(state);
 protected:
     state entityState;

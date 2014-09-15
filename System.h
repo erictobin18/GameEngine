@@ -42,7 +42,7 @@ public:
         
     }
     // All systems must update each game loop
-    virtual void update( double dt )=0;
+    virtual void update( float dt )=0;
     
     // This recieves any messages sent to the core engine in Engine.cpp
     //virtual void SendMessage( /*message *msg */ )=0;
@@ -63,7 +63,7 @@ class Physics : System
 {
 public:
     Physics();
-    void update( double dt);
+    void update( float dt);
     PhysicsComponent getComponent(componentID cid);
     
     componentID newComponent(entityID eid);
@@ -80,7 +80,7 @@ class Graphics : System
 {
 public:
     Graphics();
-    void update( double dt);
+    void update( float dt);
     GraphicsComponent getComponent(componentID cid);
     
     componentID newComponent(entityID eid);
@@ -97,7 +97,7 @@ class Logic : System
 {
 public:
     Logic();
-    void update( double dt);
+    void update( float dt);
     LogicComponent getComponent(componentID cid);
     
     componentID newComponent(entityID eid);

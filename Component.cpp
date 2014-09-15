@@ -22,9 +22,9 @@ entityID Component::getEntity()
     return entityIdentity;
 }
 
-state PhysicsComponent::getState()
+state * PhysicsComponent::getState()
 {
-    return entityState;
+    return & entityState;
 }
 
 void PhysicsComponent::setState(state s)

@@ -19,17 +19,17 @@
 
 
 typedef enum componentType {noneType = 0, physicsType = 1, graphicsType = 2, physics_and_graphicsType = 3, logicType = 4, physics_and_logicType = 5, graphics_and_logicType = 6, all = 7} componentType;
-typedef struct quaternion{double s; double i; double j; double k;}quaternion;
+typedef struct quaternion{float s; float i; float j; float k;}quaternion;
 
-typedef struct vect{double x; double y; double z;} vect;
+typedef struct vect{float x; float y; float z;} vect;
 
 typedef struct state{vect pos; vect vel; quaternion orientation; vect omega;}state;
 
-typedef struct vertex{double x; double y; double z; double texX; double texY;}vertex;
+typedef struct vertex{float x; float y; float z; float texX; float texY;}vertex;
 
 typedef struct rgb_value{unsigned char r; unsigned char g; unsigned char b;}rgb_value;
 
-typedef struct mesh{std::vector<vertex> vertices; std::vector<unsigned int> indices; std::vector<rgb_value> texture; unsigned int texWidth; unsigned int texHeight;}mesh;
+typedef struct mesh{std::vector<vertex> vertices; std::vector<unsigned int> indices; std::vector<unsigned char>texture; unsigned int texWidth; unsigned int texHeight;}mesh;
 
 typedef struct file{state s; mesh m;}file;
 

@@ -40,7 +40,7 @@ class Engine
 public:
     Engine();
     void mainloop();
-    double time;
+    float time;
     void createObject();
     void createObject(std::string filename);
     

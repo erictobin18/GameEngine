@@ -16,6 +16,11 @@
 #include "Engine.h"
 #endif
 
+#ifndef SERVER_GL_H
+#define SERVER_GL_H
+#include "ServerGL.h"
+#endif
+
 #ifndef GLOBAL_CONSTANTS_H
 #define GLOBAL_CONSTANTS_H
 #include "GlobalConstants.h"
@@ -25,7 +30,6 @@ using namespace std;
 
 int main(int argc, const char * argv[])
 {
-    Engine::gameEngine->createObject("rotatingCube");
     Engine::gameEngine->createObject("rotatingCube");
     Engine::gameEngine->mainloop();
     return EXIT_SUCCESS;

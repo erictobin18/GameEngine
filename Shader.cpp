@@ -25,7 +25,7 @@ Shader::Shader(string filename): filename(filename)
     {
         source.seekg(ios::end);
         
-        vertexShaderSource.resize(/*source.tellg()*/ 313);
+        vertexShaderSource.resize(/*source.tellg()*/ 400);
         source.seekg(source.beg);
         source.read(&vertexShaderSource[0], vertexShaderSource.size());
         source.close();
@@ -41,7 +41,7 @@ Shader::Shader(string filename): filename(filename)
     if (source)
     {
         source.seekg(ios::end);
-        fragmentShaderSource.resize(/*source.tellg()*/ 229);
+        fragmentShaderSource.resize(/*source.tellg()*/ 400);
         source.seekg(ios::beg);
         source.read(&fragmentShaderSource[0], fragmentShaderSource.size());
         source.close();

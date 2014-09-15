@@ -41,8 +41,9 @@ public:
     
     static ServerGL *graphicsServer;
     
-protected:
     void reportGLError();
+    
+protected:
     GLFWwindow *window;
     bool verbose;
 };
@@ -56,6 +57,7 @@ public:
         GraphicsObject(*new mesh);
     }
     void draw(vect position, quaternion orientation);
+    
 
 protected:
     GLuint vertexArrayObject;
