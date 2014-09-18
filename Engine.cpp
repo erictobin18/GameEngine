@@ -16,11 +16,67 @@
 #include "ServerGL.h"
 #endif
 
+#ifndef JSONCPP_H
+#define JSONCPP_H
+#include <json/json.h>
+#endif
+
+#ifndef FSTREAM_H
+#define FSTREAM_H
+#include <fstream>
+#endif
+
 using namespace std;
 Engine *Engine::gameEngine = new Engine();
 
 file readFile(string filename)
 {
+    ofstream blah("hooplah.obj");
+    blah.close();
+    
+    ifstream str("Objects/" + filename + ".obj");
+    
+    if (!str)
+    {
+        cout << "Failed to find file named " + filename + " in objects directory.\n";
+        return file();
+    }
+    
+    str.seekg(0,std::ios_base::end);
+    
+    cout << str.tellg();
+    
+    
+    string json_example = "{\"array\": [\"item1\",\"item2\"],\"not an array\": \"asdf\" }";
+    cout << json_example << '\n';
+    
+    Json::Value root;
+    Json::Reader reader;
+    
+    bool parsedSuccess = reader.parse(json_example, root, false);
+    
+    // Let's extract the array contained
+    // in the root object
+    const Json::Value array = root["array"];
+    
+    // Iterate over sequence elements and
+    // print its values
+    for(unsigned int index=0; index<array.size();
+        ++index)
+    {
+        cout<<"Element "
+        <<index
+        <<" in array: "
+        <<array[index].asString()
+        <<endl;
+    }
+    
+    
+    
+    
+    
+    
+
     vect pos = {0.0,0.0,0.0};
     vect vel = {0.0,0.0,1.0};
     quaternion orientation = {1.0, 0.0, 0.0, 0.0};
@@ -64,6 +120,8 @@ file readFile(string filename)
     
     mesh m = {vertices, indices, texture, texWidth, texHeight};
     
+
+     
     file f = {s,m};
     return f;
 }
