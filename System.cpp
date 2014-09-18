@@ -90,8 +90,10 @@ void Physics::update(float dt)
         
         state *s = components.at(i).getState();
         
-        s->orientation = hMultiply(padVector(scalarMultiply(s->omega,dt/2), 1),s->orientation);
+        
         s->orientation = scalarMultiply(s->orientation,1/magnitude(s->orientation));
+        s->orientation = hMultiply(padVector(scalarMultiply(s->omega,dt/2), 1),s->orientation);
+        
         
         
         //cout << s->pos.x << '\t' << s->pos.y << '\t' << s->pos.z << '\n';

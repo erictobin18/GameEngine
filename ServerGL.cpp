@@ -42,136 +42,53 @@ GraphicsObject::GraphicsObject(mesh m)
     glGenVertexArrays(1, &vertexArrayObject);
     glBindVertexArray(vertexArrayObject);
     
-    unsigned int buffer[3];
-    
-    
-    vertex temp[16];
-    GLfloat cpy[48];
-    GLfloat tex[32];
-    
-    copy(m.vertices.begin(), m.vertices.end(), temp);
-    
-    for (int i = 0; i < 16; i++)
-    {
-        cpy[3*i] = temp[i].x;
-        cpy[3*i+1] = temp[i].y;
-        cpy[3*i+2] = temp[i].z;
-        tex[2*i] = temp[i].texX;
-        tex[2*i + 1] = temp[i].texY;
-    }
+    unsigned int buffer[2];
     
     //VERTEX COORDS
     
-    glGenBuffers(1, &buffer[0]); //I realize this is the same as glGenBuffers(1, buffer). Maybe I just like it this way alright
+    glGenBuffers(2, &buffer[0]); //I realize this is the same as glGenBuffers(1, buffer). Maybe I just like it this way alright
     glBindBuffer(GL_ARRAY_BUFFER, buffer[0]);
 
-    
-    glBufferData(GL_ARRAY_BUFFER,sizeof(cpy), cpy, GL_STATIC_DRAW);
-    
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-    
-    
-    
+    glBufferData(GL_ARRAY_BUFFER, m.vertices.size()*sizeof(vertex), m.vertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), BUFFER_OFFSET(0));
     
     //TEX COORDS
     
-    glGenBuffers(1, &buffer[2]);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer[2]);
-    
-    glBufferData(GL_ARRAY_BUFFER, sizeof(tex), tex, GL_STATIC_DRAW);
-    
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-    
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), BUFFER_OFFSET(12));
     
     //INDICES
     
-    glGenBuffers(1, &buffer[1]);
-    
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer[1]);
-    
 
-    unsigned int ind[17];
-    copy(m.indices.begin(), m.indices.end(), ind);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m.indices.size()*sizeof(unsigned int), m.indices.data(), GL_STATIC_DRAW);
     
-    
-    numIndices = 17;
-    
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ind), ind, GL_STATIC_DRAW);
     
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
 
-    
     //--------------------------------------------------TEXTURE-----------------------------------------------------------------
-    
-    unsigned char textc[48];
-    copy(m.texture.begin(), m.texture.end(), textc);
-    
+  
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
     
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 3,4, 0, GL_RGB, GL_UNSIGNED_BYTE, textc);
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m.texWidth,m.texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, m.texture.data());
     
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     
-//    for (int i = 0; i < 48; i++)
-//    {
-//        cout << cpy[i] << '\n';
-//        if (i%3 == 2)
-//        {
-//            cout<<'\n';
-//        }
-//    }
-//    cout << '\n';
-//    for (int i = 0; i < 32; i++)
-//    {
-//        cout << tex[i] << '\n';
-//    }
-//    cout << '\n';
-//    for (int i = 0; i < 17; i++)
-//    {
-//        cout << ind[i] << '\n';
-//    }
-//    cout << '\n';
-//    for (int i = 0; i < 36; i++)
-//    {
-//        cout << static_cast<unsigned int>(textc[i]) << '\n';
-//    }
+    glBindVertexArray(0);
 }
-void GraphicsObject::draw(vect position, quaternion o)
+void GraphicsObject::draw(vect pos, quaternion o)
 {
-    
     glBindVertexArray(vertexArrayObject);
     
-    ///*
-    
     GLfloat matrix[4][4] = {
-        {o.s*o.s + o.i*o.i - o.j*o.j - o.k*o.k, 2*o.i*o.j - 2*o.s*o.k, 2*o.i*o.k + 2*o.s*o.j, 0.0},
-        {2*o.i*o.j + 2*o.s*o.k, o.s*o.s - o.i*o.i + o.j*o.j - o.k*o.k, 2*o.j*o.k - 2*o.s*o.i, 0.0},
-        {2*o.i*o.k - 2*o.s*o.j, 2*o.j*o.k + 2*o.s*o.i, o.s*o.s - o.i*o.i - o.j*o.j + o.k*o.k, 0.0},
+        {o.s*o.s + o.i*o.i - o.j*o.j - o.k*o.k, 2*o.i*o.j - 2*o.s*o.k, 2*o.i*o.k + 2*o.s*o.j, 0},
+        {2*o.i*o.j + 2*o.s*o.k, o.s*o.s - o.i*o.i + o.j*o.j - o.k*o.k, 2*o.j*o.k - 2*o.s*o.i, 0},
+        {2*o.i*o.k - 2*o.s*o.j, 2*o.j*o.k + 2*o.s*o.i, o.s*o.s - o.i*o.i - o.j*o.j + o.k*o.k, 0},
         {0.0,                   0.0,                   0.0,                                   1.0}
     };
-    
-    //*/
-    /*
-    
-    float t = glfwGetTime();
-    
-    
-    GLfloat matrix[4][4] = {
-        {static_cast<GLfloat>(cos(t)), 0.0f, static_cast<GLfloat>(-sin(t)), 0.0f},
-        {0.0f,1.0f, 0.0f, 0.0f},
-        {static_cast<GLfloat>(sin(t)), 0.0f, static_cast<GLfloat>(cos(t)), 0.0f},
-        {0.0f, 0.0f, 0.0f, 1.0f}
-    };
-    
-    */
-    
-    //cout << matrix[0][0] << '\t' << matrix[0][1] << '\t' << matrix[0][2] << '\n';
-    //cout << matrix[1][0] << '\t' << matrix[1][1] << '\t' << matrix[1][2] << '\n';
-    //cout << matrix[2][0] << '\t' << matrix[2][1] << '\t' << matrix[2][2] << "\n\n\n";
-    
     
     glVertexAttrib4fv(2, matrix[0]);
     glVertexAttrib4fv(3, matrix[1]);
@@ -179,11 +96,6 @@ void GraphicsObject::draw(vect position, quaternion o)
     glVertexAttrib4fv(5, matrix[3]);
     
     glBindTexture(GL_TEXTURE_2D, textureID);
-    
-    //glDrawArrays(GL_TRIANGLE_STRIP, 0, 8);
-    //glDrawArrays(GL_TRIANGLE_STRIP, 8, 8);
-    
-    //static_cast<int>(floor(glfwGetTime()/3)+.01)%15
         
     glDrawElements(GL_TRIANGLE_STRIP, 17, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
     ServerGL::graphicsServer->reportGLError();

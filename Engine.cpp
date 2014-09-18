@@ -16,16 +16,15 @@
 #include "ServerGL.h"
 #endif
 
-
 using namespace std;
 Engine *Engine::gameEngine = new Engine();
 
 file readFile(string filename)
 {
     vect pos = {0.0,0.0,0.0};
-    vect vel = {0.1,0.0,0.0};
+    vect vel = {0.0,0.0,1.0};
     quaternion orientation = {1.0, 0.0, 0.0, 0.0};
-    vect omega = {0.8, -0.8, 0.0};
+    vect omega = {1.0, 1.0, 0.0};
     
     state s = {pos,vel,orientation,omega};
     
@@ -47,12 +46,6 @@ file readFile(string filename)
         {-.5,-.5,-.5, 1./3,  .75}, //0
         {0.5,-.5,0.5, 0.0,  1.0}, //4
         {0.5,-.5,-.5, 1./3,  1.0}, //2
-        
-        
-        
-        
-
-        
     } ;
     vector<unsigned int>indices {
         0x0,0x1,0x2,0x3,0x4,0x5,0x6,0x7,
@@ -74,7 +67,6 @@ file readFile(string filename)
     file f = {s,m};
     return f;
 }
-
 
 Engine::Engine()
 {
