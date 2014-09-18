@@ -34,7 +34,7 @@ file readFile(string filename)
     ofstream blah("hooplah.obj");
     blah.close();
     
-    ifstream str("Objects/" + filename + ".obj");
+    ifstream str("Objects/" + filename + ".json");
     
     if (!str)
     {
@@ -42,21 +42,23 @@ file readFile(string filename)
         return file();
     }
     
-    str.seekg(0,std::ios_base::end);
-    
-    cout << str.tellg();
-    
-    
-    string json_example = "{\"array\": [\"item1\",\"item2\"],\"not an array\": \"asdf\" }";
-    cout << json_example << '\n';
+    str.seekg(0,ios_base::end);
+    string source = string(str.tellg(),'0');
+    str.seekg(ios_base::beg);
+    str.read(&source[0], source.size());
     
     Json::Value root;
     Json::Reader reader;
     
-    bool parsedSuccess = reader.parse(json_example, root, false);
+    bool parsedSuccess = reader.parse(source, root, false);
+    
+    if (!parsedSuccess)
+        cout << "Parse failure\n";
     
     // Let's extract the array contained
     // in the root object
+    
+    /*
     const Json::Value array = root["array"];
     
     // Iterate over sequence elements and
@@ -70,38 +72,29 @@ file readFile(string filename)
         <<array[index].asString()
         <<endl;
     }
-    
-    
-    
-    
-    
+     */
     
 
-    vect pos = {0.0,0.0,0.0};
-    vect vel = {0.0,0.0,1.0};
-    quaternion orientation = {1.0, 0.0, 0.0, 0.0};
-    vect omega = {1.0, 1.0, 0.0};
-    
-    state s = {pos,vel,orientation,omega};
+
     
     vector<vertex>vertices {
-        {-.5,-.5,-.5, 0.0,  0.0}, //0
-        {-.5,0.5,-.5, 0.0,  .25}, //1
-        {0.5,-.5,-.5, 1./3,  0.0}, //2
-        {0.5,0.5,-.5, 1./3,  0.25}, //3
-        {0.5,-.5,0.5, 2./3,  0.0}, //4
-        {0.5,0.5,0.5, 2./3,  .25}, //5
-        {-.5,-.5,0.5, 1.0,  0.0}, //6
-        {-.5,0.5,0.5, 1.0,  .25}, //7
+        {-.5,-.5,-.5, 0.0, 0.0}, //0
+        {-.5,0.5,-.5, 0.0, .25}, //1
+        {0.5,-.5,-.5, .25, 0.0}, //2
+        {0.5,0.5,-.5, .25, 0.25}, //3
+        {0.5,-.5,0.5, 0.5, 0.0}, //4
+        {0.5,0.5,0.5, 0.5, .25}, //5
+        {-.5,-.5,0.5, .75, 0.0}, //6
+        {-.5,0.5,0.5, .75, .25}, //7
         
-        {0.5,0.5,0.5, 0.0,  .25}, //5
-        {0.5,0.5,-.5, 1./3,  .25}, //3
-        {-.5,0.5,0.5, 0.0,  .5}, //7
-        {-.5,0.5,-.5, 1./3, .5}, //1
-        {-.5,-.5,0.5, 0.0,  .75}, //6
-        {-.5,-.5,-.5, 1./3,  .75}, //0
-        {0.5,-.5,0.5, 0.0,  1.0}, //4
-        {0.5,-.5,-.5, 1./3,  1.0}, //2
+        {0.5,0.5,0.5, 0.0, .25}, //5
+        {0.5,0.5,-.5, .25, .25}, //3
+        {-.5,0.5,0.5, 0.0, .5}, //7
+        {-.5,0.5,-.5, .25, .5}, //1
+        {-.5,-.5,0.5, 0.0, .75}, //6
+        {-.5,-.5,-.5, .25, .75}, //0
+        {0.5,-.5,0.5, 0.0, 1.0}, //4
+        {0.5,-.5,-.5, .25, 1.0}, //2
     } ;
     vector<unsigned int>indices {
         0x0,0x1,0x2,0x3,0x4,0x5,0x6,0x7,
@@ -115,14 +108,14 @@ file readFile(string filename)
         255,000,255,    190,190,190,    255,255,255,    000,255,127,
         127,000,255,    000,000,255,    000,127,255,    000,255,255, //tex coords 0.0, 1.0 (left) to 1.0, 1.0 (right)
     };
-    unsigned int texWidth = 3;
+    unsigned int texWidth = 4;
     unsigned int texHeight = 4;
     
     mesh m = {vertices, indices, texture, texWidth, texHeight};
     
 
      
-    file f = {s,m};
+    file f = {m};
     return f;
 }
 
@@ -160,7 +153,15 @@ void Engine::createObject(string filename)
     
     file f = readFile(filename);
     
-    componentID physComp = Physics::gamePhysics->newComponent(eid, f.s);
+    vect pos = {0.0,0.0,0.0};
+    vect vel = {0.0,0.0,1.0};
+    quaternion orientation = {1.0, 0.0, 0.0, 0.0};
+    vect omega = {1.0, 1.0, 0.0};
+    
+    state s = {pos,vel,orientation,omega};
+
+    
+    componentID physComp = Physics::gamePhysics->newComponent(eid, s);
     obj.addPhysicsComponent(physComp);
     
     componentID graphComp = Graphics::gameGraphics->newComponent(eid, f.m);

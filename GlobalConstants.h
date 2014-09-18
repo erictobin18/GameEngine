@@ -31,7 +31,7 @@ typedef struct rgb_value{unsigned char r; unsigned char g; unsigned char b;}rgb_
 
 typedef struct mesh{std::vector<vertex> vertices; std::vector<unsigned int> indices; std::vector<unsigned char>texture; unsigned int texWidth; unsigned int texHeight;}mesh;
 
-typedef struct file{state s; mesh m;}file;
+typedef struct file{mesh m;}file;
 
 typedef unsigned int componentID;
 
