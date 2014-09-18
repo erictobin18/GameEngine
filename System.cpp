@@ -41,10 +41,15 @@ vect scalarMultiply(vect v, float s)
 {
     return (vect){v.x*s,v.y*s,v.z*s};
 }
+quaternion scalarMultiply(quaternion q, float n)
+{
+    return (quaternion){q.s*n,q.i*n,q.j*n,q.k*n};
+}
 vect im(quaternion q)
 {
     return (vect){q.i,q.j,q.k};
 }
+/*
 vect crossProduct(vect left, vect right)
 {
     return (vect)
@@ -54,18 +59,14 @@ vect crossProduct(vect left, vect right)
         left.x*right.y - left.y*right.x
     };
 }
-vect applyQuaternion(vect initial, quaternion q)
-{
-    //v + 2rx(r x v + w v)
-    return addVect(initial, scalarMultiply(crossProduct(im(q), addVect(crossProduct(im(q), initial), scalarMultiply(initial, q.s))), 2.0));
-}
+ */
 quaternion padVector(vect v, float p)
 {
     return (quaternion){p,v.x,v.y,v.z};
 }
-float magnitude(vect v)
+float magnitude(quaternion q)
 {
-    return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+    return sqrt(q.s * q.s + q.i * q.i + q.j * q.j + q.k * q.k);
 }
 
 
@@ -89,15 +90,16 @@ void Physics::update(float dt)
         
         state *s = components.at(i).getState();
         
+        s->orientation = hMultiply(padVector(scalarMultiply(s->omega,dt/2), 1),s->orientation);
+        s->orientation = scalarMultiply(s->orientation,1/magnitude(s->orientation));
+        
+        
         //cout << s->pos.x << '\t' << s->pos.y << '\t' << s->pos.z << '\n';
         //cout << s->orientation.s << '\t' << s->orientation.i << '\t' << s->orientation.j << '\t' << s->orientation.k << '\n';
         
         s->pos = addVect(s->pos, scalarMultiply(s->vel, dt)); // x = x + dt*(dx/dt)
         
         //cout << s->pos.x << '\t' << s->vel.x << '\n';
-        
-        vect unit = (vect){s->omega.x/magnitude(s->omega),s->omega.y/magnitude(s->omega),s->omega.z/magnitude(s->omega)};
-        s->orientation = hMultiply(padVector(scalarMultiply(unit, dt), 1.0), s->orientation);
     }
 }
 componentID Physics::newComponent(entityID eid)

@@ -43,6 +43,10 @@ void GraphicsComponent::setMesh(mesh newMesh)
 }
 
 void GraphicsComponent::draw(vect position, quaternion orientation)
-{
+{ 
+//    cout << position.x << '\n';
+//    cout << position.y << '\n';
+//    cout << position.z << "\n\n";
+
     obj.draw(position, orientation);
 }

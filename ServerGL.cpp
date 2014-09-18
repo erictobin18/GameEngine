@@ -115,29 +115,29 @@ GraphicsObject::GraphicsObject(mesh m)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     
-    for (int i = 0; i < 48; i++)
-    {
-        cout << cpy[i] << '\n';
-        if (i%3 == 2)
-        {
-            cout<<'\n';
-        }
-    }
-    cout << '\n';
-    for (int i = 0; i < 32; i++)
-    {
-        cout << tex[i] << '\n';
-    }
-    cout << '\n';
-    for (int i = 0; i < 17; i++)
-    {
-        cout << ind[i] << '\n';
-    }
-    cout << '\n';
-    for (int i = 0; i < 36; i++)
-    {
-        cout << static_cast<unsigned int>(textc[i]) << '\n';
-    }
+//    for (int i = 0; i < 48; i++)
+//    {
+//        cout << cpy[i] << '\n';
+//        if (i%3 == 2)
+//        {
+//            cout<<'\n';
+//        }
+//    }
+//    cout << '\n';
+//    for (int i = 0; i < 32; i++)
+//    {
+//        cout << tex[i] << '\n';
+//    }
+//    cout << '\n';
+//    for (int i = 0; i < 17; i++)
+//    {
+//        cout << ind[i] << '\n';
+//    }
+//    cout << '\n';
+//    for (int i = 0; i < 36; i++)
+//    {
+//        cout << static_cast<unsigned int>(textc[i]) << '\n';
+//    }
 }
 void GraphicsObject::draw(vect position, quaternion o)
 {
@@ -147,9 +147,9 @@ void GraphicsObject::draw(vect position, quaternion o)
     ///*
     
     GLfloat matrix[4][4] = {
-        {o.s*o.s + o.i*o.i - o.j*o.j - o.k*o.k, 2*o.i*o.j - 2*o.s*o.k, 2*o.i*o.k - 2*o.s*o.j, 0.0},
+        {o.s*o.s + o.i*o.i - o.j*o.j - o.k*o.k, 2*o.i*o.j - 2*o.s*o.k, 2*o.i*o.k + 2*o.s*o.j, 0.0},
         {2*o.i*o.j + 2*o.s*o.k, o.s*o.s - o.i*o.i + o.j*o.j - o.k*o.k, 2*o.j*o.k - 2*o.s*o.i, 0.0},
-        {2*o.i*o.k - 2*o.s*o.j, 2*o.j*o.k - 2*o.s*o.i, o.s*o.s - o.i*o.i - o.j*o.j + o.k*o.k, 0.0},
+        {2*o.i*o.k - 2*o.s*o.j, 2*o.j*o.k + 2*o.s*o.i, o.s*o.s - o.i*o.i - o.j*o.j + o.k*o.k, 0.0},
         {0.0,                   0.0,                   0.0,                                   1.0}
     };
     
@@ -160,12 +160,10 @@ void GraphicsObject::draw(vect position, quaternion o)
     
     
     GLfloat matrix[4][4] = {
-        {static_cast<GLfloat>(cos(t)), 0.3f, static_cast<GLfloat>(-sin(t)), 0.0f},
-        {-.3f,1.0f, 0.0f, 0.0f},
+        {static_cast<GLfloat>(cos(t)), 0.0f, static_cast<GLfloat>(-sin(t)), 0.0f},
+        {0.0f,1.0f, 0.0f, 0.0f},
         {static_cast<GLfloat>(sin(t)), 0.0f, static_cast<GLfloat>(cos(t)), 0.0f},
         {0.0f, 0.0f, 0.0f, 1.0f}
-        
-        
     };
     
     */

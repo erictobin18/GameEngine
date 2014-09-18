@@ -25,7 +25,7 @@ file readFile(string filename)
     vect pos = {0.0,0.0,0.0};
     vect vel = {0.1,0.0,0.0};
     quaternion orientation = {1.0, 0.0, 0.0, 0.0};
-    vect omega = {0.2, -0.2, 0.0};
+    vect omega = {0.8, -0.8, 0.0};
     
     state s = {pos,vel,orientation,omega};
     
