@@ -26,6 +26,8 @@
 #include <fstream>
 #endif
 
+
+
 using namespace std;
 Engine *Engine::gameEngine = new Engine();
 
@@ -74,34 +76,38 @@ file readFile(string filename)
     }
      */
     
-
-
+    const Json::Value verts = root["vertices"];
     
-    vector<vertex>vertices {
-        {-.5,-.5,-.5, 0.0, 0.0}, //0
-        {-.5,0.5,-.5, 0.0, .25}, //1
-        {0.5,-.5,-.5, .25, 0.0}, //2
-        {0.5,0.5,-.5, .25, 0.25}, //3
-        {0.5,-.5,0.5, 0.5, 0.0}, //4
-        {0.5,0.5,0.5, 0.5, .25}, //5
-        {-.5,-.5,0.5, .75, 0.0}, //6
-        {-.5,0.5,0.5, .75, .25}, //7
-        
-        {0.5,0.5,0.5, 0.0, .25}, //5
-        {0.5,0.5,-.5, .25, .25}, //3
-        {-.5,0.5,0.5, 0.0, .5}, //7
-        {-.5,0.5,-.5, .25, .5}, //1
-        {-.5,-.5,0.5, 0.0, .75}, //6
-        {-.5,-.5,-.5, .25, .75}, //0
-        {0.5,-.5,0.5, 0.0, 1.0}, //4
-        {0.5,-.5,-.5, .25, 1.0}, //2
-    } ;
-    vector<unsigned int>indices {
-        0x0,0x1,0x2,0x3,0x4,0x5,0x6,0x7,
-        0xFFFFFFFF,
-        0x8,0x9,0xa,0xb,0xc,0xd,0xe,0xf
-    } ;
+    vector<vertex> vertices = *new vector<vertex>(verts.size());
     
+    for (int i = 0; i < verts.size(); i++)
+    {
+        vertices.at(i).x = verts[i][0].asFloat();
+        vertices.at(i).y = verts[i][1].asFloat();
+        vertices.at(i).z = verts[i][2].asFloat();
+        vertices.at(i).texX = verts[i][3].asFloat();
+        vertices.at(i).texY = verts[i][4].asFloat();
+    }
+    
+    const Json::Value ind = root["indices"];
+    
+    vector<unsigned int> indices = *new vector<unsigned int>(ind.size());
+
+    for (int i = 0; i < ind.size(); i++)
+    {
+        indices.at(i) = ind[i].asUInt();
+    }
+    
+    vector<unsigned char>texture;
+    
+    unsigned int texWidth, texHeight;
+    
+    unsigned error = lodepng::decode(texture, texWidth, texHeight, "Objects/" + filename + ".png");
+    
+    if (error)
+        cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+    
+    /*
     vector<unsigned char> texture {
         255,000,000,    255,127,000,    255,255,000,    127,255,000, // tex coords 0.0, 0.0 (left) to 1.0, 0.0 (right)
         255,000,127,    063,063,063,    127,127,127,    000,255,000,
@@ -111,6 +117,8 @@ file readFile(string filename)
     unsigned int texWidth = 4;
     unsigned int texHeight = 4;
     
+     */
+     
     mesh m = {vertices, indices, texture, texWidth, texHeight};
     
 

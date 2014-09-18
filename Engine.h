@@ -31,6 +31,10 @@
 #endif
 
 
+#include "lodepng.h"
+
+
+
 class Physics;
 class Graphics;
 class Logic;
