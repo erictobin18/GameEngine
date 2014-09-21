@@ -74,8 +74,6 @@ GraphicsObject::GraphicsObject(mesh m)
     
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m.texWidth,m.texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, m.texture.data());
     
-    cout << m.texWidth; cout << m.texHeight;
-    
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     

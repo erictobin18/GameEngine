@@ -45,8 +45,11 @@ public:
     Engine();
     void mainloop();
     float time;
+    int num;
     void createObject();
     void createObject(std::string filename);
+    void createObject(std::string filename, state s);
+    double getTime();
     
     componentID getPhysicsComponent(entityID eid);
     componentID getGraphicsComponent(entityID eid);

@@ -57,25 +57,6 @@ file readFile(string filename)
     if (!parsedSuccess)
         cout << "Parse failure\n";
     
-    // Let's extract the array contained
-    // in the root object
-    
-    /*
-    const Json::Value array = root["array"];
-    
-    // Iterate over sequence elements and
-    // print its values
-    for(unsigned int index=0; index<array.size();
-        ++index)
-    {
-        cout<<"Element "
-        <<index
-        <<" in array: "
-        <<array[index].asString()
-        <<endl;
-    }
-     */
-    
     const Json::Value verts = root["vertices"];
     
     vector<vertex> vertices = *new vector<vertex>(verts.size());
@@ -106,22 +87,8 @@ file readFile(string filename)
     
     if (error)
         cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
-    
-    /*
-    vector<unsigned char> texture {
-        255,000,000,    255,127,000,    255,255,000,    127,255,000, // tex coords 0.0, 0.0 (left) to 1.0, 0.0 (right)
-        255,000,127,    063,063,063,    127,127,127,    000,255,000,
-        255,000,255,    190,190,190,    255,255,255,    000,255,127,
-        127,000,255,    000,000,255,    000,127,255,    000,255,255, //tex coords 0.0, 1.0 (left) to 1.0, 1.0 (right)
-    };
-    unsigned int texWidth = 4;
-    unsigned int texHeight = 4;
-    
-     */
      
     mesh m = {vertices, indices, texture, texWidth, texHeight};
-    
-
      
     file f = {m};
     return f;
@@ -135,6 +102,7 @@ Engine::Engine()
 void Engine::mainloop()
 {
     time = glfwGetTime();
+    num = 0;
     
     while (ServerGL::graphicsServer->windowOpen) //animation loop
     {
@@ -151,23 +119,16 @@ void Engine::mainloop()
 void Engine::createObject()
 {
     createObject("rotatingCube");
+    
 }
 
-void Engine::createObject(string filename)
+void Engine::createObject(string filename, state s)
 {
     entityID eid = static_cast<entityID>(objectTable.size());
     Entity obj = *new Entity(eid, filename + to_string(eid));
     
     
     file f = readFile(filename);
-    
-    vect pos = {0.0,0.0,0.0};
-    vect vel = {0.0,0.0,1.0};
-    quaternion orientation = {1.0, 0.0, 0.0, 0.0};
-    vect omega = {1.0, 1.0, 0.0};
-    
-    state s = {pos,vel,orientation,omega};
-
     
     componentID physComp = Physics::gamePhysics->newComponent(eid, s);
     obj.addPhysicsComponent(physComp);
@@ -179,6 +140,13 @@ void Engine::createObject(string filename)
     obj.addLogicComponent(logComp);
     
     objectTable.push_back(obj);
+
+}
+
+void Engine::createObject(string filename)
+{
+    state s = (state){(vect){0,0,0} , (vect){0,0,0} , (quaternion){1.0, 0.0, 0.0, 0.0} , (vect){0,0.5,0.25}};
+    createObject(filename, s);
 }
 
 

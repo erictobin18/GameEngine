@@ -30,7 +30,15 @@ using namespace std;
 
 int main(int argc, const char * argv[])
 {
-    Engine::gameEngine->createObject("rotatingCube");
+    Engine::gameEngine->createObject("rotatingCube", (state){(vect){0,0,0}, (vect){0,0,0}, (quaternion){1.0,0.0,0.0,0.0},(vect){1.0,.5,.25}});
+    /*
+    for (int i = 0; i < 27; i++)
+    {
+        Engine::gameEngine->createObject("rotatingCube", (state){(vect){0,0,0} , (vect){0,0,0} , (quaternion){1.0, 0.0, 0.0, 0.0} , (vect){static_cast<float>(i%3 - 1.0),static_cast<float>((i/3)%3 - 1.0),static_cast<float>((i/9)%3 - 1)}});
+    }
+     */
+     
+    
     Engine::gameEngine->mainloop();
     return EXIT_SUCCESS;
 } //main
