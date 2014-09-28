@@ -18,11 +18,7 @@
 
 using namespace std;
 
-Engine System::gameEngine2;
-
-Physics *Physics::gamePhysics = new Physics();
-Graphics *Graphics::gameGraphics = new Graphics();
-Logic *Logic::gameLogic = new Logic();
+Engine *System::gameEngine;
 
 System::System()
 {
@@ -31,7 +27,7 @@ System::System()
 
 void System::setGameEngine(Engine *gEngine)
 {
-    gameEngine2 = *gEngine;
+    gameEngine = gEngine;
 }
 
 quaternion hMultiply(quaternion left, quaternion right)
@@ -152,8 +148,8 @@ void Graphics::update(float dt)
 {
     for (int i = 0; i < components.size(); i++)
     {
-        componentID phys = Engine::gameEngine->getPhysicsComponent(components.at(i).getIdentity());
-        PhysicsComponent physComp = Physics::gamePhysics->getComponent(phys);
+        componentID phys = gameEngine->getPhysicsComponent(components.at(i).getIdentity());
+        PhysicsComponent physComp = Engine::gamePhysics.getComponent(phys);
         vect p = physComp.getState()->pos;
         quaternion q = physComp.getState()->orientation;
         

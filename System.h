@@ -34,7 +34,7 @@ public:
     
     static void setGameEngine(Engine *gEngine);
     
-    static Engine gameEngine2;
+    static Engine *gameEngine;
         
     virtual ~System()
     {
@@ -54,7 +54,6 @@ public:
     
     componentID newComponent(entityID eid);
     componentID newComponent(entityID eid, state s);
-    static Physics *gamePhysics;
     
     ~Physics();
     //Physics& operator=(Physics other);
@@ -71,7 +70,6 @@ public:
     
     componentID newComponent(entityID eid);
     componentID newComponent(entityID eid, mesh m);
-    static Graphics *gameGraphics;
     
     ~Graphics();
     //Graphics& operator=(Graphics other);
@@ -87,7 +85,6 @@ public:
     LogicComponent getComponent(componentID cid);
     
     componentID newComponent(entityID eid);
-    static Logic *gameLogic;
     
     ~Logic();
     //Logic& operator=(Logic other);

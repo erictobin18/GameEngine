@@ -24,18 +24,25 @@ class Engine
 public:
     Engine();
     void mainloop();
-    float time;
-    int num;
     void createObject();
     void createObject(std::string filename);
     void createObject(std::string filename, state s);
     double getTime();
+
+    
+    float time;
+    int num;
+    
+    static Physics gamePhysics;
+    static Graphics gameGraphics;
+    static Logic gameLogic;
     
     componentID getPhysicsComponent(entityID eid);
     componentID getGraphicsComponent(entityID eid);
     componentID getLogicComponent(entityID eid);
     
-    static Engine *gameEngine;
+    //static Engine *gameEngine;
+    
     
 protected:
     std::vector<Entity> objectTable;

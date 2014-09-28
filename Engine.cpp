@@ -29,7 +29,13 @@
 
 
 using namespace std;
-Engine *Engine::gameEngine = new Engine();
+
+Physics Engine::gamePhysics;
+Graphics Engine::gameGraphics;
+Logic Engine::gameLogic;
+
+
+//Engine *Engine::gameEngine = new Engine();
 
 file readFile(string filename)
 {
@@ -107,9 +113,9 @@ void Engine::mainloop()
         ServerGL::graphicsServer->prepareForDrawing(); //clears display, checks if window should closes
         float dt = glfwGetTime() - time;
         time = glfwGetTime();
-        Physics::gamePhysics->update(dt);
-        Logic::gameLogic->update(dt);
-        Graphics::gameGraphics->update(dt); //draws
+        gamePhysics.update(dt);
+        gameLogic.update(dt);
+        gameGraphics.update(dt); //draws
         ServerGL::graphicsServer->draw();//Graphics must be last call in animation loop
     } //while
     cout << "Execution Terminated\n"; //Finish
@@ -128,13 +134,13 @@ void Engine::createObject(string filename, state s)
     
     file f = readFile(filename);
     
-    componentID physComp = Physics::gamePhysics->newComponent(eid, s);
+    componentID physComp = gamePhysics.newComponent(eid, s);
     obj.addPhysicsComponent(physComp);
     
-    componentID graphComp = Graphics::gameGraphics->newComponent(eid, f.m);
+    componentID graphComp = gameGraphics.newComponent(eid, f.m);
     obj.addGraphicsComponent(graphComp);
     
-    componentID logComp = Logic::gameLogic->newComponent(eid);
+    componentID logComp = gameLogic.newComponent(eid);
     obj.addLogicComponent(logComp);
     
     objectTable.push_back(obj);
