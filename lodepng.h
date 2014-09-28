@@ -23,8 +23,8 @@ freely, subject to the following restrictions:
     distribution.
 */
 
-#ifndef LODEPNG_H
-#define LODEPNG_H
+#ifndef _LODEPNG_H_
+#define _LODEPNG_H_
 
 #include <string.h> /*for size_t*/
 

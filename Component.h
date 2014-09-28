@@ -6,24 +6,12 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
-#ifndef COMPONENT_H
-#define COMPONENT_H
-#endif
+#ifndef _COMPONENT_H_
+#define _COMPONENT_H_
 
-#ifndef IOSTREAM_H
-#define IOSTREAM_H
 #include <iostream>
-#endif
-
-#ifndef GLOBAL_CONSTANTS_H
-#define GLOBAL_CONSTANTS_H
 #include "GlobalConstants.h"
-#endif
-
-#ifndef SERVER_GL_H
-#define SERVER_GL_H
 #include "ServerGL.h"
-#endif
 
 class Component
 {
@@ -79,3 +67,5 @@ class LogicComponent : public Component
 public:
     LogicComponent(componentID cid, entityID eid) : Component(cid, eid) {}
 };
+
+#endif

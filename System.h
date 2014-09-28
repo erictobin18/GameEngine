@@ -6,29 +6,14 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
-#ifndef SYSTEM_H
-#define SYSTEM_H
-#endif
+#ifndef _SYSTEM_H_
+#define _SYSTEM_H_
 
-#ifndef IOSTREAM_H
-#define IOSTREAM_H
+
 #include <iostream>
-#endif
-
-#ifndef GLOBAL_CONSTANTS_H
-#define GLOBAL_CONSTANTS_H
 #include "GlobalConstants.h"
-#endif
-
-#ifndef COMPONENT_H
-#define COMPONENT_H
 #include "Component.h"
-#endif
-
-#ifndef ENGINE_H
-#define ENGINE_H
 #include "Engine.h"
-#endif
 
 class PhysicsComponent;
 class GraphicsComponent;
@@ -37,10 +22,7 @@ class LogicComponent;
 class System
 {
 public:
-    System()
-    {
-        
-    }
+    System();
     // All systems must update each game loop
     virtual void update( float dt )=0;
     
@@ -49,6 +31,10 @@ public:
     
     componentID newComponent(entityID eid);
     void removeComponent(componentID cid);
+    
+    static void setGameEngine(Engine *gEngine);
+    
+    static Engine gameEngine2;
         
     virtual ~System()
     {
@@ -108,3 +94,5 @@ public:
 protected:
     std::vector<LogicComponent> components;
 };
+
+#endif

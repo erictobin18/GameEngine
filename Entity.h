@@ -6,20 +6,11 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
-#ifndef ENTITY_H
-#define ENTITY_H
-#endif
+#ifndef _ENTITY_H_
+#define _ENTITY_H_
 
-#ifndef IOSTREAM_H
-#define IOSTREAM_H
 #include <iostream>
-#endif
-
-#ifndef GLOBAL_CONSTANTS_H
-#define GLOBAL_CONSTANTS_H
 #include "GlobalConstants.h"
-#endif
-
 
 class Engine;
 
@@ -54,3 +45,5 @@ protected:
     entityID identity; //index in the Master Object Table
     std::string name;
 };
+
+#endif

@@ -17,11 +17,22 @@
 #endif
 
 using namespace std;
+
+Engine System::gameEngine2;
+
 Physics *Physics::gamePhysics = new Physics();
 Graphics *Graphics::gameGraphics = new Graphics();
 Logic *Logic::gameLogic = new Logic();
 
+System::System()
+{
+    
+}
 
+void System::setGameEngine(Engine *gEngine)
+{
+    gameEngine2 = *gEngine;
+}
 
 quaternion hMultiply(quaternion left, quaternion right)
 {

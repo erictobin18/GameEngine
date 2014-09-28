@@ -33,9 +33,6 @@ Engine *Engine::gameEngine = new Engine();
 
 file readFile(string filename)
 {
-    ofstream blah("hooplah.obj");
-    blah.close();
-    
     ifstream str("Objects/" + filename + ".json");
     
     if (!str)
@@ -97,6 +94,7 @@ file readFile(string filename)
 Engine::Engine()
 {
     objectTable = *new vector<Entity>;
+    System::setGameEngine(this);
 }
 
 void Engine::mainloop()

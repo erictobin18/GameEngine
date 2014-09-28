@@ -146,11 +146,13 @@ ServerGL::ServerGL(): windowOpen(false), verbose(false)
     glfwMakeContextCurrent(window);
     
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f); //sets clear color
-    glClearDepth(0.0f);
+    glClearDepth(1.0f);
     
     
     glEnable(GL_CULL_FACE);
     //glFrontFace(GL_CW);
+    
+    glEnable(GL_DEPTH_TEST);
     
     glDepthMask(GL_TRUE);
     

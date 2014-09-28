@@ -7,31 +7,37 @@
 //
 
 
-#ifndef GLOBAL_CONSTANTS_H
-#define GLOBAL_CONSTANTS_H
-#endif
+#ifndef _GLOBAL_CONSTANTS_H_
+#define _GLOBAL_CONSTANTS_H_
 
-
-#ifndef VECTOR_H
-#define VECTOR_H
 #include <vector>
-#endif
+
+
+//make this a namespace
+//don't need typedefs
 
 
 typedef enum componentType {noneType = 0, physicsType = 1, graphicsType = 2, physics_and_graphicsType = 3, logicType = 4, physics_and_logicType = 5, graphics_and_logicType = 6, all = 7} componentType;
-typedef struct quaternion{float s; float i; float j; float k;}quaternion;
 
-typedef struct vect{float x; float y; float z;} vect;
+struct quaternion
+{
+    float s;
+    float i;
+    float j;
+    float k;
+};
 
-typedef struct state{vect pos; vect vel; quaternion orientation; vect omega;}state;
+struct vect{float x; float y; float z;};
 
-typedef struct vertex{float x; float y; float z; float texX; float texY;}vertex;
+struct state{vect pos; vect vel; quaternion orientation; vect omega;};
 
-typedef struct rgb_value{unsigned char r; unsigned char g; unsigned char b;}rgb_value;
+ struct vertex{float x; float y; float z; float texX; float texY;};
 
-typedef struct mesh{std::vector<vertex> vertices; std::vector<unsigned int> indices; std::vector<unsigned char>texture; unsigned int texWidth; unsigned int texHeight;}mesh;
+ struct rgb_value{unsigned char r; unsigned char g; unsigned char b;};
 
-typedef struct file{mesh m;}file;
+ struct mesh{std::vector<vertex> vertices; std::vector<unsigned int> indices; std::vector<unsigned char>texture; unsigned int texWidth; unsigned int texHeight;};
+
+ struct file{mesh m;};
 
 typedef unsigned int componentID;
 
@@ -40,3 +46,5 @@ typedef unsigned int entityID;
 typedef unsigned char bit_field;
 
 typedef unsigned int textureID;
+
+#endif

@@ -6,34 +6,14 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
-#ifndef ENGINE_H
-#define ENGINE_H
-#endif
+#ifndef _ENGINE_H_
+#define _ENGINE_H_
 
-#ifndef IOSTREAM_H
-#define IOSTREAM_H
 #include <iostream>
-#endif
-
-#ifndef GLOBAL_CONSTANTS_H
-#define GLOBAL_CONSTANTS_H
 #include "GlobalConstants.h"
-#endif
-
-#ifndef ENTITY_H
-#define ENTITY_H
 #include "Entity.h"
-#endif
-
-#ifndef SYSTEM_H
-#define SYSTEM_H
 #include "System.h"
-#endif
-
-
 #include "lodepng.h"
-
-
 
 class Physics;
 class Graphics;
@@ -60,3 +40,5 @@ public:
 protected:
     std::vector<Entity> objectTable;
 };
+
+#endif
