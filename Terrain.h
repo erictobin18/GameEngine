@@ -11,9 +11,16 @@
 
 #include <stdio.h>
 #include "GlobalConstants.h"
+#include "ServerGL.h"
 
-
-
-
+class Terrain
+{
+public:
+    Terrain();
+    
+    void draw();
+    
+    Chunk testChunk;
+};
 
 #endif

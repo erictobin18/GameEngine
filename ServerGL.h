@@ -28,9 +28,13 @@ public:
     bool windowOpen; //true iff window is open
     static void reportGLError(); //Prints error type to cout
     
+    static GLuint normalProgram;
+    static GLuint terrainProgram;
+    
 protected:
     GLFWwindow *window;
     bool verbose;
+    
 };
 
 class GraphicsObject //every GraphicsComponent has a GraphicsObject
@@ -38,12 +42,37 @@ class GraphicsObject //every GraphicsComponent has a GraphicsObject
 public:
     GraphicsObject(mesh m);
     GraphicsObject();
+    ~GraphicsObject();
     
     void draw(vect position, quaternion orientation); //must be called after ServerGL::prepareForDrawing but before ServerGL::draw
 
 protected:
     GLuint vertexArrayObject; //Every GraphicsObject has a VAO
     GLuint textureID; //Every GraphicsObject has a (not necessarily unique) texture
-    };
+    GLuint buffers[2];
+};
+
+class Chunk
+{
+public:
+    Chunk();
+    ~Chunk();
+    
+    GLuint getBlock(unsigned char x, unsigned char y, unsigned char z);
+    void setBlock(unsigned char x, unsigned char y, unsigned char z, unsigned char blockID);
+    
+    void update();
+    
+    void draw();
+    
+    
+protected:
+    GLubyte blocks[16][16][16];
+    GLuint vertexArrayObject;
+    GLuint bufferID;
+    unsigned int numElements;
+    bool modified;
+};
+
 
 #endif

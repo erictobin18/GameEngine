@@ -10,6 +10,7 @@
 #include "ServerGL.h"
 #include "System.h"
 #include "Entity.h"
+#include "Terrain.h"
 #include "lodepng.h"
 #include <json/json.h>
 #include <fstream>
@@ -21,6 +22,8 @@ Graphics Engine::gameGraphics;
 Logic Engine::gameLogic;
 
 ServerGL Engine::openGLServer;
+
+Terrain Engine::gameTerrain;
 
 file readFile(string filename)
 {
@@ -99,6 +102,9 @@ void Engine::mainloop()
         time = glfwGetTime();
         gamePhysics.update(dt);
         gameLogic.update(dt);
+        
+        //gameTerrain.draw();
+        
         gameGraphics.update(dt); //draws
         openGLServer.draw();//Graphics must be last call in animation loop
     } //while

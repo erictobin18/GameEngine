@@ -16,7 +16,8 @@
 class Physics;
 class Graphics;
 class Logic;
-class ServerGL; //forward declaration of classes to keep System.h and ServerGL.h out of header file includes
+class ServerGL;
+class Terrain; //forward declaration of classes to keep System.h and ServerGL.h out of header file includes
 
 class Engine
 {
@@ -37,6 +38,7 @@ public:
     static Graphics gameGraphics; //Graphics system
     static Logic gameLogic; //Logic system
     static ServerGL openGLServer; //GL interface class
+    static Terrain gameTerrain;
     
 protected:
     float time; //elapsed time, seconds
