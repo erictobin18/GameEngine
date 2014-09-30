@@ -6,27 +6,13 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
-#ifndef ENGINE_H
-#define ENGINE_H
 #include "Engine.h"
-#endif
-
-#ifndef SERVER_GL_H
-#define SERVER_GL_H
 #include "ServerGL.h"
-#endif
-
-#ifndef JSONCPP_H
-#define JSONCPP_H
+#include "System.h"
+#include "Entity.h"
+#include "lodepng.h"
 #include <json/json.h>
-#endif
-
-#ifndef FSTREAM_H
-#define FSTREAM_H
 #include <fstream>
-#endif
-
-
 
 using namespace std;
 
@@ -34,8 +20,7 @@ Physics Engine::gamePhysics;
 Graphics Engine::gameGraphics;
 Logic Engine::gameLogic;
 
-
-//Engine *Engine::gameEngine = new Engine();
+ServerGL Engine::openGLServer;
 
 file readFile(string filename)
 {
@@ -99,24 +84,23 @@ file readFile(string filename)
 
 Engine::Engine()
 {
-    objectTable = *new vector<Entity>;
+    vector<Entity> objectTable;
     System::setGameEngine(this);
 }
 
 void Engine::mainloop()
 {
     time = glfwGetTime();
-    num = 0;
     
-    while (ServerGL::graphicsServer->windowOpen) //animation loop
+    while (openGLServer.windowOpen) //animation loop
     {
-        ServerGL::graphicsServer->prepareForDrawing(); //clears display, checks if window should closes
+        openGLServer.prepareForDrawing(); //clears display, checks if window should closes
         float dt = glfwGetTime() - time;
         time = glfwGetTime();
         gamePhysics.update(dt);
         gameLogic.update(dt);
         gameGraphics.update(dt); //draws
-        ServerGL::graphicsServer->draw();//Graphics must be last call in animation loop
+        openGLServer.draw();//Graphics must be last call in animation loop
     } //while
     cout << "Execution Terminated\n"; //Finish
 }
@@ -129,7 +113,7 @@ void Engine::createObject()
 void Engine::createObject(string filename, state s)
 {
     entityID eid = static_cast<entityID>(objectTable.size());
-    Entity obj = *new Entity(eid, filename + to_string(eid));
+    Entity obj(eid, filename + to_string(eid));
     
     
     file f = readFile(filename);

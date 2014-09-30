@@ -6,29 +6,11 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
-#ifndef SYSTEM_H
-#define SYSTEM_H
 #include "System.h"
-#endif
-
-#ifndef MATH_H
-#define MATH_H
+#include "Engine.h"
 #include <math.h>
-#endif
 
 using namespace std;
-
-Engine *System::gameEngine;
-
-System::System()
-{
-    
-}
-
-void System::setGameEngine(Engine *gEngine)
-{
-    gameEngine = gEngine;
-}
 
 quaternion hMultiply(quaternion left, quaternion right)
 {
@@ -56,17 +38,6 @@ vect im(quaternion q)
 {
     return (vect){q.i,q.j,q.k};
 }
-/*
-vect crossProduct(vect left, vect right)
-{
-    return (vect)
-    {
-        left.y*right.z - left.z*right.y,
-        left.z*right.x - left.x*right.z,
-        left.x*right.y - left.y*right.x
-    };
-}
- */
 quaternion padVector(vect v, float p)
 {
     return (quaternion){p,v.x,v.y,v.z};
@@ -76,44 +47,52 @@ float magnitude(quaternion q)
     return sqrt(q.s * q.s + q.i * q.i + q.j * q.j + q.k * q.k);
 }
 
+Engine *System::gameEngine;
+
+System::System()
+{
+    
+}
+
+void System::setGameEngine(Engine *gEngine)
+{
+    gameEngine = gEngine;
+}
 
 void System::removeComponent(componentID cid)
 {
-    components.erase(components.begin() + cid);
+    components.erase(components.begin() + cid); //this method will cause problems because all componentID's larger than cid in the table are now invalid. Need to either update all cid's higher than cid OR modify component creation method and update mehtod so they handle a sparse component array
+}
+
+System::~System()
+{
+    
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 
 Physics::Physics() : System()
 {
-    components = *new vector<PhysicsComponent>;
+    vector<PhysicsComponent> components;
 }
 
 void Physics::update(float dt)
 {
     for (int i = 0; i < components.size(); i++)
     {
-        
-        
         state *s = components.at(i).getState();
         
         
         s->orientation = scalarMultiply(s->orientation,1/magnitude(s->orientation));
         s->orientation = hMultiply(padVector(scalarMultiply(s->omega,dt/2), 1),s->orientation);
         
-        
-        
-        //cout << s->pos.x << '\t' << s->pos.y << '\t' << s->pos.z << '\n';
-        //cout << s->orientation.s << '\t' << s->orientation.i << '\t' << s->orientation.j << '\t' << s->orientation.k << '\n';
-        
         s->pos = addVect(s->pos, scalarMultiply(s->vel, dt)); // x = x + dt*(dx/dt)
-        
-        //cout << s->pos.x << '\t' << s->vel.x << '\n';
     }
 }
 componentID Physics::newComponent(entityID eid)
 {
-    return newComponent(eid, *new state);
+    state s;
+    return newComponent(eid, s);
 }
 
 componentID Physics::newComponent(entityID eid, state s)
@@ -131,17 +110,12 @@ Physics::~Physics()
 {
     
 }
-/*Physics& Physics::operator=(Physics other)
-{
-    swap(components, other.components);
-    return *this;
-}*/
 
 //---------------------------------------------------------------------------------------------------------------------
 
 Graphics::Graphics() : System()
 {
-    components = *new vector<GraphicsComponent>;
+    vector<GraphicsComponent> components;
 }
 
 void Graphics::update(float dt)
@@ -159,12 +133,13 @@ void Graphics::update(float dt)
 
 componentID Graphics::newComponent(entityID eid)
 {
-    return newComponent(eid, *new mesh);
+    mesh m;
+    return newComponent(eid, m);
 }
 componentID Graphics::newComponent(entityID eid, mesh m)
 {
     componentID cid = (componentID)components.size();
-    GraphicsComponent newComp = *new GraphicsComponent(cid, eid, m);
+    GraphicsComponent newComp(cid, eid, m);
     components.push_back(newComp);
     return cid;
 }
@@ -176,17 +151,12 @@ Graphics::~Graphics()
 {
     
 }
-/*Graphics& Graphics::operator=(Graphics other)
-{
-    swap(components, other.components);
-    return *this;
-}*/
 
 //---------------------------------------------------------------------------------------------------------------------
 
 Logic::Logic() : System()
 {
-    components = *new vector<LogicComponent>;
+    vector<LogicComponent> components;
 }
 void Logic::update(float dt)
 {
@@ -208,8 +178,3 @@ Logic::~Logic()
 {
     
 }
-/*Logic& Logic::operator=(Logic other)
-{
-    swap(components, other.components);
-    return *this;
-}*/

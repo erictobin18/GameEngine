@@ -6,28 +6,14 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
-#ifndef SERVER_GL_H
-#define SERVER_GL_H
 #include "ServerGL.h"
-#endif
-
-#ifndef SHADER_H
-#define SHADER_H
 #include "Shader.h"
-#endif
-
-#ifndef MATH_H
-#define MATH_H
 #include <math.h>
-#endif
 
 #define BUFFER_OFFSET(offset) ((void *)(offset))
 #define RESTART_CHAR 0xFFFFFFFF
 
 using namespace std;
-ServerGL *ServerGL::graphicsServer = new ServerGL();
-
-int x = 0;
 
 void errorCallback(int error, const char *description)
 {
@@ -35,6 +21,12 @@ void errorCallback(int error, const char *description)
     fputs(description, stderr);
     cout << '\n';
 } //errorCallback
+
+GraphicsObject::GraphicsObject()
+{
+    mesh m;
+    GraphicsObject((mesh) m); //why does this need a cast...?
+}
 
 GraphicsObject::GraphicsObject(mesh m)
 {
@@ -66,6 +58,9 @@ GraphicsObject::GraphicsObject(mesh m)
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
 
+    ServerGL::reportGLError();
+    cout << "5\n";
+    
     //--------------------------------------------------TEXTURE-----------------------------------------------------------------
   
     glGenTextures(1, &textureID);
@@ -78,6 +73,9 @@ GraphicsObject::GraphicsObject(mesh m)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     
     glBindVertexArray(0);
+    
+    ServerGL::reportGLError();
+    cout << "6\n";
 }
 void GraphicsObject::draw(vect pos, quaternion o)
 {
@@ -98,7 +96,7 @@ void GraphicsObject::draw(vect pos, quaternion o)
     glBindTexture(GL_TEXTURE_2D, textureID);
         
     glDrawElements(GL_TRIANGLE_STRIP, 17, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-    ServerGL::graphicsServer->reportGLError();
+    ServerGL::reportGLError();
 }
 
 

@@ -6,12 +6,14 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
-#ifndef COMPONENT_H
-#define COMPONENT_H
 #include "Component.h"
-#endif
 
 using namespace std;
+
+Component::Component(componentID cid, entityID eid) : identity(cid), entityIdentity(eid)
+{
+
+}
 
 componentID Component::getIdentity()
 {
@@ -20,6 +22,16 @@ componentID Component::getIdentity()
 entityID Component::getEntity()
 {
     return entityIdentity;
+}
+
+PhysicsComponent::PhysicsComponent(componentID cid, entityID eid, state s): Component(cid, eid), entityState(s)
+{
+    
+}
+PhysicsComponent::PhysicsComponent(componentID cid, entityID eid) : Component(cid, eid)
+{
+    state s;
+    PhysicsComponent(cid, eid, s);
 }
 
 state * PhysicsComponent::getState()
@@ -32,6 +44,18 @@ void PhysicsComponent::setState(state s)
     entityState = s;
 }
 
+GraphicsComponent::GraphicsComponent(componentID cid, entityID eid, mesh m) : Component(cid, eid), componentMesh(m)
+{
+    GraphicsObject gObject(m);
+    obj = gObject;
+}
+GraphicsComponent::GraphicsComponent(componentID cid, entityID eid) : Component(cid, eid)
+{
+    mesh m;
+    GraphicsComponent(cid, eid, m);
+}
+
+
 mesh GraphicsComponent::getMesh()
 {
     return componentMesh;
@@ -43,10 +67,11 @@ void GraphicsComponent::setMesh(mesh newMesh)
 }
 
 void GraphicsComponent::draw(vect position, quaternion orientation)
-{ 
-//    cout << position.x << '\n';
-//    cout << position.y << '\n';
-//    cout << position.z << "\n\n";
-
+{
     obj.draw(position, orientation);
+}
+
+LogicComponent::LogicComponent(componentID cid, entityID eid) : Component(cid, eid)
+{
+    
 }

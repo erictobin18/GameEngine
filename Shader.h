@@ -18,12 +18,13 @@
 #include <iostream>
 #include <fstream>
 
-class Shader
+class Shader //Compiles shaders. There be dragons here.
 {
 public:
     Shader(std::string filename);
     
     GLuint getProgramObject();
+    
 protected:
     void init();
     GLuint loadShader(GLenum theShaderType, std::string theShader, GLint *theShaderCompiled);

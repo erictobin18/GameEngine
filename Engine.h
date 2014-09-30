@@ -11,41 +11,36 @@
 
 #include <iostream>
 #include "GlobalConstants.h"
-#include "Entity.h"
-#include "System.h"
-#include "lodepng.h"
+#include "Entity.h" //required for objectTable declaration
 
 class Physics;
 class Graphics;
 class Logic;
+class ServerGL; //forward declaration of classes to keep System.h and ServerGL.h out of header file includes
 
 class Engine
 {
 public:
     Engine();
-    void mainloop();
-    void createObject();
+    
+    void mainloop(); //contains infinite while loop that runs game
+    void createObject(); //adds a new entity to the objectTable
     void createObject(std::string filename);
     void createObject(std::string filename, state s);
-    double getTime();
-
+    double getTime(); //wraps the GLFW command
     
-    float time;
-    int num;
-    
-    static Physics gamePhysics;
-    static Graphics gameGraphics;
-    static Logic gameLogic;
-    
-    componentID getPhysicsComponent(entityID eid);
+    componentID getPhysicsComponent(entityID eid); //looks up component associated with an entity in the objectTable
     componentID getGraphicsComponent(entityID eid);
     componentID getLogicComponent(entityID eid);
     
-    //static Engine *gameEngine;
-    
+    static Physics gamePhysics; //Physics system
+    static Graphics gameGraphics; //Graphics system
+    static Logic gameLogic; //Logic system
+    static ServerGL openGLServer; //GL interface class
     
 protected:
-    std::vector<Entity> objectTable;
+    float time; //elapsed time, seconds
+    std::vector<Entity> objectTable; //vector of all entities in the Engine
 };
 
 #endif

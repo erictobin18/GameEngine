@@ -6,17 +6,22 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
-#ifndef ENTITY_H
-#define ENTITY_H
 #include "Entity.h"
-#endif
-
-#ifndef ENGINE_H
-#define ENGINE_H
 #include "Engine.h"
-#endif
 
 using namespace std;
+
+Entity::Entity(entityID eid, std::string n) : identity(eid),components(0x0), name(n)
+{
+    for (int i = 0; i < 8; i++)
+    {
+        componentIDs[i] = 0;
+    }
+}
+Entity::Entity(entityID eid)
+{
+    Entity(eid, "NULL");
+}
 
 void Entity::addPhysicsComponent(componentID cid)
 {

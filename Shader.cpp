@@ -6,10 +6,7 @@
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
-#ifndef SHADER_H
-#define SHADER_H
 #include "Shader.h"
-#endif
 
 using namespace std;
 

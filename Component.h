@@ -11,14 +11,14 @@
 
 #include <iostream>
 #include "GlobalConstants.h"
-#include "ServerGL.h"
+#include "ServerGL.h" //required for some reason to declare: GraphicsObject obj;
 
-class Component
+class Component //contains data required to update a specific type of system (e.g. "Physics")
 {
 public:
-    Component(componentID cid, entityID eid) : identity(cid), entityIdentity(eid) {}
-    componentID getIdentity();
-    entityID getEntity();
+    Component(componentID cid, entityID eid); 
+    componentID getIdentity(); //returns this component's componentID (index in the component table in the appropriate system)
+    entityID getEntity(); //returns the index of the associated entity in the objectTable (in the engine)
     
 protected:
     componentID identity;
@@ -28,12 +28,10 @@ protected:
 class PhysicsComponent : public Component
 {
 public:
-    PhysicsComponent(componentID cid, entityID eid, state s) : Component(cid, eid), entityState(s) {}
-    PhysicsComponent(componentID cid, entityID eid) : Component(cid, eid)
-    {
-        PhysicsComponent(cid, eid, *new state);
-    }
-    state *getState();
+    PhysicsComponent(componentID cid, entityID eid, state s); 
+    PhysicsComponent(componentID cid, entityID eid);
+    
+    state *getState(); //accessors for entityState
     void setState(state);
 protected:
     state entityState;
@@ -42,30 +40,22 @@ protected:
 class GraphicsComponent : public Component
 {
 public:
-    GraphicsComponent(componentID cid, entityID eid, mesh m) : Component(cid, eid), componentMesh(m), obj(*new GraphicsObject(m)) {}
-    GraphicsComponent(componentID cid, entityID eid) : Component(cid, eid)
-    {
-        GraphicsComponent(cid, eid, *new mesh);
-    }
+    GraphicsComponent(componentID cid, entityID eid, mesh m);
+    GraphicsComponent(componentID cid, entityID eid);
     
-    mesh getMesh();
+    mesh getMesh(); //accessors for componentMesh
     void setMesh(mesh newMesh);
-    std::vector<unsigned int> getIndices();
-    void setIndices(std::vector<unsigned int> i);
-    void draw(vect position, quaternion orientation);
-    
+    void draw(vect position, quaternion orientation); //draws the component by invoking OpenGL server drawing command
     
 protected:
     mesh componentMesh;
     GraphicsObject obj;
-    
-    
 };
 
 class LogicComponent : public Component
 {
 public:
-    LogicComponent(componentID cid, entityID eid) : Component(cid, eid) {}
+    LogicComponent(componentID cid, entityID eid);
 };
 
 #endif

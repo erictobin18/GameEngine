@@ -17,33 +17,24 @@ class Engine;
 class Entity
 {
 public:
-    Entity(entityID eid, std::string n) : identity(eid),components(0x0), name(n)
-    {
-        for (int i = 0; i < 8; i++)
-        {
-            componentIDs[i] = 0;
-        }
-    }
-    Entity(entityID eid)
-    {
-        Entity(eid, "NULL");
-    }
+    Entity(entityID eid, std::string n);
+    Entity(entityID eid);
     
-    void addPhysicsComponent(componentID cid);
-    void addGraphicsComponent(componentID cid);
+    void addPhysicsComponent(componentID cid); //Each entity can only have at most one component of each type
+    void addGraphicsComponent(componentID cid); //These methods add them to the entity if they do not already exist
     void addLogicComponent(componentID cid);
-    
-    void removeComponent(bit_field type);
-    bool hasComponent(bit_field type);
+    void removeComponent(bit_field type); //removes a component of a specific type
+    bool hasComponent(bit_field type); //checks whether a component of a specified type is associated with this entity
     componentID getComponentID(bit_field type);
     
-    bit_field components;
+    bit_field components; //keeps track of which component types are associated with this entity.
+                          //may be faster to mask this bitfield than to call "hasComponent"
     
 protected:
     int numComponents();
     componentID componentIDs[8];
-    entityID identity; //index in the Master Object Table
-    std::string name;
+    entityID identity; //index in the objectTable (in engine)
+    std::string name; //entity name
 };
 
 #endif

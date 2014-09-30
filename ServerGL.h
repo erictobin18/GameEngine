@@ -23,35 +23,28 @@ public:
     ServerGL();
     ~ServerGL();
     
-    void prepareForDrawing();
-    void draw();
-    bool windowOpen;
-    
-    static ServerGL *graphicsServer;
-    
-    void reportGLError();
+    void prepareForDrawing(); //called every drawing cycle BEFORE any components can draw
+    void draw(); //last call to openGL in a given drawing cycle
+    bool windowOpen; //true iff window is open
+    static void reportGLError(); //Prints error type to cout
     
 protected:
     GLFWwindow *window;
     bool verbose;
 };
 
-class GraphicsObject
+class GraphicsObject //every GraphicsComponent has a GraphicsObject
 {
 public:
     GraphicsObject(mesh m);
-    GraphicsObject()
-    {
-        GraphicsObject(*new mesh);
-    }
-    void draw(vect position, quaternion orientation);
+    GraphicsObject();
     
+    void draw(vect position, quaternion orientation); //must be called after ServerGL::prepareForDrawing but before ServerGL::draw
 
 protected:
-    GLuint vertexArrayObject;
-    GLuint textureID;
+    GLuint vertexArrayObject; //Every GraphicsObject has a VAO
+    GLuint textureID; //Every GraphicsObject has a (not necessarily unique) texture
     GLuint numIndices;
-    
     };
 
 #endif
