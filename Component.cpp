@@ -44,6 +44,8 @@ void PhysicsComponent::setState(state s)
     entityState = s;
 }
 
+
+
 GraphicsComponent::GraphicsComponent(componentID cid, entityID eid, mesh m) : Component(cid, eid), componentMesh(m)
 {
     GraphicsObject gObject(m);

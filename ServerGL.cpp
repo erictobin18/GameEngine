@@ -24,8 +24,8 @@ void errorCallback(int error, const char *description)
 
 GraphicsObject::GraphicsObject()
 {
-    mesh m;
-    GraphicsObject((mesh) m); //why does this need a cast...?
+    vertexArrayObject = 0;
+    textureID = 0;
 }
 
 GraphicsObject::GraphicsObject(mesh m)
@@ -58,8 +58,6 @@ GraphicsObject::GraphicsObject(mesh m)
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
 
-    ServerGL::reportGLError();
-    cout << "5\n";
     
     //--------------------------------------------------TEXTURE-----------------------------------------------------------------
   
@@ -75,10 +73,14 @@ GraphicsObject::GraphicsObject(mesh m)
     glBindVertexArray(0);
     
     ServerGL::reportGLError();
-    cout << "6\n";
 }
 void GraphicsObject::draw(vect pos, quaternion o)
 {
+    if (vertexArrayObject == 0)
+    {
+        cout << "WARNING: Tried to draw a graphics object with no VAO. Probably means the object was not properly initialized.";
+    }
+    
     glBindVertexArray(vertexArrayObject);
     
     GLfloat matrix[4][4] = {
@@ -98,9 +100,6 @@ void GraphicsObject::draw(vect pos, quaternion o)
     glDrawElements(GL_TRIANGLE_STRIP, 17, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
     ServerGL::reportGLError();
 }
-
-
-
 
 ServerGL::~ServerGL()
 {

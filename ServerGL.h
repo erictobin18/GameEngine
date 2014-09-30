@@ -44,7 +44,6 @@ public:
 protected:
     GLuint vertexArrayObject; //Every GraphicsObject has a VAO
     GLuint textureID; //Every GraphicsObject has a (not necessarily unique) texture
-    GLuint numIndices;
     };
 
 #endif
