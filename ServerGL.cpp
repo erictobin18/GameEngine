@@ -345,11 +345,13 @@ unsigned int vec4r(unsigned char x, unsigned char y, unsigned char z, unsigned c
     return (val << 24) + (z << 16) + (y << 8) + x;
 }
 
-Chunk::Chunk()
+Chunk::Chunk(GLint x, GLint y, GLint z):x(x),y(y),z(z)
 {
+    /*
     modified = true;
     glGenVertexArrays(1, &vertexArrayObject);
     glGenBuffers(1, &bufferID);
+     */
 }
 
 Chunk::~Chunk()
@@ -451,6 +453,23 @@ void Chunk::needsUpdate()
     modified = true;
 }
 
+void Chunk::init()
+{
+    modified = true;
+    glGenVertexArrays(1, &vertexArrayObject);
+    glGenBuffers(1, &bufferID);
+    for (unsigned char x = 0; x < 16; x++)
+    {
+        for (unsigned char y = 0; y < 16; y++)
+        {
+            for (unsigned char z = 0; z < 16; z++)
+            {
+                this->setBlock(x, y, z, std::rand()%256 );
+            }
+        }
+    }
+}
+
 void Chunk::draw()
 {
     
@@ -486,18 +505,37 @@ void Chunk::draw()
     
     
     
-    GLfloat matrix[4][4] = {
+    GLfloat matrixR[4][4] = {
         {oP.s*oP.s + oP.i*oP.i - oP.j*oP.j - oP.k*oP.k, 2*oP.i*oP.j - 2*oP.s*oP.k, 2*oP.i*oP.k + 2*oP.s*oP.j, 0},
         {2*oP.i*oP.j + 2*oP.s*oP.k, oP.s*oP.s - oP.i*oP.i + oP.j*oP.j - oP.k*oP.k, 2*oP.j*oP.k - 2*oP.s*oP.i, 0},
         {2*oP.i*oP.k - 2*oP.s*oP.j, 2*oP.j*oP.k + 2*oP.s*oP.i, oP.s*oP.s - oP.i*oP.i - oP.j*oP.j + oP.k*oP.k, 0},
         {0,                      0,                         0,                                              1.0}
     };
     
+    
+    
+    
     for (int i = 0; i < 3; i++)
     {
-        matrix[3][i] = matrix[i][0]*posP.x + matrix[i][1]*posP.y + matrix[i][2]*posP.z;
+        matrixR[3][i] = matrixR[i][0]*posP.x + matrixR[i][1]*posP.y + matrixR[i][2]*posP.z;
     }
     
+     
+    
+    //cout << x << '\t' << y << '\t' << z << '\n';
+    
+    GLfloat matrixL[4][4] = {
+        {1,0,0,0},
+        {0,1,0,0},
+        {0,0,1,0},
+        {x*1.0f,y*1.0f,z*1.0f,1}
+    };
+    
+    
+    
+    GLfloat matrix[4][4];
+    
+    GraphicsObject::matrixMultiply(matrix, matrixL, matrixR);
     
     
     

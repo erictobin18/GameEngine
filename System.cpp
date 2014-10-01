@@ -83,7 +83,7 @@ void Physics::update(float dt)
         state *s = components.at(i).getState();
         
         
-        s->orientation = scalarMultiply(s->orientation,1/magnitude(s->orientation));
+        s->orientation = scalarMultiply(s->orientation,1/magnitude(s->orientation)); //normalizes quaternion
         s->orientation = hMultiply(padVector(scalarMultiply(s->omega,dt/2), 1),s->orientation);
         
         //cout << "Updating PhysicsComponent with ID " << i << '\n' << "Address: " << &components.at(i);

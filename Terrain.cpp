@@ -8,38 +8,31 @@
 
 #include "Terrain.h"
 
-Terrain::Terrain()
+Terrain::Terrain() : testChunk(Chunk(0,0,0)),testChunk2(Chunk(-1,0,0))
 {
-    //Chunk testChunk;
-    for (unsigned char x = 0; x < 16; x++)
+    for (int x = -4; x < 4; x++)
     {
-        for (unsigned char y = 0; y < 16; y++)
+        for (int y = -4; y < 4; y++)
         {
-            for (unsigned char z = 0; z < 16; z++)
+            for (int z = 0; z < 2; z++)
             {
-                //testChunk.setBlock(x, y, z, 5);
-                testChunk.setBlock(x, y, z, std::rand()%256 );
-                //std::cout << testChunk.getBlock(x, y, z) << '\n';
+                Chunk temp(x,y,z);
+                chunks.push_back(temp);
+                chunks.at(chunks.size()-1).init(); //C++ IS PASS BY VALUE YOU IDIOT
             }
         }
     }
-    
+}
+
+void Terrain::init()
+{
+
 }
 
 void Terrain::draw()
 {
-    for (unsigned char x = 0; x < 16; x++)
+    for (int i = 0; i < chunks.size(); i++)
     {
-        for (unsigned char y = 0; y < 16; y++)
-        {
-            for (unsigned char z = 0; z < 16; z++)
-            {
-                //testChunk.setBlock(x, y, z, 5);
-                testChunk.setBlock(x, y, z, std::rand()%256 );
-                //std::cout << testChunk.getBlock(x, y, z) << '\n';
-            }
-        }
+        chunks.at(i).draw();
     }
-    testChunk.needsUpdate();
-    testChunk.draw();
 }

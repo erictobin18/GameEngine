@@ -51,9 +51,11 @@ public:
     
     void draw(vect position, quaternion orientation); //must be called after ServerGL::prepareForDrawing but before ServerGL::draw
     static GLubyte instance;
+    
+    static void matrixMultiply(GLfloat matOut[4][4], GLfloat matLeft[4][4], GLfloat matRight[4][4]);
 
 protected:
-    void matrixMultiply(GLfloat matOut[4][4], GLfloat matLeft[4][4], GLfloat matRight[4][4]);
+   
     GLuint vertexArrayObject; //Every GraphicsObject has a VAO
     GLuint textureID; //Every GraphicsObject has a (not necessarily unique) texture
     GLuint buffers[2];
@@ -63,7 +65,7 @@ protected:
 class Chunk
 {
 public:
-    Chunk();
+    Chunk(GLint x, GLint y, GLint z);
     ~Chunk();
     
     GLuint getBlock(unsigned char x, unsigned char y, unsigned char z);
@@ -73,10 +75,16 @@ public:
     
     void needsUpdate();
     
+    void init();
+    
     void draw();
     
     
 protected:
+    GLint x;
+    GLint y;
+    GLint z;
+    
     GLubyte blocks[16][16][16];
     GLuint vertexArrayObject;
     GLuint bufferID;

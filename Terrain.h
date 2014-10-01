@@ -18,9 +18,14 @@ class Terrain
 public:
     Terrain();
     
+    void init();
+    
     void draw();
     
     Chunk testChunk;
+    Chunk testChunk2;
+    
+    std::vector<Chunk> chunks;
 };
 
 #endif
