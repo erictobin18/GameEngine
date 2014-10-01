@@ -13,6 +13,8 @@ using namespace std;
 
 Entity::Entity(entityID eid, std::string n) : identity(eid),components(0x0), name(n)
 {
+    cout << "Entity " << name << " with eid " << eid << " created.\n";
+    cout << "Entity address: " << this << "\n\n";
     for (int i = 0; i < 8; i++)
     {
         componentIDs[i] = 0;
@@ -27,16 +29,19 @@ void Entity::addPhysicsComponent(componentID cid)
 {
     componentIDs[1] = cid;
     components = components | physicsType;
+    cout << "Entity " << name << " linked with Physics Component with ID " << cid << "\n";
 }
 void Entity::addGraphicsComponent(componentID cid)
 {
     componentIDs[2] = cid;
     components = components | graphicsType;
+    cout << "Entity " << name << " linked with Graphics Component with ID " << cid << "\n";
 }
 void Entity::addLogicComponent(componentID cid)
 {
     componentIDs[4] = cid;
     components = components | logicType;
+    cout << "Entity " << name << " linked with Logic Component with ID " << cid << "\n";
 }
 
 

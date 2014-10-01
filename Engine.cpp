@@ -25,6 +25,8 @@ ServerGL Engine::openGLServer;
 
 Terrain Engine::gameTerrain;
 
+Entity Engine::player(0,"Player");
+
 file readFile(string filename)
 {
     ifstream str("Objects/" + filename + ".json");
@@ -88,59 +90,104 @@ file readFile(string filename)
 Engine::Engine()
 {
     vector<Entity> objectTable;
+    cout << "Added player to newly created objectTable with size " << objectTable.size() << '\n';
+}
+
+void Engine::init()
+{
     System::setGameEngine(this);
+    ServerGL::setGameEngine(this);
+    cout << "1objectTable size is " << objectTable.size() << '\n'; //returns 1
+    createCamera();
+    cout << "2objectTable size is " << objectTable.size() << '\n'; //returns 1
 }
 
 void Engine::mainloop()
 {
     time = glfwGetTime();
     
+    (gamePhysics.getComponent(getPhysicsComponent(0)))->setAlpha((vect){0,0,0}); //some state gets set in this call
+    
     while (openGLServer.windowOpen) //animation loop
     {
         openGLServer.prepareForDrawing(); //clears display, checks if window should closes
         float dt = glfwGetTime() - time;
         time = glfwGetTime();
+        
+        //vect newAlpha = (vect){(std::rand()%9-4)/20.0f,(std::rand()%9-4)/20.0f,(std::rand()%9-4)/20.0f};
+        
+        //cout << objectTable.size() - 1 << '\n';
+        
+        //(gamePhysics.getComponent(getPhysicsComponent(0)))->setAlpha(newAlpha);
+        
         gamePhysics.update(dt);
         gameLogic.update(dt);
         
-        //gameTerrain.draw();
+        gameTerrain.draw();
         
         gameGraphics.update(dt); //draws
         openGLServer.draw();//Graphics must be last call in animation loop
     } //while
     cout << "Execution Terminated\n"; //Finish
 }
-void Engine::createObject()
+entityID Engine::createObject()
 {
-    createObject("rotatingCube");
-    
+    return createObject("rotatingCube");
 }
 
-void Engine::createObject(string filename, state s)
+entityID Engine::createCamera()
 {
-    entityID eid = static_cast<entityID>(objectTable.size());
-    Entity obj(eid, filename + to_string(eid));
+    state s = (state){(vect){0,0,0},(vect){0,0,0},(quaternion){1,0,0,0},(vect){0,0.1,0.1}};
     
+    componentID physComp = gamePhysics.newComponent(0, s);
+    cout << "Created Physics Component for Player\n";
+    
+    player.addPhysicsComponent(physComp);
+    cout << "Added Player Physics Component to Player\n";
+    
+    cout << "3objectTable size is " << objectTable.size() << '\n'; //returns 0
+    objectTable.push_back(player);
+    
+    return 0;
+}
+
+entityID Engine::createObject(string filename, state s)
+{
+    cout << "5objectTable size is " << objectTable.size() << '\n';
+    entityID eid = static_cast<entityID>(objectTable.size());
+    cout << "Adding new Entity to objectTable. EntityID is " << eid << '\n';
+    Entity obj(eid, filename + to_string(eid));
+    cout << "Created Entity of type " << filename << '\n';
     
     file f = readFile(filename);
     
     componentID physComp = gamePhysics.newComponent(eid, s);
+    cout << "Added new PhysicsComponent to gamePhysics with ID " << physComp << '\n';
     obj.addPhysicsComponent(physComp);
+    cout << "Added PhysicsComponent with ID " << physComp << " to Entity " << &obj << " with entityID " << eid << '\n';
     
     componentID graphComp = gameGraphics.newComponent(eid, f.m);
+    cout << "Added new GraphicsComponent to gameGraphics with ID " << graphComp << '\n';
     obj.addGraphicsComponent(graphComp);
+    cout << "Added GraphicsComponent with ID " << graphComp << " to Entity " << &obj << " with entityID " << eid << '\n';
     
     componentID logComp = gameLogic.newComponent(eid);
+    cout << "Added new LogicComponent to gameGraphics with ID " << logComp << '\n';
     obj.addLogicComponent(logComp);
+    cout << "Added LogicComponent with ID " << logComp << " to Entity " << &obj << " with entityID " << eid << '\n';
+    
+    cout << "4objectTable size is " << objectTable.size() << '\n';
     
     objectTable.push_back(obj);
-
+    
+    cout << "Added Entity " << &obj << " to objectTable with size " << objectTable.size() << '\n';
+    return eid;
 }
 
-void Engine::createObject(string filename)
+entityID Engine::createObject(string filename)
 {
-    state s = (state){(vect){0,0,0} , (vect){0,0,0} , (quaternion){1.0, 0.0, 0.0, 0.0} , (vect){0,0.5,0.25}};
-    createObject(filename, s);
+    state s = (state){(vect){0,0,0} , (vect){1,0,0} , (quaternion){1.0, 0.0, 0.0, 0.0} , (vect){0,0.5,0.25}};
+    return createObject(filename, s);
 }
 
 

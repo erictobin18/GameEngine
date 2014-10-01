@@ -12,7 +12,7 @@ using namespace std;
 
 Component::Component(componentID cid, entityID eid) : identity(cid), entityIdentity(eid)
 {
-
+    cout << "Component with componentID " << cid << " linked to Entity with entityID " << eid << " created.\n";
 }
 
 componentID Component::getIdentity()
@@ -44,6 +44,30 @@ void PhysicsComponent::setState(state s)
     entityState = s;
 }
 
+void PhysicsComponent::setAlpha(vect alpha)
+{
+    entityAlpha = alpha;
+    //cout << "Set Alpha for PhysicsComponent " << this << '\n';
+}
+vect PhysicsComponent::getAlpha()
+{
+    return entityAlpha;
+}
+void PhysicsComponent::setAcceleration(vect accel)
+{
+    entityAccel = accel;
+}
+vect PhysicsComponent::getAcceleration()
+{
+    return entityAccel;
+}
+void PhysicsComponent::killMotion()
+{
+    entityAccel = {0,0,0};
+    entityAlpha = {0,0,0};
+    entityState.vel = {0,0,0};
+    entityState.omega = {0,0,0};
+}
 
 
 GraphicsComponent::GraphicsComponent(componentID cid, entityID eid, mesh m) : Component(cid, eid), componentMesh(m)

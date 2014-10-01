@@ -1,11 +1,23 @@
 #version 410 core
 
-in vec4 texcoord;
+in vec4 testingPosition;
+in vec4 instanceF;
 
 layout(location = 0) out vec4 fColor;
 
+uniform sampler2D tex;
+
 void main(void)
 {
-    //fColor = vec4(texcoord.w,0,0,1);
-    fColor = vec4((int(texcoord.w) << 4) % 4, (int(texcoord.w) << 2) % 4, int(texcoord.w) % 4 ,1.0);
+    //fColor = vec4(1,0,0,1);
+    //fColor = vec4(instanceF.a/48.0f,instanceF.a/48.0f,instanceF.a/48.0f,1);
+    fColor = vec4((int(instanceF.a)/64)/3.0f,((int(instanceF.a)/16)%4)/3.0f,((int(instanceF.a)/4)%4)/3.0f,(int(instanceF.a)%4)/3.0f);
 }
+
+
+
+
+
+
+
+

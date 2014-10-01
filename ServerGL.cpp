@@ -8,15 +8,21 @@
 
 #include "ServerGL.h"
 #include "Shader.h"
+#include "Engine.h"
+#include "System.h"
 #include <math.h>
 
 #define BUFFER_OFFSET(offset) ((void *)(offset))
 #define RESTART_CHAR 0xFFFFFFFF
 
+#define CHUNK_SIZE 16
+
 using namespace std;
 
 GLuint ServerGL::normalProgram = 0;
 GLuint ServerGL::terrainProgram = 0;
+
+Engine *ServerGL::gameEngine;
 
 void errorCallback(int error, const char *description)
 {
@@ -24,6 +30,8 @@ void errorCallback(int error, const char *description)
     fputs(description, stderr);
     cout << '\n';
 } //errorCallback
+
+
 
 ServerGL::ServerGL(): windowOpen(false), verbose(false)
 {
@@ -111,6 +119,7 @@ void ServerGL::draw()
 {
     glfwSwapBuffers(window);
     glfwPollEvents();
+    //GraphicsObject::instance++;
 }
 
 void ServerGL::reportGLError()
@@ -155,6 +164,13 @@ void ServerGL::reportGLError()
             
     } //switch
 } //reportGLError
+
+void ServerGL::setGameEngine(Engine *gEngine)
+{
+    gameEngine = gEngine;
+}
+
+GLubyte GraphicsObject::instance = 0;
 
 GraphicsObject::GraphicsObject()
 {
@@ -211,6 +227,17 @@ GraphicsObject::GraphicsObject(mesh m)
     
     ServerGL::reportGLError();
 }
+void GraphicsObject::matrixMultiply(GLfloat matOut[4][4], GLfloat matLeft[4][4], GLfloat matRight[4][4])
+{
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            matOut[i][j] = matLeft[i][0]*matRight[0][j] + matLeft[i][1]*matRight[1][j] + matLeft[i][2]*matRight[2][j] + matLeft[i][3]*matRight[3][j];
+        }
+    }
+}
+
 void GraphicsObject::draw(vect pos, quaternion o)
 {
     if (vertexArrayObject == 0)
@@ -220,24 +247,86 @@ void GraphicsObject::draw(vect pos, quaternion o)
     
     glBindVertexArray(vertexArrayObject);
     
-    GLfloat matrix[4][4] = {
+    
+    GLfloat matrixL[4][4] = {
         {o.s*o.s + o.i*o.i - o.j*o.j - o.k*o.k, 2*o.i*o.j - 2*o.s*o.k, 2*o.i*o.k + 2*o.s*o.j, 0},
         {2*o.i*o.j + 2*o.s*o.k, o.s*o.s - o.i*o.i + o.j*o.j - o.k*o.k, 2*o.j*o.k - 2*o.s*o.i, 0},
         {2*o.i*o.k - 2*o.s*o.j, 2*o.j*o.k + 2*o.s*o.i, o.s*o.s - o.i*o.i - o.j*o.j + o.k*o.k, 0},
-        {0.0,                   0.0,                   0.0,                                   1.0}
+        {pos.x,                  pos.y,                  pos.z,                             1.0}
     };
     
-    /*
-    GLfloat matrix[4][4] = {
-    {1, 0, 0, 0},
-    {0, 1, 0, 0},
-    {0, 0, 1, 0},
-    {0, 0, 0, 1}
-    }; */
+    
+    vect posP = (ServerGL::gameEngine->gamePhysics).getComponent((ServerGL::gameEngine->player).getComponentID(physicsType))->getState()->pos;
+    quaternion oP =(ServerGL::gameEngine->gamePhysics).getComponent((ServerGL::gameEngine->player).getComponentID(physicsType))->getState()->orientation;
+    
+    
+    
+    GLfloat matrixR[4][4] = {
+        {oP.s*oP.s + oP.i*oP.i - oP.j*oP.j - oP.k*oP.k, 2*oP.i*oP.j - 2*oP.s*oP.k, 2*oP.i*oP.k + 2*oP.s*oP.j, 0},
+        {2*oP.i*oP.j + 2*oP.s*oP.k, oP.s*oP.s - oP.i*oP.i + oP.j*oP.j - oP.k*oP.k, 2*oP.j*oP.k - 2*oP.s*oP.i, 0},
+        {2*oP.i*oP.k - 2*oP.s*oP.j, 2*oP.j*oP.k + 2*oP.s*oP.i, oP.s*oP.s - oP.i*oP.i - oP.j*oP.j + oP.k*oP.k, 0},
+        {0,                      0,                         0,                                              1.0}
+    };
+    
+    
+    for (int i = 0; i < 3; i++)
+    {
+        matrixR[3][i] = matrixR[i][0]*posP.x + matrixR[i][1]*posP.y + matrixR[i][2]*posP.z;
+    }
+    
+    
+    GLfloat matrix[4][4];
+    
+    matrixMultiply(matrix, matrixL, matrixR);
+     
+     /*
+    
+     GLfloat matrix[4][4] = { //ISOMETRIC
+     {0.707107,        0, -0.707107, 0},
+     {0.408248, 0.816497,  0.408248, 0},
+     { 0.57735, -0.57735,   0.57735, 0},
+     {       0,        0,         0, 1}
+     };
+      
+      */
     glVertexAttrib4fv(2, matrix[0]);
     glVertexAttrib4fv(3, matrix[1]);
     glVertexAttrib4fv(4, matrix[2]);
     glVertexAttrib4fv(5, matrix[3]);
+    
+    GLfloat color[3];
+    
+    switch (instance++%4)
+    {
+        case 0:
+            color[0] = 16.0f;
+            color[1] = 0.0f;
+            color[2] = 0.0f;
+            break;
+        case 1:
+            color[0] = 0.0f;
+            color[1] = 16.0f;
+            color[2] = 0.0f;
+            break;
+        case 2:
+            color[0] = 0.0f;
+            color[1] = 0.0f;
+            color[2] = 16.0f;
+            break;
+        case 3:
+            color[0] = 16.0f;
+            color[1] = 16.0f;
+            color[2] = 16.0f;
+            break;
+        default:
+            color[0] = 0.0f;
+            color[1] = 0.0f;
+            color[2] = 0.0f;
+            break;
+    }
+    
+    
+    glVertexAttrib3fv(6, color);
     
     glBindTexture(GL_TEXTURE_2D, textureID);
     
@@ -248,7 +337,12 @@ void GraphicsObject::draw(vect pos, quaternion o)
 
 unsigned int vec4(unsigned char x, unsigned char y, unsigned char z, unsigned char val)
 {
-    return (x << 24) + (y << 16) + (z << 8) + val;
+    return ((unsigned int)x << 24) + ((unsigned int)y << 16) + ((unsigned int)z << 8) + (unsigned int)val;
+}
+
+unsigned int vec4r(unsigned char x, unsigned char y, unsigned char z, unsigned char val)
+{
+    return (val << 24) + (z << 16) + (y << 8) + x;
 }
 
 Chunk::Chunk()
@@ -278,67 +372,68 @@ void Chunk::update()
 {
     modified = false;
     
-    unsigned int vertices[16*16*16*6*6];
+    unsigned int vertices[CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE*6*6];
     int i = 0;
     
-    for (unsigned char x = 0; x < 16; x++)
+
+    
+    for (unsigned char x = 0; x < CHUNK_SIZE; x++)
     {
-        for (unsigned char y = 0; y < 16; y++)
+        for (unsigned char y = 0; y < CHUNK_SIZE; y++)
         {
-            for (unsigned char z = 0; z < 16; z++)
+            for (unsigned char z = 0; z < CHUNK_SIZE; z++)
             {
-                if (!blocks[x][y][z]) continue;
+                //if (!blocks[x][y][z]) continue;
                 
-                vertices[i++] = vec4(x    , y    , z    , blocks[x][y][z]);
-                vertices[i++] = vec4(x    , y    , z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4(x    , y + 1, z    , blocks[x][y][z]);
-                vertices[i++] = vec4(x    , y + 1, z    , blocks[x][y][z]);
-                vertices[i++] = vec4(x    , y    , z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4(x    , y + 1, z + 1, blocks[x][y][z]);
                 
-                //std::cout << vec4(x, y, z, blocks[x][y][z]) << '\n';
+                vertices[i++] = vec4r(x    , y    , z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y    , z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y + 1, z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y + 1, z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y    , z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y + 1, z + 1, blocks[x][y][z]);
+     
+                vertices[i++] = vec4r(x + 1, y + 1, z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y + 1, z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y + 1, z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z    , blocks[x][y][z]);
+     
+                vertices[i++] = vec4r(x    , y    , z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y    , z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y    , z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z + 1, blocks[x][y][z]);
                 
-                vertices[i++] = vec4(x + 1, y + 1, z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4(x + 1, y    , z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4(x + 1, y + 1, z    , blocks[x][y][z]);
-                vertices[i++] = vec4(x + 1, y + 1, z    , blocks[x][y][z]);
-                vertices[i++] = vec4(x + 1, y    , z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4(x + 1, y    , z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y + 1, z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y + 1, z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y + 1, z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y + 1, z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y + 1, z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y + 1, z    , blocks[x][y][z]);
                 
-                vertices[i++] = vec4(x    , y    , z    , blocks[x][y][z]);
-                vertices[i++] = vec4(x + 1, y    , z    , blocks[x][y][z]);
-                vertices[i++] = vec4(x    , y    , z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4(x    , y    , z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4(x + 1, y    , z    , blocks[x][y][z]);
-                vertices[i++] = vec4(x + 1, y    , z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y    , z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y + 1, z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y + 1, z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y + 1, z    , blocks[x][y][z]);
                 
-                vertices[i++] = vec4(x + 1, y + 1, z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4(x + 1, y + 1, z    , blocks[x][y][z]);
-                vertices[i++] = vec4(x    , y + 1, z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4(x    , y + 1, z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4(x + 1, y + 1, z    , blocks[x][y][z]);
-                vertices[i++] = vec4(x    , y + 1, z    , blocks[x][y][z]);
-                
-                vertices[i++] = vec4(x    , y    , z    , blocks[x][y][z]);
-                vertices[i++] = vec4(x    , y + 1, z    , blocks[x][y][z]);
-                vertices[i++] = vec4(x + 1, y    , z    , blocks[x][y][z]);
-                vertices[i++] = vec4(x + 1, y    , z    , blocks[x][y][z]);
-                vertices[i++] = vec4(x    , y + 1, z    , blocks[x][y][z]);
-                vertices[i++] = vec4(x + 1, y + 1, z    , blocks[x][y][z]);
-                
-                vertices[i++] = vec4(x + 1, y + 1, z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4(x    , y + 1, z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4(x + 1, y    , z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4(x + 1, y    , z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4(x    , y + 1, z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4(x    , y    , z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y + 1, z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y + 1, z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y + 1, z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y    , z + 1, blocks[x][y][z]);
+                 
             }
         }
     }
-    
-    std::cout << vertices[1] << '\n';
-    
     numElements = i;
+    
+    
     
     glBindVertexArray(vertexArrayObject);
     glBindBuffer(GL_ARRAY_BUFFER, bufferID);
@@ -351,10 +446,15 @@ void Chunk::update()
     
 }
 
+void Chunk::needsUpdate()
+{
+    modified = true;
+}
+
 void Chunk::draw()
 {
     
-    //glUseProgram(ServerGL::normalProgram);
+    glUseProgram(ServerGL::terrainProgram);
     glBindVertexArray(vertexArrayObject);
     
     if (modified) update();
@@ -366,15 +466,39 @@ void Chunk::draw()
     glBindBuffer(GL_ARRAY_BUFFER, bufferID);
     
     glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_FALSE, 0, BUFFER_OFFSET(0));
+    glVertexAttribPointer(6, 4, GL_UNSIGNED_BYTE, GL_FALSE, 0, BUFFER_OFFSET(0));
+    
+    
+    /*
+     GLfloat matrix[4][4] = { //ISOMETRIC
+     {0.707107,        0, -0.707107, 0},
+     {0.408248, 0.816497,  0.408248, 0},
+     { 0.57735, -0.57735,   0.57735, 0},
+     {       0,        0,         0, 1}
+     };
+     
+     */
+    
+    
+    
+    vect posP = (ServerGL::gameEngine->gamePhysics).getComponent((ServerGL::gameEngine->player).getComponentID(physicsType))->getState()->pos;
+    quaternion oP =(ServerGL::gameEngine->gamePhysics).getComponent((ServerGL::gameEngine->player).getComponentID(physicsType))->getState()->orientation;
     
     
     
     GLfloat matrix[4][4] = {
-        {1, 0, 0, 0},
-        {0, 1, 0, 0},
-        {0, 0, 1, 0},
-        {0, 0, 0, 1}
+        {oP.s*oP.s + oP.i*oP.i - oP.j*oP.j - oP.k*oP.k, 2*oP.i*oP.j - 2*oP.s*oP.k, 2*oP.i*oP.k + 2*oP.s*oP.j, 0},
+        {2*oP.i*oP.j + 2*oP.s*oP.k, oP.s*oP.s - oP.i*oP.i + oP.j*oP.j - oP.k*oP.k, 2*oP.j*oP.k - 2*oP.s*oP.i, 0},
+        {2*oP.i*oP.k - 2*oP.s*oP.j, 2*oP.j*oP.k + 2*oP.s*oP.i, oP.s*oP.s - oP.i*oP.i - oP.j*oP.j + oP.k*oP.k, 0},
+        {0,                      0,                         0,                                              1.0}
     };
+    
+    for (int i = 0; i < 3; i++)
+    {
+        matrix[3][i] = matrix[i][0]*posP.x + matrix[i][1]*posP.y + matrix[i][2]*posP.z;
+    }
+    
+    
     
     
     glVertexAttrib4fv(2, matrix[0]);
@@ -383,11 +507,12 @@ void Chunk::draw()
     glVertexAttrib4fv(5, matrix[3]);
     
     glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(6);
     
     glDrawArrays(GL_TRIANGLES, 0, numElements);
     
     glBindVertexArray(0);
-    //glUseProgram(ServerGL::normalProgram);
+    glUseProgram(ServerGL::normalProgram);
     ServerGL::reportGLError();
 }
 

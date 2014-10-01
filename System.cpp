@@ -86,7 +86,16 @@ void Physics::update(float dt)
         s->orientation = scalarMultiply(s->orientation,1/magnitude(s->orientation));
         s->orientation = hMultiply(padVector(scalarMultiply(s->omega,dt/2), 1),s->orientation);
         
+        //cout << "Updating PhysicsComponent with ID " << i << '\n' << "Address: " << &components.at(i);
+        //cout << "Omega Components initial: " << s->omega.x << ", " << s->omega.y << ", " << s->omega.z << '\n';
+        
+        s->omega = addVect(s->omega, scalarMultiply(components.at(i).getAlpha(), dt));
+        
+        //cout << "Omega Components final: " << s->omega.x << ", " << s->omega.y << ", " << s->omega.z << "\n\n";
+        
         s->pos = addVect(s->pos, scalarMultiply(s->vel, dt)); // x = x + dt*(dx/dt)
+        
+        //s->vel = addVect(s->vel, scalarMultiply(components.at(i).getAcceleration(), dt));
     }
 }
 componentID Physics::newComponent(entityID eid)
@@ -100,11 +109,12 @@ componentID Physics::newComponent(entityID eid, state s)
     componentID cid = (componentID)components.size();
     PhysicsComponent newComp = PhysicsComponent(cid, eid, s);
     components.push_back(newComp);
+    cout << "PhysicsComponent with componentID " << cid << " linked to Entity with entityID " << eid << " added to Physics components list.\n";
     return cid;
 }
-PhysicsComponent Physics::getComponent(componentID cid)
+PhysicsComponent *Physics::getComponent(componentID cid)
 {
-    return components.at(cid);
+    return &components.at(cid);
 }
 Physics::~Physics()
 {
@@ -122,8 +132,8 @@ void Graphics::update(float dt)
 {
     for (int i = 0; i < components.size(); i++)
     {
-        componentID phys = gameEngine->getPhysicsComponent(components.at(i).getIdentity());
-        PhysicsComponent physComp = Engine::gamePhysics.getComponent(phys);
+        componentID phys = gameEngine->getPhysicsComponent(components.at(i).getEntity());
+        PhysicsComponent physComp = *Engine::gamePhysics.getComponent(phys);
         vect p = physComp.getState()->pos;
         quaternion q = physComp.getState()->orientation;
         
@@ -141,11 +151,12 @@ componentID Graphics::newComponent(entityID eid, mesh m)
     componentID cid = (componentID)components.size();
     GraphicsComponent newComp(cid, eid, m);
     components.push_back(newComp);
+    cout << "GraphicsComponent with componentID " << cid << " linked to Entity with entityID " << eid << " added to Graphics components list.\n";
     return cid;
 }
-GraphicsComponent Graphics::getComponent(componentID cid)
+GraphicsComponent *Graphics::getComponent(componentID cid)
 {
-    return components.at(cid);
+    return &components.at(cid);
 }
 Graphics::~Graphics()
 {
@@ -168,11 +179,12 @@ componentID Logic::newComponent(entityID eid)
     componentID cid = (componentID)components.size();
     LogicComponent newComp = LogicComponent(cid, eid);
     components.push_back(newComp);
+    cout << "LogicComponent with componentID " << cid << " linked to Entity with entityID " << eid << " added to Logic components list.\n";
     return cid;
 }
-LogicComponent Logic::getComponent(componentID cid)
+LogicComponent *Logic::getComponent(componentID cid)
 {
-    return components.at(cid);
+    return &components.at(cid);
 }
 Logic::~Logic()
 {

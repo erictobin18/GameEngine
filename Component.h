@@ -33,8 +33,15 @@ public:
     
     state *getState(); //accessors for entityState
     void setState(state);
+    void setAlpha(vect alpha);
+    vect getAlpha(); //PASS BY VALUE!!! CANNOT ACCESS!!! FUCK JAVA
+    void setAcceleration(vect accel);
+    vect getAcceleration(); //PASS BY VALUE!!! CANNOT ACCESS!!! FUCK JAVA
+    void killMotion();
 protected:
     state entityState;
+    vect entityAlpha;
+    vect entityAccel;
 };
 
 class GraphicsComponent : public Component

@@ -24,10 +24,14 @@ class Engine
 public:
     Engine();
     
+    void init();
+    
     void mainloop(); //contains infinite while loop that runs game
-    void createObject(); //adds a new entity to the objectTable
-    void createObject(std::string filename);
-    void createObject(std::string filename, state s);
+    entityID createObject(); //adds a new entity to the objectTable
+    entityID createObject(std::string filename);
+    entityID createObject(std::string filename, state s);
+    
+    entityID createCamera();
     double getTime(); //wraps the GLFW command
     
     componentID getPhysicsComponent(entityID eid); //looks up component associated with an entity in the objectTable
@@ -40,6 +44,7 @@ public:
     static ServerGL openGLServer; //GL interface class
     static Terrain gameTerrain;
     
+    static Entity player;
 protected:
     float time; //elapsed time, seconds
     std::vector<Entity> objectTable; //vector of all entities in the Engine

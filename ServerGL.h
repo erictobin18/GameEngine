@@ -17,6 +17,8 @@
 #define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED //NOTE!!! GLFW INCLUDES GL.h, but GL 3.2+ functionality requires gl3. This is related to how GL versions are different on OSX. Ignoring this for now...GLFW should detect this. All other GL headers must be BEFORE GLFW.
 #include <GLFW/glfw3.h>
 
+class Engine;
+
 class ServerGL
 {
 public:
@@ -27,9 +29,12 @@ public:
     void draw(); //last call to openGL in a given drawing cycle
     bool windowOpen; //true iff window is open
     static void reportGLError(); //Prints error type to cout
+    static void setGameEngine(Engine *gEngine);
     
     static GLuint normalProgram;
     static GLuint terrainProgram;
+    
+    static Engine *gameEngine;
     
 protected:
     GLFWwindow *window;
@@ -45,11 +50,14 @@ public:
     ~GraphicsObject();
     
     void draw(vect position, quaternion orientation); //must be called after ServerGL::prepareForDrawing but before ServerGL::draw
+    static GLubyte instance;
 
 protected:
+    void matrixMultiply(GLfloat matOut[4][4], GLfloat matLeft[4][4], GLfloat matRight[4][4]);
     GLuint vertexArrayObject; //Every GraphicsObject has a VAO
     GLuint textureID; //Every GraphicsObject has a (not necessarily unique) texture
     GLuint buffers[2];
+
 };
 
 class Chunk
@@ -63,6 +71,8 @@ public:
     
     void update();
     
+    void needsUpdate();
+    
     void draw();
     
     
@@ -72,6 +82,7 @@ protected:
     GLuint bufferID;
     unsigned int numElements;
     bool modified;
+    
 };
 
 

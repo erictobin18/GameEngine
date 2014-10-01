@@ -40,7 +40,7 @@ class Physics : System
 public:
     Physics();
     void update( float dt);
-    PhysicsComponent getComponent(componentID cid); //looks up a component in its table
+    PhysicsComponent *getComponent(componentID cid); //looks up a component in its table
     componentID newComponent(entityID eid);
     componentID newComponent(entityID eid, state s);
     ~Physics();
@@ -54,7 +54,7 @@ class Graphics : System
 public:
     Graphics();
     void update( float dt);
-    GraphicsComponent getComponent(componentID cid); //looks up a component in its table
+    GraphicsComponent *getComponent(componentID cid); //looks up a component in its table
     componentID newComponent(entityID eid);
     componentID newComponent(entityID eid, mesh m);
     ~Graphics();
@@ -68,7 +68,7 @@ class Logic : System
 public:
     Logic();
     void update( float dt);
-    LogicComponent getComponent(componentID cid); //looks up a component in its table
+    LogicComponent *getComponent(componentID cid); //looks up a component in its table
     componentID newComponent(entityID eid);
     ~Logic();
     
