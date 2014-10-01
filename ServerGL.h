@@ -81,9 +81,9 @@ public:
     
     
 protected:
-    GLint x;
-    GLint y;
-    GLint z;
+    GLint chunkX;
+    GLint chunkY;
+    GLint chunkZ;
     
     GLubyte blocks[16][16][16];
     GLuint vertexArrayObject;

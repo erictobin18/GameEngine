@@ -345,7 +345,7 @@ unsigned int vec4r(unsigned char x, unsigned char y, unsigned char z, unsigned c
     return (val << 24) + (z << 16) + (y << 8) + x;
 }
 
-Chunk::Chunk(GLint x, GLint y, GLint z):x(x),y(y),z(z)
+Chunk::Chunk(GLint x, GLint y, GLint z):chunkX(x),chunkY(y),chunkZ(z)
 {
     /*
     modified = true;
@@ -385,7 +385,7 @@ void Chunk::update()
         {
             for (unsigned char z = 0; z < CHUNK_SIZE; z++)
             {
-                //if (!blocks[x][y][z]) continue;
+                if (!blocks[x][y][z]) continue;
                 
                 
                 vertices[i++] = vec4r(x    , y    , z    , blocks[x][y][z]);
@@ -458,16 +458,30 @@ void Chunk::init()
     modified = true;
     glGenVertexArrays(1, &vertexArrayObject);
     glGenBuffers(1, &bufferID);
-    for (unsigned char x = 0; x < 16; x++)
+    /*if (chunkX == 0 && chunkY == 0  && chunkZ == 0 )
     {
-        for (unsigned char y = 0; y < 16; y++)
+        for (unsigned char x = 0; x < 16; x++)
         {
-            for (unsigned char z = 0; z < 16; z++)
+            for (unsigned char y = 0; y < 16; y++)
             {
-                this->setBlock(x, y, z, std::rand()%256 );
+                for (unsigned char z = 0; z < 16; z++)
+                {
+                    this->setBlock(x, y, z, 0);
+                }
             }
         }
-    }
+    }*/
+        for (unsigned char x = 0; x < 16; x++)
+        {
+            for (unsigned char y = 0; y < 16; y++)
+            {
+                for (unsigned char z = 0; z < 16; z++)
+                {
+                    this->setBlock(x, y, z, std::rand()%256 );
+                }
+            }
+        }
+    
 }
 
 void Chunk::draw()
@@ -528,14 +542,24 @@ void Chunk::draw()
         {1,0,0,0},
         {0,1,0,0},
         {0,0,1,0},
-        {x*1.0f,y*1.0f,z*1.0f,1}
+        {chunkX*1.0f,chunkY*1.0f,chunkZ*1.0f,1}
     };
     
+    GLfloat modelViewMatrix[4][4];
     
+    GraphicsObject::matrixMultiply(modelViewMatrix, matrixL, matrixR);
+    
+    GLfloat perspective[4][4] = {
+        {1,0,0,0},
+        {0,1,0,0},
+        {0,0,1-11.0f/9,20.0f/9},
+        {0,0,-1.0f,0}
+
+    };
     
     GLfloat matrix[4][4];
     
-    GraphicsObject::matrixMultiply(matrix, matrixL, matrixR);
+    GraphicsObject::matrixMultiply(matrix,  modelViewMatrix, perspective);
     
     
     

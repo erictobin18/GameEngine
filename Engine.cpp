@@ -138,7 +138,7 @@ entityID Engine::createObject()
 
 entityID Engine::createCamera()
 {
-    state s = (state){(vect){0,-1,0},(vect){0,0,0},(quaternion){1,-0.785398f,0,0},(vect){0,0.1,0.1}};
+    state s = (state){(vect){0,-2,0},(vect){0,0,0},(quaternion){1,-0.785398f,0,0},(vect){0.2,0,0}};
     
     componentID physComp = gamePhysics.newComponent(0, s);
     cout << "Created Physics Component for Player\n";

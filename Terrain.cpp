@@ -8,13 +8,13 @@
 
 #include "Terrain.h"
 
-Terrain::Terrain() : testChunk(Chunk(0,0,0)),testChunk2(Chunk(-1,0,0))
+Terrain::Terrain() 
 {
-    for (int x = -4; x < 4; x++)
+    for (int x = -8; x < 8; x+=2)
     {
-        for (int y = -4; y < 4; y++)
+        for (int y = -8; y < 8; y+=2)
         {
-            for (int z = 0; z < 2; z++)
+            for (int z = 0; z < 4; z+=2)
             {
                 Chunk temp(x,y,z);
                 chunks.push_back(temp);
