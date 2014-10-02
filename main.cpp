@@ -20,15 +20,13 @@ int main(int argc, const char *argv[])
     
     gameEngine.init();
     
-    gameEngine.createObject("rotatingCube", (state){(vect){-.75,-.75,0}, (vect){0,0,0}, (quaternion){1.0,0.0,0.0,0.0},(vect){-.3,-.3,0}});
+    gameEngine.createObject("rotatingCube", (state){(vect){0,0,0}, (vect){0,0,0}, (quaternion){1.0,0.0,0.0,0.0},(vect){0.5,0.5,0.5}});
     
-    gameEngine.createObject("rotatingCube", (state){(vect){-.75, .75,0}, (vect){0,0,0}, (quaternion){1.0,0.0,0.0,0.0},(vect){-.3,.3,0}});
+    //gameEngine.createObject("rotatingCube", (state){(vect){-.75, .75,0}, (vect){0,0,0}, (quaternion){1.0,0.0,0.0,0.0},(vect){-.3,.3,0}});
     
-    gameEngine.createObject("rotatingCube", (state){(vect){ .75,-.75,0}, (vect){0,0,0}, (quaternion){1.0,0.0,0.0,0.0},(vect){.3,-.3,0}});
+    //gameEngine.createObject("rotatingCube", (state){(vect){ .75,-.75,0}, (vect){0,0,0}, (quaternion){1.0,0.0,0.0,0.0},(vect){.3,-.3,0}});
     
-    gameEngine.createObject("rotatingCube", (state){(vect){ .75, .75,0}, (vect){0,0,0}, (quaternion){1.0,0.0,0.0,0.0},(vect){.3,.3,0}});
-    
-    
+    //gameEngine.createObject("rotatingCube", (state){(vect){ .75, .75,0}, (vect){0,0,0}, (quaternion){1.0,0.0,0.0,0.0},(vect){.3,.3,0}});
     
     /*
     for (int i = 0; i < 27; i++)

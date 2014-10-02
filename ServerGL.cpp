@@ -67,12 +67,13 @@ ServerGL::ServerGL(): windowOpen(false), verbose(false)
     glClearDepth(1.0f);
     
     
-    glEnable(GL_CULL_FACE);
-    //glFrontFace(GL_CW);
+    //glEnable(GL_CULL_FACE); //<-----------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<    ***CULL FACE IS HERE***
+    //glFrontFace(GL_CCW);
+    //lCullFace(GL_BACK);
     
-    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_DEPTH_TEST);
     
-    glDepthMask(GL_TRUE);
+    //glDepthMask(GL_TRUE);
     
     glEnable(GL_PRIMITIVE_RESTART);
     glPrimitiveRestartIndex(RESTART_CHAR);
@@ -85,7 +86,7 @@ ServerGL::ServerGL(): windowOpen(false), verbose(false)
     
     reportGLError();
     
-    Shader shn = Shader("Shader");
+    Shader shn = Shader("EntityShader");
     
     normalProgram = shn.getProgramObject();
     
@@ -233,9 +234,23 @@ void GraphicsObject::matrixMultiply(GLfloat matOut[4][4], GLfloat matLeft[4][4],
     {
         for (int j = 0; j < 4; j++)
         {
-            matOut[i][j] = matLeft[i][0]*matRight[0][j] + matLeft[i][1]*matRight[1][j] + matLeft[i][2]*matRight[2][j] + matLeft[i][3]*matRight[3][j];
+            matOut[j][i] = matLeft[0][i]*matRight[j][0] + matLeft[1][i]*matRight[j][1] + matLeft[2][i]*matRight[j][2] + matLeft[3][i]*matRight[j][3];
         }
     }
+}
+
+void printMatrix(GLfloat matrix[4][4])
+{
+    cout << "Printing Matrix: \n";
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            cout << matrix[i][j] << '\t';
+        }
+        cout << '\n';
+    }
+    cout << '\n';
 }
 
 void GraphicsObject::draw(vect pos, quaternion o)
@@ -247,86 +262,91 @@ void GraphicsObject::draw(vect pos, quaternion o)
     
     glBindVertexArray(vertexArrayObject);
     
+    //MODEL TRANSFORM MATRIX
     
-    GLfloat matrixL[4][4] = {
-        {o.s*o.s + o.i*o.i - o.j*o.j - o.k*o.k, 2*o.i*o.j - 2*o.s*o.k, 2*o.i*o.k + 2*o.s*o.j, 0},
-        {2*o.i*o.j + 2*o.s*o.k, o.s*o.s - o.i*o.i + o.j*o.j - o.k*o.k, 2*o.j*o.k - 2*o.s*o.i, 0},
-        {2*o.i*o.k - 2*o.s*o.j, 2*o.j*o.k + 2*o.s*o.i, o.s*o.s - o.i*o.i - o.j*o.j + o.k*o.k, 0},
+    GLfloat modelTransform[4][4] = {
+        {o.s*o.s + o.i*o.i - o.j*o.j - o.k*o.k, 2*o.i*o.j + 2*o.s*o.k, 2*o.i*o.k - 2*o.s*o.j, 0},
+        {2*o.i*o.j - 2*o.s*o.k, o.s*o.s - o.i*o.i + o.j*o.j - o.k*o.k, 2*o.j*o.k + 2*o.s*o.i, 0},
+        {2*o.i*o.k + 2*o.s*o.j, 2*o.j*o.k - 2*o.s*o.i, o.s*o.s - o.i*o.i - o.j*o.j + o.k*o.k, 0},
         {pos.x,                  pos.y,                  pos.z,                             1.0}
-    };
+    }; //matrix should be correct now. Obtained by taking the transpose (OPENGL IS COLUMN MAJOR, C++ IS ROW MAJOR) of the appropriate model transform
     
     
     vect posP = (ServerGL::gameEngine->gamePhysics).getComponent((ServerGL::gameEngine->player).getComponentID(physicsType))->getState()->pos;
     quaternion oP =(ServerGL::gameEngine->gamePhysics).getComponent((ServerGL::gameEngine->player).getComponentID(physicsType))->getState()->orientation;
     
+    //VIEW TRANSFORM MATRIX
     
-    
-    GLfloat matrixR[4][4] = {
-        {oP.s*oP.s + oP.i*oP.i - oP.j*oP.j - oP.k*oP.k, 2*oP.i*oP.j - 2*oP.s*oP.k, 2*oP.i*oP.k + 2*oP.s*oP.j, 0},
-        {2*oP.i*oP.j + 2*oP.s*oP.k, oP.s*oP.s - oP.i*oP.i + oP.j*oP.j - oP.k*oP.k, 2*oP.j*oP.k - 2*oP.s*oP.i, 0},
-        {2*oP.i*oP.k - 2*oP.s*oP.j, 2*oP.j*oP.k + 2*oP.s*oP.i, oP.s*oP.s - oP.i*oP.i - oP.j*oP.j + oP.k*oP.k, 0},
+    GLfloat viewTransform[4][4] = {
+        {oP.s*oP.s + oP.i*oP.i - oP.j*oP.j - oP.k*oP.k, 2*oP.i*oP.j + 2*oP.s*oP.k, -2*oP.i*oP.k + 2*oP.s*oP.j, 0},
+        {2*oP.i*oP.j - 2*oP.s*oP.k, oP.s*oP.s - oP.i*oP.i + oP.j*oP.j - oP.k*oP.k, -2*oP.j*oP.k - 2*oP.s*oP.i, 0},
+        {2*oP.i*oP.k + 2*oP.s*oP.j, 2*oP.j*oP.k - 2*oP.s*oP.i, -oP.s*oP.s + oP.i*oP.i + oP.j*oP.j - oP.k*oP.k, 0},
         {0,                      0,                         0,                                              1.0}
     };
     
     
-    for (int i = 0; i < 3; i++)
-    {
-        matrixR[3][i] = matrixR[i][0]*posP.x + matrixR[i][1]*posP.y + matrixR[i][2]*posP.z;
-    }
+    viewTransform[3][0] = -viewTransform[0][0]*posP.x - viewTransform[0][1]*posP.y - viewTransform[0][2]*posP.z;
+    viewTransform[3][1] = -viewTransform[1][0]*posP.x - viewTransform[1][1]*posP.y - viewTransform[1][2]*posP.z;
+    viewTransform[3][2] = viewTransform[2][0]*posP.x + viewTransform[2][1]*posP.y + viewTransform[2][2]*posP.z;
     
+    //matrix should be correct now. Obtained by taking the transpose (OPENGL IS COLUMN MAJOR, C++ IS ROW MAJOR) of the matrix product of a reflection about the z axis on the left (to change to left-handed coordinates) and the appropriate view transform
+    
+    
+    
+    //MODELVIEW MATRIX = VIEW * MODEL
+    
+    GLfloat modelView[4][4];
+    
+    matrixMultiply(modelView, viewTransform, modelTransform);
+    
+    //PERSPECTIVE MATRIX
+    
+    GLfloat znear, zfar, width, height;
+    
+    width = height = .173;
+    
+    znear = .1f;
+    
+    zfar = 10.0;
+    
+    GLfloat perspective[4][4] = {
+        {2*znear/width,              0,                             0,   0},
+        {            0, 2*znear/height,                             0,   0},
+        {            0,              0,-(zfar + znear)/(zfar - znear),-1.0},
+        {            0,              0,   2*zfar*znear/(zfar - znear),   0}
+    };
+    
+    //TOTAL TRANSFORM
+    //TRANSFORM = PERSPECTIVE * MODELVIEW
     
     GLfloat matrix[4][4];
     
-    matrixMultiply(matrix, matrixL, matrixR);
-     
-     /*
+    matrixMultiply(matrix, perspective, modelView);
     
-     GLfloat matrix[4][4] = { //ISOMETRIC
-     {0.707107,        0, -0.707107, 0},
-     {0.408248, 0.816497,  0.408248, 0},
-     { 0.57735, -0.57735,   0.57735, 0},
-     {       0,        0,         0, 1}
-     };
-      
-      */
+    printMatrix(modelTransform);
+    
+    printMatrix(viewTransform);
+    
+    printMatrix(modelView);
+    
+    printMatrix(perspective);
+    
+    printMatrix(matrix);
+    
+    cout << "\n\n\n";
+    
+    ///*
     glVertexAttrib4fv(2, matrix[0]);
     glVertexAttrib4fv(3, matrix[1]);
     glVertexAttrib4fv(4, matrix[2]);
     glVertexAttrib4fv(5, matrix[3]);
-    
-    GLfloat color[3];
-    
-    switch (instance++%4)
-    {
-        case 0:
-            color[0] = 16.0f;
-            color[1] = 0.0f;
-            color[2] = 0.0f;
-            break;
-        case 1:
-            color[0] = 0.0f;
-            color[1] = 16.0f;
-            color[2] = 0.0f;
-            break;
-        case 2:
-            color[0] = 0.0f;
-            color[1] = 0.0f;
-            color[2] = 16.0f;
-            break;
-        case 3:
-            color[0] = 16.0f;
-            color[1] = 16.0f;
-            color[2] = 16.0f;
-            break;
-        default:
-            color[0] = 0.0f;
-            color[1] = 0.0f;
-            color[2] = 0.0f;
-            break;
-    }
-    
-    
-    glVertexAttrib3fv(6, color);
+   // */
+    /*
+    glVertexAttrib4fv(2, modelView[0]);
+    glVertexAttrib4fv(3, modelView[1]);
+    glVertexAttrib4fv(4, modelView[2]);
+    glVertexAttrib4fv(5, modelView[3]);
+    */
     
     glBindTexture(GL_TEXTURE_2D, textureID);
     
@@ -348,9 +368,9 @@ unsigned int vec4r(unsigned char x, unsigned char y, unsigned char z, unsigned c
 Chunk::Chunk(GLint x, GLint y, GLint z):chunkX(x),chunkY(y),chunkZ(z)
 {
     /*
-    modified = true;
-    glGenVertexArrays(1, &vertexArrayObject);
-    glGenBuffers(1, &bufferID);
+     modified = true;
+     glGenVertexArrays(1, &vertexArrayObject);
+     glGenBuffers(1, &bufferID);
      */
 }
 
@@ -377,7 +397,7 @@ void Chunk::update()
     unsigned int vertices[CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE*6*6];
     int i = 0;
     
-
+    
     
     for (unsigned char x = 0; x < CHUNK_SIZE; x++)
     {
@@ -394,29 +414,29 @@ void Chunk::update()
                 vertices[i++] = vec4r(x    , y + 1, z    , blocks[x][y][z]);
                 vertices[i++] = vec4r(x    , y    , z + 1, blocks[x][y][z]);
                 vertices[i++] = vec4r(x    , y + 1, z + 1, blocks[x][y][z]);
-     
-                vertices[i++] = vec4r(x + 1, y + 1, z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4r(x + 1, y    , z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4r(x + 1, y + 1, z    , blocks[x][y][z]);
-                vertices[i++] = vec4r(x + 1, y + 1, z    , blocks[x][y][z]);
-                vertices[i++] = vec4r(x + 1, y    , z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4r(x + 1, y    , z    , blocks[x][y][z]);
-     
-                vertices[i++] = vec4r(x    , y    , z    , blocks[x][y][z]);
-                vertices[i++] = vec4r(x + 1, y    , z    , blocks[x][y][z]);
-                vertices[i++] = vec4r(x    , y    , z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4r(x    , y    , z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4r(x + 1, y    , z    , blocks[x][y][z]);
-                vertices[i++] = vec4r(x + 1, y    , z + 1, blocks[x][y][z]);
                 
                 vertices[i++] = vec4r(x + 1, y + 1, z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z + 1, blocks[x][y][z]);
                 vertices[i++] = vec4r(x + 1, y + 1, z    , blocks[x][y][z]);
-                vertices[i++] = vec4r(x    , y + 1, z + 1, blocks[x][y][z]);
-                vertices[i++] = vec4r(x    , y + 1, z + 1, blocks[x][y][z]);
                 vertices[i++] = vec4r(x + 1, y + 1, z    , blocks[x][y][z]);
-                vertices[i++] = vec4r(x    , y + 1, z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z    , blocks[x][y][z]);
                 
                 vertices[i++] = vec4r(x    , y    , z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y    , z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y    , z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y    , z + 1, blocks[x][y][z]);
+                
+                vertices[i++] = vec4r(x + 1, y + 1, z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y + 1, z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y + 1, z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y + 1, z + 1, blocks[x][y][z]);
+                vertices[i++] = vec4r(x + 1, y + 1, z    , blocks[x][y][z]);
+                vertices[i++] = vec4r(x    , y + 1, z    , blocks[x][y][z]);
+                
+                vertices[i++] = vec4r(x    , y    , z    , blocks[x][y][z]);
                 vertices[i++] = vec4r(x    , y + 1, z    , blocks[x][y][z]);
                 vertices[i++] = vec4r(x + 1, y    , z    , blocks[x][y][z]);
                 vertices[i++] = vec4r(x + 1, y    , z    , blocks[x][y][z]);
@@ -429,7 +449,7 @@ void Chunk::update()
                 vertices[i++] = vec4r(x + 1, y    , z + 1, blocks[x][y][z]);
                 vertices[i++] = vec4r(x    , y + 1, z + 1, blocks[x][y][z]);
                 vertices[i++] = vec4r(x    , y    , z + 1, blocks[x][y][z]);
-                 
+                
             }
         }
     }
@@ -459,28 +479,28 @@ void Chunk::init()
     glGenVertexArrays(1, &vertexArrayObject);
     glGenBuffers(1, &bufferID);
     /*if (chunkX == 0 && chunkY == 0  && chunkZ == 0 )
+     {
+     for (unsigned char x = 0; x < 16; x++)
+     {
+     for (unsigned char y = 0; y < 16; y++)
+     {
+     for (unsigned char z = 0; z < 16; z++)
+     {
+     this->setBlock(x, y, z, 0);
+     }
+     }
+     }
+     }*/
+    for (unsigned char x = 0; x < 16; x++)
     {
-        for (unsigned char x = 0; x < 16; x++)
+        for (unsigned char y = 0; y < 16; y++)
         {
-            for (unsigned char y = 0; y < 16; y++)
+            for (unsigned char z = 0; z < 16; z++)
             {
-                for (unsigned char z = 0; z < 16; z++)
-                {
-                    this->setBlock(x, y, z, 0);
-                }
+                this->setBlock(x, y, z, std::rand()%256 );
             }
         }
-    }*/
-        for (unsigned char x = 0; x < 16; x++)
-        {
-            for (unsigned char y = 0; y < 16; y++)
-            {
-                for (unsigned char z = 0; z < 16; z++)
-                {
-                    this->setBlock(x, y, z, std::rand()%256 );
-                }
-            }
-        }
+    }
     
 }
 
@@ -534,7 +554,7 @@ void Chunk::draw()
         matrixR[3][i] = matrixR[i][0]*posP.x + matrixR[i][1]*posP.y + matrixR[i][2]*posP.z;
     }
     
-     
+    
     
     //cout << x << '\t' << y << '\t' << z << '\n';
     
@@ -554,7 +574,7 @@ void Chunk::draw()
         {0,1,0,0},
         {0,0,1-11.0f/9,20.0f/9},
         {0,0,-1.0f,0}
-
+        
     };
     
     GLfloat matrix[4][4];

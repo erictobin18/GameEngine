@@ -3,7 +3,6 @@
 
 in vec2 tex_coordinate_out;
 in vec4 testingPosition;
-in vec4 instanceF;
 
 layout(location = 0) out vec4 fColor;
 

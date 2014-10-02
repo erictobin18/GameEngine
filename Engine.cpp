@@ -90,7 +90,6 @@ file readFile(string filename)
 Engine::Engine()
 {
     vector<Entity> objectTable;
-    cout << "Added player to newly created objectTable with size " << objectTable.size() << '\n';
 }
 
 void Engine::init()
@@ -98,9 +97,7 @@ void Engine::init()
     System::setGameEngine(this);
     ServerGL::setGameEngine(this);
     gameTerrain.init();
-    cout << "1objectTable size is " << objectTable.size() << '\n'; //returns 1
     createCamera();
-    cout << "2objectTable size is " << objectTable.size() << '\n'; //returns 1
 }
 
 void Engine::mainloop()
@@ -111,20 +108,16 @@ void Engine::mainloop()
     
     while (openGLServer.windowOpen) //animation loop
     {
-        openGLServer.prepareForDrawing(); //clears display, checks if window should closes
+        openGLServer.prepareForDrawing(); //clears display, checks if window should close
         float dt = glfwGetTime() - time;
         time = glfwGetTime();
-        
-        //vect newAlpha = (vect){(std::rand()%9-4)/20.0f,(std::rand()%9-4)/20.0f,(std::rand()%9-4)/20.0f};
-        
-        //cout << objectTable.size() - 1 << '\n';
         
         //(gamePhysics.getComponent(getPhysicsComponent(0)))->setAlpha(newAlpha);
         
         gamePhysics.update(dt);
         gameLogic.update(dt);
         
-        gameTerrain.draw();
+        //gameTerrain.draw();
         
         gameGraphics.update(dt); //draws
         openGLServer.draw();//Graphics must be last call in animation loop
@@ -138,15 +131,12 @@ entityID Engine::createObject()
 
 entityID Engine::createCamera()
 {
-    state s = (state){(vect){0,-2,0},(vect){0,0,0},(quaternion){1,-0.785398f,0,0},(vect){0.2,0,0}};
+    state s = (state){(vect){0,0,-3},(vect){0,0,.1},(quaternion){1,0,0,0},(vect){0,0,0}};
     
     componentID physComp = gamePhysics.newComponent(0, s);
-    cout << "Created Physics Component for Player\n";
     
     player.addPhysicsComponent(physComp);
-    cout << "Added Player Physics Component to Player\n";
     
-    cout << "3objectTable size is " << objectTable.size() << '\n'; //returns 0
     objectTable.push_back(player);
     
     return 0;
@@ -154,34 +144,22 @@ entityID Engine::createCamera()
 
 entityID Engine::createObject(string filename, state s)
 {
-    cout << "5objectTable size is " << objectTable.size() << '\n';
     entityID eid = static_cast<entityID>(objectTable.size());
-    cout << "Adding new Entity to objectTable. EntityID is " << eid << '\n';
     Entity obj(eid, filename + to_string(eid));
-    cout << "Created Entity of type " << filename << '\n';
     
     file f = readFile(filename);
     
     componentID physComp = gamePhysics.newComponent(eid, s);
-    cout << "Added new PhysicsComponent to gamePhysics with ID " << physComp << '\n';
     obj.addPhysicsComponent(physComp);
-    cout << "Added PhysicsComponent with ID " << physComp << " to Entity " << &obj << " with entityID " << eid << '\n';
     
     componentID graphComp = gameGraphics.newComponent(eid, f.m);
-    cout << "Added new GraphicsComponent to gameGraphics with ID " << graphComp << '\n';
     obj.addGraphicsComponent(graphComp);
-    cout << "Added GraphicsComponent with ID " << graphComp << " to Entity " << &obj << " with entityID " << eid << '\n';
     
     componentID logComp = gameLogic.newComponent(eid);
-    cout << "Added new LogicComponent to gameGraphics with ID " << logComp << '\n';
     obj.addLogicComponent(logComp);
-    cout << "Added LogicComponent with ID " << logComp << " to Entity " << &obj << " with entityID " << eid << '\n';
-    
-    cout << "4objectTable size is " << objectTable.size() << '\n';
     
     objectTable.push_back(obj);
     
-    cout << "Added Entity " << &obj << " to objectTable with size " << objectTable.size() << '\n';
     return eid;
 }
 
