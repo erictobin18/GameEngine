@@ -9,54 +9,47 @@
 #include "Entity.h"
 #include "Engine.h"
 
-using namespace std;
-
-Entity::Entity(entityID eid, std::string n) : identity(eid),components(0x0), name(n)
+Entity::Entity(gMath::entityID eid, std::string n) : identity(eid),components(0x0), name(n)
 {
-    cout << "Entity " << name << " with eid " << eid << " created.\n";
-    cout << "Entity address: " << this << "\n\n";
     for (int i = 0; i < 8; i++)
     {
         componentIDs[i] = 0;
     }
 }
-Entity::Entity(entityID eid)
+Entity::Entity(gMath::entityID eid)
 {
     Entity(eid, "NULL");
 }
 
-void Entity::addPhysicsComponent(componentID cid)
+void Entity::addPhysicsComponent(gMath::componentID cid)
 {
     componentIDs[1] = cid;
-    components = components | physicsType;
-    cout << "Entity " << name << " linked with Physics Component with ID " << cid << "\n";
+    components = components | gMath::physicsType;
 }
-void Entity::addGraphicsComponent(componentID cid)
+void Entity::addGraphicsComponent(gMath::componentID cid)
 {
     componentIDs[2] = cid;
-    components = components | graphicsType;
-    cout << "Entity " << name << " linked with Graphics Component with ID " << cid << "\n";
+    components = components | gMath::graphicsType;
 }
-void Entity::addLogicComponent(componentID cid)
+void Entity::addLogicComponent(gMath::componentID cid)
 {
     componentIDs[4] = cid;
-    components = components | logicType;
-    cout << "Entity " << name << " linked with Logic Component with ID " << cid << "\n";
+    components = components | gMath::logicType;
 }
 
 
-void Entity::removeComponent(bit_field type)
+void Entity::removeComponent(gMath::bit_field type)
 {
     if (hasComponent(type))
         components -= type;
 }
 
-bool Entity::hasComponent(bit_field type)
+bool Entity::hasComponent(gMath::bit_field type)
 {
     return (components & type) > 0;
 }
 
-componentID Entity::getComponentID(bit_field type)
+gMath::componentID Entity::getComponentID(gMath::bit_field type)
 {
     if (!hasComponent(type))
         return -1;

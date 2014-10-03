@@ -10,7 +10,7 @@
 #define _SERVER_GL_H_
 
 #include <iostream>
-#include "GlobalConstants.h"
+#include "GraphicsMath.h"
 #include <OpenGL/gl3.h>
 #include <OpenGL/gl3ext.h>
 
@@ -28,11 +28,13 @@ public:
     void prepareForDrawing(); //called every drawing cycle BEFORE any components can draw
     void draw(); //last call to openGL in a given drawing cycle
     bool windowOpen; //true iff window is open
-    static void reportGLError(); //Prints error type to cout
+    //static void reportGLError(); //Prints error type to cout
     static void setGameEngine(Engine *gEngine);
     
     static GLuint normalProgram;
     static GLuint terrainProgram;
+    
+    static GLfloat glTransform[4][4];
     
     static Engine *gameEngine;
     
@@ -45,14 +47,14 @@ protected:
 class GraphicsObject //every GraphicsComponent has a GraphicsObject
 {
 public:
-    GraphicsObject(mesh m);
+    GraphicsObject(gMath::mesh m);
     GraphicsObject();
     ~GraphicsObject();
     
-    void draw(vect position, quaternion orientation); //must be called after ServerGL::prepareForDrawing but before ServerGL::draw
+    void draw(gMath::vect position, gMath::quaternion orientation); //must be called after ServerGL::prepareForDrawing but before ServerGL::draw
     static GLubyte instance;
     
-    static void matrixMultiply(GLfloat matOut[4][4], GLfloat matLeft[4][4], GLfloat matRight[4][4]);
+    //static void matrixMultiply(GLfloat matOut[4][4], GLfloat matLeft[4][4], GLfloat matRight[4][4]);
 
 protected:
    

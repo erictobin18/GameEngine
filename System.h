@@ -11,7 +11,7 @@
 
 
 #include <iostream>
-#include "GlobalConstants.h"
+#include "GraphicsMath.h"
 #include "Component.h" //required for component vector definitions
 
 class Engine; //Forward declaration to keep Engine.h out of header includes
@@ -24,8 +24,8 @@ public:
     virtual void update( float dt )=0; //All systems must update all their components every loop
     // This recieves any messages sent to the core engine in Engine.cpp
     //virtual void SendMessage( /*message *msg */ )=0;
-    virtual componentID newComponent(entityID eid)=0; //creates and sets up a new Component of appropriate type
-    void removeComponent(componentID cid); //removes a component from the component table
+    virtual gMath::componentID newComponent(gMath::entityID eid)=0; //creates and sets up a new Component of appropriate type
+    void removeComponent(gMath::componentID cid); //removes a component from the component table
     static void setGameEngine(Engine *gEngine); //consider working this method into the constructor
     virtual ~System();
     
@@ -40,9 +40,9 @@ class Physics : System
 public:
     Physics();
     void update( float dt);
-    PhysicsComponent *getComponent(componentID cid); //looks up a component in its table
-    componentID newComponent(entityID eid);
-    componentID newComponent(entityID eid, state s);
+    PhysicsComponent *getComponent(gMath::componentID cid); //looks up a component in its table
+    gMath::componentID newComponent(gMath::entityID eid);
+    gMath::componentID newComponent(gMath::entityID eid, gMath::state s);
     ~Physics();
     
 protected:
@@ -54,9 +54,9 @@ class Graphics : System
 public:
     Graphics();
     void update( float dt);
-    GraphicsComponent *getComponent(componentID cid); //looks up a component in its table
-    componentID newComponent(entityID eid);
-    componentID newComponent(entityID eid, mesh m);
+    GraphicsComponent *getComponent(gMath::componentID cid); //looks up a component in its table
+    gMath::componentID newComponent(gMath::entityID eid);
+    gMath::componentID newComponent(gMath::entityID eid, gMath::mesh m);
     ~Graphics();
     
 protected:
@@ -68,8 +68,8 @@ class Logic : System
 public:
     Logic();
     void update( float dt);
-    LogicComponent *getComponent(componentID cid); //looks up a component in its table
-    componentID newComponent(entityID eid);
+    LogicComponent *getComponent(gMath::componentID cid); //looks up a component in its table
+    gMath::componentID newComponent(gMath::entityID eid);
     ~Logic();
     
 protected:

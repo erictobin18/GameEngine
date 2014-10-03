@@ -10,7 +10,7 @@
 #define _ENGINE_H_
 
 #include <iostream>
-#include "GlobalConstants.h"
+#include "GraphicsMath.h"
 #include "Entity.h" //required for objectTable declaration
 
 class Physics;
@@ -27,16 +27,16 @@ public:
     void init();
     
     void mainloop(); //contains infinite while loop that runs game
-    entityID createObject(); //adds a new entity to the objectTable
-    entityID createObject(std::string filename);
-    entityID createObject(std::string filename, state s);
+    gMath::entityID createObject(); //adds a new entity to the objectTable
+    gMath::entityID createObject(std::string filename);
+    gMath::entityID createObject(std::string filename, gMath::state s);
     
-    entityID createCamera();
+    gMath::entityID createCamera();
     double getTime(); //wraps the GLFW command
     
-    componentID getPhysicsComponent(entityID eid); //looks up component associated with an entity in the objectTable
-    componentID getGraphicsComponent(entityID eid);
-    componentID getLogicComponent(entityID eid);
+    gMath::componentID getPhysicsComponent(gMath::entityID eid); //looks up component associated with an entity in the objectTable
+    gMath::componentID getGraphicsComponent(gMath::entityID eid);
+    gMath::componentID getLogicComponent(gMath::entityID eid);
     
     static Physics gamePhysics; //Physics system
     static Graphics gameGraphics; //Graphics system

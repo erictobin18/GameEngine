@@ -10,7 +10,7 @@
 #define _Terrain_
 
 #include <stdio.h>
-#include "GlobalConstants.h"
+#include "GraphicsMath.h"
 #include "ServerGL.h"
 
 class Terrain

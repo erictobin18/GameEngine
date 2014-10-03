@@ -10,11 +10,12 @@
 
 Terrain::Terrain() 
 {
-    for (int x = -8; x < 8; x+=2)
+  
+    for (int x = 0; x < 1; x+=1)
     {
-        for (int y = -8; y < 8; y+=2)
+        for (int y = 0; y < 1; y+=1)
         {
-            for (int z = 0; z < 4; z+=2)
+            for (int z = 0; z < 1; z+=1)
             {
                 Chunk temp(x,y,z);
                 chunks.push_back(temp);

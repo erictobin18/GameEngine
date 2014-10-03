@@ -10,54 +10,54 @@
 
 using namespace std;
 
-Component::Component(componentID cid, entityID eid) : identity(cid), entityIdentity(eid)
+Component::Component(gMath::componentID cid, gMath::entityID eid) : identity(cid), entityIdentity(eid)
 {
     cout << "Component with componentID " << cid << " linked to Entity with entityID " << eid << " created.\n";
 }
 
-componentID Component::getIdentity()
+gMath::componentID Component::getIdentity()
 {
     return identity;
 }
-entityID Component::getEntity()
+gMath::entityID Component::getEntity()
 {
     return entityIdentity;
 }
 
-PhysicsComponent::PhysicsComponent(componentID cid, entityID eid, state s): Component(cid, eid), entityState(s)
+PhysicsComponent::PhysicsComponent(gMath::componentID cid, gMath::entityID eid, gMath::state s): Component(cid, eid), entityState(s)
 {
     
 }
-PhysicsComponent::PhysicsComponent(componentID cid, entityID eid) : Component(cid, eid)
+PhysicsComponent::PhysicsComponent(gMath::componentID cid, gMath::entityID eid) : Component(cid, eid)
 {
-    state s;
+    gMath::state s;
     PhysicsComponent(cid, eid, s);
 }
 
-state * PhysicsComponent::getState()
+gMath::state * PhysicsComponent::getState()
 {
     return & entityState;
 }
 
-void PhysicsComponent::setState(state s)
+void PhysicsComponent::setState(gMath::state s)
 {
     entityState = s;
 }
 
-void PhysicsComponent::setAlpha(vect alpha)
+void PhysicsComponent::setAlpha(gMath::vect alpha)
 {
     entityAlpha = alpha;
     //cout << "Set Alpha for PhysicsComponent " << this << '\n';
 }
-vect PhysicsComponent::getAlpha()
+gMath::vect PhysicsComponent::getAlpha()
 {
     return entityAlpha;
 }
-void PhysicsComponent::setAcceleration(vect accel)
+void PhysicsComponent::setAcceleration(gMath::vect accel)
 {
     entityAccel = accel;
 }
-vect PhysicsComponent::getAcceleration()
+gMath::vect PhysicsComponent::getAcceleration()
 {
     return entityAccel;
 }
@@ -70,34 +70,34 @@ void PhysicsComponent::killMotion()
 }
 
 
-GraphicsComponent::GraphicsComponent(componentID cid, entityID eid, mesh m) : Component(cid, eid), componentMesh(m)
+GraphicsComponent::GraphicsComponent(gMath::componentID cid, gMath::entityID eid, gMath::mesh m) : Component(cid, eid), componentMesh(m)
 {
     GraphicsObject gObject(m);
     obj = gObject;
 }
-GraphicsComponent::GraphicsComponent(componentID cid, entityID eid) : Component(cid, eid)
+GraphicsComponent::GraphicsComponent(gMath::componentID cid, gMath::entityID eid) : Component(cid, eid)
 {
-    mesh m;
+    gMath::mesh m;
     GraphicsComponent(cid, eid, m);
 }
 
 
-mesh GraphicsComponent::getMesh()
+gMath::mesh GraphicsComponent::getMesh()
 {
     return componentMesh;
 }
 
-void GraphicsComponent::setMesh(mesh newMesh)
+void GraphicsComponent::setMesh(gMath::mesh newMesh)
 {
     componentMesh = newMesh;
 }
 
-void GraphicsComponent::draw(vect position, quaternion orientation)
+void GraphicsComponent::draw(gMath::vect position, gMath::quaternion orientation)
 {
     obj.draw(position, orientation);
 }
 
-LogicComponent::LogicComponent(componentID cid, entityID eid) : Component(cid, eid)
+LogicComponent::LogicComponent(gMath::componentID cid, gMath::entityID eid) : Component(cid, eid)
 {
     
 }

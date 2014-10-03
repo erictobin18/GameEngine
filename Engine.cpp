@@ -15,8 +15,6 @@
 #include <json/json.h>
 #include <fstream>
 
-using namespace std;
-
 Physics Engine::gamePhysics;
 Graphics Engine::gameGraphics;
 Logic Engine::gameLogic;
@@ -27,14 +25,15 @@ Terrain Engine::gameTerrain;
 
 Entity Engine::player(0,"Player");
 
-file readFile(string filename)
+gMath::file readFile(std::string filename)
 {
+    using namespace std;
     ifstream str("Objects/" + filename + ".json");
     
     if (!str)
     {
         cout << "Failed to find file named " + filename + " in objects directory.\n";
-        return file();
+        return gMath::file();
     }
     
     str.seekg(0,ios_base::end);
@@ -52,7 +51,7 @@ file readFile(string filename)
     
     const Json::Value verts = root["vertices"];
     
-    vector<vertex> vertices = *new vector<vertex>(verts.size());
+    vector<gMath::vertex> vertices = *new vector<gMath::vertex>(verts.size());
     
     for (int i = 0; i < verts.size(); i++)
     {
@@ -81,15 +80,15 @@ file readFile(string filename)
     if (error)
         cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
      
-    mesh m = {vertices, indices, texture, texWidth, texHeight};
+    gMath::mesh m = {vertices, indices, texture, texWidth, texHeight};
      
-    file f = {m};
+    gMath::file f = {m};
     return f;
 }
 
 Engine::Engine()
 {
-    vector<Entity> objectTable;
+    std::vector<Entity> objectTable;
 }
 
 void Engine::init()
@@ -104,7 +103,7 @@ void Engine::mainloop()
 {
     time = glfwGetTime();
     
-    (gamePhysics.getComponent(getPhysicsComponent(0)))->setAlpha((vect){0,0,0}); //some state gets set in this call
+    (gamePhysics.getComponent(getPhysicsComponent(0)))->setAlpha((gMath::vect){0,0,0}); //some state gets set in this call
     
     while (openGLServer.windowOpen) //animation loop
     {
@@ -122,18 +121,18 @@ void Engine::mainloop()
         gameGraphics.update(dt); //draws
         openGLServer.draw();//Graphics must be last call in animation loop
     } //while
-    cout << "Execution Terminated\n"; //Finish
+    std::cout << "Execution Terminated\n"; //Finish
 }
-entityID Engine::createObject()
+gMath::entityID Engine::createObject()
 {
     return createObject("rotatingCube");
 }
 
-entityID Engine::createCamera()
+gMath::entityID Engine::createCamera()
 {
-    state s = (state){(vect){0,0,-3},(vect){0,0,.1},(quaternion){1,0,0,0},(vect){0,0,0}};
+    gMath::state s = (gMath::state){(gMath::vect){0,0,1},(gMath::vect){0,0,0},(gMath::quaternion){1,0,0,0},(gMath::vect){0.5,0,0}};
     
-    componentID physComp = gamePhysics.newComponent(0, s);
+    gMath::componentID physComp = gamePhysics.newComponent(0, s);
     
     player.addPhysicsComponent(physComp);
     
@@ -142,20 +141,20 @@ entityID Engine::createCamera()
     return 0;
 }
 
-entityID Engine::createObject(string filename, state s)
+gMath::entityID Engine::createObject(std::string filename, gMath::state s)
 {
-    entityID eid = static_cast<entityID>(objectTable.size());
-    Entity obj(eid, filename + to_string(eid));
+    gMath::entityID eid = static_cast<gMath::entityID>(objectTable.size());
+    Entity obj(eid, filename + std::to_string(eid));
     
-    file f = readFile(filename);
+    gMath::file f = readFile(filename);
     
-    componentID physComp = gamePhysics.newComponent(eid, s);
+    gMath::componentID physComp = gamePhysics.newComponent(eid, s);
     obj.addPhysicsComponent(physComp);
     
-    componentID graphComp = gameGraphics.newComponent(eid, f.m);
+    gMath::componentID graphComp = gameGraphics.newComponent(eid, f.m);
     obj.addGraphicsComponent(graphComp);
     
-    componentID logComp = gameLogic.newComponent(eid);
+    gMath::componentID logComp = gameLogic.newComponent(eid);
     obj.addLogicComponent(logComp);
     
     objectTable.push_back(obj);
@@ -163,22 +162,22 @@ entityID Engine::createObject(string filename, state s)
     return eid;
 }
 
-entityID Engine::createObject(string filename)
+gMath::entityID Engine::createObject(std::string filename)
 {
-    state s = (state){(vect){0,0,0} , (vect){1,0,0} , (quaternion){1.0, 0.0, 0.0, 0.0} , (vect){0,0.5,0.25}};
+    gMath::state s = (gMath::state){(gMath::vect){0,0,0} , (gMath::vect){1,0,0} , (gMath::quaternion){1.0, 0.0, 0.0, 0.0} , (gMath::vect){0,0.5,0.25}};
     return createObject(filename, s);
 }
 
 
-componentID Engine::getPhysicsComponent(entityID eid)
+gMath::componentID Engine::getPhysicsComponent(gMath::entityID eid)
 {
-    return objectTable.at(eid).getComponentID(physicsType);
+    return objectTable.at(eid).getComponentID(gMath::physicsType);
 }
-componentID Engine::getGraphicsComponent(entityID eid)
+gMath::componentID Engine::getGraphicsComponent(gMath::entityID eid)
 {
-    return objectTable.at(eid).getComponentID(graphicsType);
+    return objectTable.at(eid).getComponentID(gMath::graphicsType);
 }
-componentID Engine::getLogicComponent(entityID eid)
+gMath::componentID Engine::getLogicComponent(gMath::entityID eid)
 {
-    return objectTable.at(eid).getComponentID(logicType);
+    return objectTable.at(eid).getComponentID(gMath::logicType);
 }

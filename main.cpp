@@ -9,7 +9,7 @@
 #include <iostream>
 #include "Engine.h"
 #include "ServerGL.h"
-#include "GlobalConstants.h"
+#include "GraphicsMath.h"
 
 using namespace std;
 
@@ -20,7 +20,7 @@ int main(int argc, const char *argv[])
     
     gameEngine.init();
     
-    gameEngine.createObject("rotatingCube", (state){(vect){0,0,0}, (vect){0,0,0}, (quaternion){1.0,0.0,0.0,0.0},(vect){0.5,0.5,0.5}});
+    gameEngine.createObject("rotatingCube", (gMath::state){(gMath::vect){0,0,0}, (gMath::vect){0,0,0}, (gMath::quaternion){1.0,0.0,0.0,0.0},(gMath::vect){0,0,0}});
     
     //gameEngine.createObject("rotatingCube", (state){(vect){-.75, .75,0}, (vect){0,0,0}, (quaternion){1.0,0.0,0.0,0.0},(vect){-.3,.3,0}});
     

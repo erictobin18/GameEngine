@@ -10,59 +10,59 @@
 #define _COMPONENT_H_
 
 #include <iostream>
-#include "GlobalConstants.h"
+#include "GraphicsMath.h"
 #include "ServerGL.h" //required for some reason to declare: GraphicsObject obj;
 
 class Component //contains data required to update a specific type of system (e.g. "Physics")
 {
 public:
-    Component(componentID cid, entityID eid); 
-    componentID getIdentity(); //returns this component's componentID (index in the component table in the appropriate system)
-    entityID getEntity(); //returns the index of the associated entity in the objectTable (in the engine)
+    Component(gMath::componentID cid, gMath::entityID eid);
+    gMath::componentID getIdentity(); //returns this component's componentID (index in the component table in the appropriate system)
+    gMath::entityID getEntity(); //returns the index of the associated entity in the objectTable (in the engine)
     
 protected:
-    componentID identity;
-    entityID entityIdentity;
+    gMath::componentID identity;
+    gMath::entityID entityIdentity;
 };
 
 class PhysicsComponent : public Component
 {
 public:
-    PhysicsComponent(componentID cid, entityID eid, state s); 
-    PhysicsComponent(componentID cid, entityID eid);
+    PhysicsComponent(gMath::componentID cid, gMath::entityID eid, gMath::state s);
+    PhysicsComponent(gMath::componentID cid, gMath::entityID eid);
     
-    state *getState(); //accessors for entityState
-    void setState(state);
-    void setAlpha(vect alpha);
-    vect getAlpha(); //PASS BY VALUE!!! CANNOT ACCESS!!! FUCK JAVA
-    void setAcceleration(vect accel);
-    vect getAcceleration(); //PASS BY VALUE!!! CANNOT ACCESS!!! FUCK JAVA
+    gMath::state *getState(); //accessors for entityState
+    void setState(gMath::state);
+    void setAlpha(gMath::vect alpha);
+    gMath::vect getAlpha(); //PASS BY VALUE!!! CANNOT ACCESS!!! FUCK JAVA
+    void setAcceleration(gMath::vect accel);
+    gMath::vect getAcceleration(); //PASS BY VALUE!!! CANNOT ACCESS!!! FUCK JAVA
     void killMotion();
 protected:
-    state entityState;
-    vect entityAlpha;
-    vect entityAccel;
+    gMath::state entityState;
+    gMath::vect entityAlpha;
+    gMath::vect entityAccel;
 };
 
 class GraphicsComponent : public Component
 {
 public:
-    GraphicsComponent(componentID cid, entityID eid, mesh m);
-    GraphicsComponent(componentID cid, entityID eid);
+    GraphicsComponent(gMath::componentID cid, gMath::entityID eid, gMath::mesh m);
+    GraphicsComponent(gMath::componentID cid, gMath::entityID eid);
     
-    mesh getMesh(); //accessors for componentMesh
-    void setMesh(mesh newMesh);
-    void draw(vect position, quaternion orientation); //draws the component by invoking OpenGL server drawing command
+    gMath::mesh getMesh(); //accessors for componentMesh
+    void setMesh(gMath::mesh newMesh);
+    void draw(gMath::vect position, gMath::quaternion orientation); //draws the component by invoking OpenGL server drawing command
     
 protected:
-    mesh componentMesh;
+    gMath::mesh componentMesh;
     GraphicsObject obj;
 };
 
 class LogicComponent : public Component
 {
 public:
-    LogicComponent(componentID cid, entityID eid);
+    LogicComponent(gMath::componentID cid, gMath::entityID eid);
 };
 
 #endif
