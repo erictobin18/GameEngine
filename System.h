@@ -87,11 +87,14 @@ public:
     static void mouseFunction(GLFWwindow * window, double xpos, double ypos);
     static void keyFunction(GLFWwindow * window, int key, int scancode, int action, int modifierKeys);
     gMath::componentID newComponent(gMath::entityID eid);
+    
+    static double altitude, azimuth;
+    
     static bool isJumping;
     ~Input();
 protected:
     InputComponent inComp;
-    static gMath::vect omegaUpdate;
+    //static gMath::vect omegaUpdate;
     static char xVel;
     static char yVel;
 };

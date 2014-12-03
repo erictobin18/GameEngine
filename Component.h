@@ -41,11 +41,9 @@ public:
     gMath::vect getOmega();
     void killMotion();
     
-    bool rollEnabled;
     bool gravityEnabled;
     bool terrainEnabled;
-    
-    bool isJumping;
+    bool mouseControl;
 protected:
     gMath::state entityState;
     gMath::vect entityAlpha;

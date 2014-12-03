@@ -107,9 +107,9 @@ void Engine::init()
     gMath::componentID physComp = gamePhysics.newComponent(0, s);
     gameInput.newComponent(0);
     
-    gamePhysics.getComponent(physComp)->rollEnabled = false;
     gamePhysics.getComponent(physComp)->gravityEnabled = true;
     gamePhysics.getComponent(physComp)->terrainEnabled = true;
+    gamePhysics.getComponent(physComp)->mouseControl = true;
     
     player.addPhysicsComponent(physComp);
     

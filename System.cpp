@@ -60,25 +60,23 @@ void Physics::update(float dt)
         
         gMath::state *s = components.at(i).getState();
         
-        computeAlpha(&(components.at(i)));
-        computeAccel(&(components.at(i)));
-        
-        s->orientation = scalarMultiply(s->orientation,1/gMath::magnitude(s->orientation)); //normalizes quaternion
-        s->orientation = hMultiply(padVector(gMath::scalarMultiply(s->omega,dt/2), 1),s->orientation);
-        
-        if (!components.at(i).rollEnabled)
+        if (components.at(i).mouseControl)
         {
+            double altitude = Input::altitude;
+            double azimuth = Input::azimuth;
             //orient object so "up" is in the z direction by rolling the object around its local x axis
             //First, find altitude and azimuth:
+            /*
             double arg = -2 * s->orientation.s * s->orientation.j + 2 * s->orientation.i * s->orientation.k;
-            if (arg < -1.0)
+            while (arg < -1.0)
             {
-                arg = -1.0;
+                arg += 1.0;
             }
-            else if (arg > 1.0)
+            while (arg > 1.0)
             {
-                arg = 1.0;
+                arg -= 1.0;
             }
+            
             double altitude = asin(arg);
             double azimuth = atan((2*s->orientation.i*s->orientation.j+2*s->orientation.s*s->orientation.k)/(s->orientation.s*s->orientation.s+s->orientation.i*s->orientation.i-s->orientation.j*s->orientation.j-s->orientation.k*s->orientation.k));
             if ((s->orientation.s*s->orientation.s+s->orientation.i*s->orientation.i-s->orientation.j*s->orientation.j-s->orientation.k*s->orientation.k) < 0)
@@ -86,6 +84,7 @@ void Physics::update(float dt)
                 azimuth = azimuth + M_PI;
             }
             
+             */
             //std::cout << "ALTITUDE: " << altitude << " AZIMUTH: " << azimuth << '\n';
             
             s->orientation.s =  cos(altitude/2)*cos(azimuth/2);
@@ -93,17 +92,28 @@ void Physics::update(float dt)
             s->orientation.j = -sin(altitude/2)*cos(azimuth/2);
             s->orientation.k =  cos(altitude/2)*sin(azimuth/2);
         }
+        else
+        {
+            computeAlpha(&(components.at(i)));
+            s->orientation = scalarMultiply(s->orientation,1/gMath::magnitude(s->orientation)); //normalizes quaternion
+            s->orientation = hMultiply(padVector(gMath::scalarMultiply(s->omega,dt/2), 1),s->orientation);
+            s->omega = addVect(s->omega, gMath::scalarMultiply(components.at(i).getAlpha(), dt));
+        }
         
-        //cout << "Updating PhysicsComponent with ID " << i << '\n' << "Address: " << &components.at(i);
-        //cout << "Omega Components initial: " << s->omega.x << ", " << s->omega.y << ", " << s->omega.z << '\n';
         
-        s->omega = addVect(s->omega, gMath::scalarMultiply(components.at(i).getAlpha(), dt));
         
-        //cout << "Omega Components final: " << s->omega.x << ", " << s->omega.y << ", " << s->omega.z << "\n\n";
+        
+        
+        computeAccel(&(components.at(i)));
         
         if (components.at(i).terrainEnabled)
         {
+            std::cout << "pos.x: " << s->pos.x << '\n';
+            std::cout << "vel.x: " << s->vel.x << '\n';
+            
             gMath::vect tempPos = addVect(s->pos, gMath::scalarMultiply(s->vel, dt));
+            
+            std::cout << "tempX: " << tempPos.x << '\n';
             
             float posX = (int)s->pos.x;
             float posY = (int)s->pos.y;
@@ -111,22 +121,32 @@ void Physics::update(float dt)
             float posXf = s->pos.x - posX;
             float delX = tempPos.x - s->pos.x;
             
+            std::cout << "posX:  " << posX << '\n';
+            std::cout << "posXf: " << posXf << '\n';
+            std::cout << "delX:  " << delX << '\n';
             
             
             if (posXf < .75 && posXf + delX > .75 && (gameEngine->gameTerrain).getBlock(posX + 1,posY,posZ))
             {
                 s->pos.x = posX + .75;
                 s->vel.x = 0.0f;
+                
+                std::cout << "pos.x: " << s->pos.x << '\n';
+                std::cout << "vel.x: " << s->vel.x << "\n\n";
             }
             else if (posXf > .25 && posXf + delX < .25 && (gameEngine->gameTerrain).getBlock(posX - 1,posY,posZ))
             {
                 s->pos.x = posX + .25;
                 s->vel.x = 0.0f;
+                std::cout << "pos.x: " << s->pos.x << '\n';
+                std::cout << "vel.x: " << s->vel.x << "\n\n";
             }
             else
             {
                 s->pos.x = s->pos.x + delX;
                 s->vel.x = s->vel.x + components.at(i).getAcceleration().x * dt;
+                std::cout << "pos.x: " << s->pos.x << '\n';
+                std::cout << "vel.x: " << s->vel.x << "\n\n";
             }
             
             float posYf = s->pos.y - posY;
@@ -160,7 +180,7 @@ void Physics::update(float dt)
             else if (posZf >= .60 && posZf + delZ < .60 && (gameEngine->gameTerrain).getBlock(posX,posY,posZ - 2))
             {
                 s->pos.z = posZ + .60;
-                s->vel.z = 0.0f + components.at(i).isJumping*4.0f;
+                s->vel.z = 0.0f + components.at(i).mouseControl*Input::isJumping*5.5f;
             }
             else
             {
@@ -169,7 +189,6 @@ void Physics::update(float dt)
             }
 
         }
-        
         else
         {
             s->pos = addVect(s->pos, gMath::scalarMultiply(s->vel, dt)); // x = x + dt*(dx/dt)
@@ -272,10 +291,12 @@ Logic::~Logic()
 
 
 //---------------------------------------------------------------------------------------------------------------------
-
-gMath::vect Input::omegaUpdate = (gMath::vect){0,0,0};
 char Input::xVel = 0;
 char Input::yVel = 0;
+
+double Input::altitude = 0.0;
+double Input::azimuth = 0.0;
+
 bool Input::isJumping = false;
 
 Input::Input() : System(), inComp(InputComponent(0,0))
@@ -287,17 +308,18 @@ void Input::update(float dt)
     //Set camera updates here
     PhysicsComponent *physComp =gameEngine->gamePhysics.getComponent( gameEngine->getPhysicsComponent(gameEngine->cameraEntity));
     
-    physComp->setOmega(omegaUpdate);
     
-    gMath::quaternion oC = physComp->getState()->orientation;
-    float scale = (1.0f - 4 * oC.s*oC.s*oC.j*oC.j + 8*oC.s*oC.i*oC.j*oC.k - 4*oC.i*oC.i*oC.k*oC.k)/10.0;
+    //gMath::quaternion oC = physComp->getState()->orientation;
+    //float scale = (1.0f - 4 * oC.s*oC.s*oC.j*oC.j + 8*oC.s*oC.i*oC.j*oC.k - 4*oC.i*oC.i*oC.k*oC.k)/4.5;
     
-    if (physComp->getState()->vel.x*physComp->getState()->vel.x + physComp->getState()->vel.y*physComp->getState()->vel.y < 2/(scale*scale))
+    //std::cout << "scale: " << scale << '\n';
+    
+    if (physComp->getState()->vel.x*physComp->getState()->vel.x + physComp->getState()->vel.y*physComp->getState()->vel.y < 32.1)
     {
-        physComp->getState()->vel.x = xVel*(oC.s*oC.s + oC.i*oC.i - oC.j*oC.j-oC.k*oC.k)/scale + yVel*(-2*oC.i*oC.j - 2*oC.k*oC.s)/scale;
-        physComp->getState()->vel.y = xVel*(2*oC.i*oC.j + 2*oC.k*oC.s)/scale + yVel*(oC.s*oC.s + oC.i*oC.i - oC.j*oC.j-oC.k*oC.k)/scale;
+        physComp->getState()->vel.x = 4*(xVel*cos(azimuth) - yVel*sin(azimuth));
+        physComp->getState()->vel.y = 4*(xVel*sin(azimuth) + yVel*cos(azimuth));
     }
-    physComp->isJumping = isJumping;
+    //physComp->isJumping = isJumping;
 }
 
 gMath::componentID Input::newComponent(gMath::entityID eid)
@@ -314,12 +336,33 @@ InputComponent *Input::getComponent()
 
 void Input::mouseFunction(GLFWwindow * window, double xpos, double ypos)
 {
-    PhysicsComponent *cameraComponent = gameEngine->gamePhysics.getComponent( gameEngine->getPhysicsComponent(gameEngine->cameraEntity));
+    altitude = -(ypos)/400.0;
+    if (altitude < -M_PI/2)
+    {
+        altitude = -M_PI/2;
+    }
+    else if (altitude > M_PI/2)
+    {
+        altitude = M_PI/2;
+    }
     
-    gMath::quaternion oC = cameraComponent->getState()->orientation;
+    azimuth = -xpos/400.0;
+    while (azimuth < -M_PI)
+    {
+        azimuth += 2*M_PI;
+    }
+    while (azimuth > M_PI)
+    {
+        azimuth -= 2*M_PI;
+    }
     
-    float scale = 100.0f*(1.0f - 4 * oC.s*oC.s*oC.j*oC.j + 8*oC.s*oC.i*oC.j*oC.k - 4*oC.i*oC.i*oC.k*oC.k);
+    //PhysicsComponent *cameraComponent = gameEngine->gamePhysics.getComponent( gameEngine->getPhysicsComponent(gameEngine->cameraEntity));
     
+    //gMath::quaternion oC = cameraComponent->getState()->orientation;
+    
+    //float scale = 100.0f*(1.0f - 4 * oC.s*oC.s*oC.j*oC.j + 8*oC.s*oC.i*oC.j*oC.k - 4*oC.i*oC.i*oC.k*oC.k);
+    
+    /*
     
     gMath::vect omega = {0.0f,0.0f,0.0f};
     omega.x =  (ypos-300.0f)*(-2*oC.i*oC.j - 2*oC.k*oC.s)/scale;
@@ -327,6 +370,7 @@ void Input::mouseFunction(GLFWwindow * window, double xpos, double ypos)
     omega.z = -(xpos-300.0f)/100.0f;
     
     omegaUpdate = omega;
+     */
     //std::cout << "MOUSE X: " << floor(xpos) << " MOUSE Y: " << floor(ypos) << '\n';
     //glfwSetCursorPos(window, 300, 300);
 }

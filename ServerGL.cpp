@@ -65,6 +65,10 @@ ServerGL::ServerGL(): windowOpen(false), verbose(false)
         std::cout << "Initiating OpenGL\n";
     glfwMakeContextCurrent(window);
     
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPos(window, 300, 300);
+    
+    
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f); //sets clear color
     glClearDepth(0.0f);
     
@@ -470,8 +474,8 @@ void Chunk::init()
         //std::cout << (int)x << '\n';
         for (unsigned char y = 0; y < CHUNK_SIZE; y++)
         {
-            //unsigned char tempHeight = (unsigned char)(8*(sin(6.28319*(x + y)/(24.0))+1));
-            unsigned char tempHeight = 16;
+            unsigned char tempHeight = (unsigned char)(8*(sin(M_PI*2*(x + y + 5)/(24.0))+1) + 1);
+            //unsigned char tempHeight = 16;
             if (tempHeight > 16)
             {
                 tempHeight = 16;
