@@ -39,6 +39,8 @@ class Physics : System
 {
 public:
     Physics();
+    void computeAlpha(PhysicsComponent *comp);
+    void computeAccel(PhysicsComponent *comp);
     void update( float dt);
     PhysicsComponent *getComponent(gMath::componentID cid); //looks up a component in its table
     gMath::componentID newComponent(gMath::entityID eid);
@@ -74,6 +76,23 @@ public:
     
 protected:
     std::vector<LogicComponent> components; //Logic has Components of type LogicComponent
+};
+
+class Input : System
+{
+public:
+    Input();
+    void update( float dt);
+    InputComponent *getComponent(); //returns the Input Component
+    static void mouseFunction(GLFWwindow * window, double xpos, double ypos);
+    static void keyFunction(GLFWwindow * window, int key, int scancode, int action, int modifierKeys);
+    gMath::componentID newComponent(gMath::entityID eid);
+    ~Input();
+protected:
+    InputComponent inComp;
+    static gMath::vect omegaUpdate;
+    static char xVel;
+    static char yVel;
 };
 
 #endif

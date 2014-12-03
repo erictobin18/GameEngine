@@ -37,9 +37,9 @@ public:
     static GLfloat glTransform[4][4];
     
     static Engine *gameEngine;
+    GLFWwindow *window;
     
 protected:
-    GLFWwindow *window;
     bool verbose;
     
 };
@@ -52,7 +52,6 @@ public:
     ~GraphicsObject();
     
     void draw(gMath::vect position, gMath::quaternion orientation); //must be called after ServerGL::prepareForDrawing but before ServerGL::draw
-    static GLubyte instance;
     
     //static void matrixMultiply(GLfloat matOut[4][4], GLfloat matLeft[4][4], GLfloat matRight[4][4]);
 

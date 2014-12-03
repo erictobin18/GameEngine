@@ -24,7 +24,7 @@ gMath::entityID Component::getEntity()
     return entityIdentity;
 }
 
-PhysicsComponent::PhysicsComponent(gMath::componentID cid, gMath::entityID eid, gMath::state s): Component(cid, eid), entityState(s)
+PhysicsComponent::PhysicsComponent(gMath::componentID cid, gMath::entityID eid, gMath::state s): Component(cid, eid), entityState(s), rollEnabled(true),gravityEnabled(true)
 {
     
 }
@@ -53,6 +53,15 @@ gMath::vect PhysicsComponent::getAlpha()
 {
     return entityAlpha;
 }
+void PhysicsComponent::setOmega(gMath::vect omega)
+{
+    entityState.omega = omega;
+}
+gMath::vect PhysicsComponent::getOmega()
+{
+    return entityState.omega;
+}
+
 void PhysicsComponent::setAcceleration(gMath::vect accel)
 {
     entityAccel = accel;
@@ -98,6 +107,11 @@ void GraphicsComponent::draw(gMath::vect position, gMath::quaternion orientation
 }
 
 LogicComponent::LogicComponent(gMath::componentID cid, gMath::entityID eid) : Component(cid, eid)
+{
+    
+}
+
+InputComponent::InputComponent(gMath::componentID cid, gMath::entityID eid) : Component(cid, eid)
 {
     
 }

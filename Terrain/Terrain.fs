@@ -11,7 +11,9 @@ void main(void)
 {
     //fColor = vec4(1,0,0,1);
     //fColor = vec4(instanceF.a/48.0f,instanceF.a/48.0f,instanceF.a/48.0f,1);
-    fColor = vec4((int(instanceF.a)/64)/3.0f,((int(instanceF.a)/16)%4)/3.0f,((int(instanceF.a)/4)%4)/3.0f,(int(instanceF.a)%4)/3.0f);
+    //int temp = int(instanceF.a);
+    
+    fColor = vec4(instanceF.a/128.0,instanceF.a/256.0,instanceF.a/512.0,1);
 }
 
 

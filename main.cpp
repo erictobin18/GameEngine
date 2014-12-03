@@ -20,9 +20,9 @@ int main(int argc, const char *argv[])
     
     gameEngine.init();
     
-    gameEngine.createObject("rotatingCube", (gMath::state){(gMath::vect){0,0,0}, (gMath::vect){0,0,0}, (gMath::quaternion){1.0,0.0,0.0,0.0},(gMath::vect){0,0,0}});
+    //gameEngine.createObject("rotatingCube", (gMath::state){(gMath::vect){0,0,0}, (gMath::vect){0,0,0}, (gMath::quaternion){1.0,0.3,0.8,-0.2},(gMath::vect){0,0,0}});
     
-    //gameEngine.createObject("rotatingCube", (state){(vect){-.75, .75,0}, (vect){0,0,0}, (quaternion){1.0,0.0,0.0,0.0},(vect){-.3,.3,0}});
+    //gameEngine.createObject("rotatingCube", (gMath::state){(gMath::vect){-1,0,0}, (gMath::vect){1,0,0}, (gMath::quaternion){1.0,0.3,0.8,-0.2},(gMath::vect){0,0,0}});
     
     //gameEngine.createObject("rotatingCube", (state){(vect){ .75,-.75,0}, (vect){0,0,0}, (quaternion){1.0,0.0,0.0,0.0},(vect){.3,-.3,0}});
     

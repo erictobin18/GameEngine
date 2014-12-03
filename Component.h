@@ -37,7 +37,12 @@ public:
     gMath::vect getAlpha(); //PASS BY VALUE!!! CANNOT ACCESS!!! FUCK JAVA
     void setAcceleration(gMath::vect accel);
     gMath::vect getAcceleration(); //PASS BY VALUE!!! CANNOT ACCESS!!! FUCK JAVA
+    void setOmega(gMath::vect omega);
+    gMath::vect getOmega();
     void killMotion();
+    
+    bool rollEnabled;
+    bool gravityEnabled;
 protected:
     gMath::state entityState;
     gMath::vect entityAlpha;
@@ -63,6 +68,12 @@ class LogicComponent : public Component
 {
 public:
     LogicComponent(gMath::componentID cid, gMath::entityID eid);
+};
+
+class InputComponent : public Component
+{
+public:
+    InputComponent(gMath::componentID cid, gMath::entityID eid);
 };
 
 #endif

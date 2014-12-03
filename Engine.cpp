@@ -2,7 +2,7 @@
 //  Engine.cpp
 //  CppProgram
 //
-//  Created by Eric Tobin on 9/12/14.
+//  Created by                                                               Eric Tobin on 9/12/14.
 //  Copyright (c) 2014 omnisciendus. All rights reserved.
 //
 
@@ -18,12 +18,13 @@
 Physics Engine::gamePhysics;
 Graphics Engine::gameGraphics;
 Logic Engine::gameLogic;
+Input Engine::gameInput;
 
 ServerGL Engine::openGLServer;
 
 Terrain Engine::gameTerrain;
 
-Entity Engine::player(0,"Player");
+gMath::entityID Engine::cameraEntity = 0;
 
 gMath::file readFile(std::string filename)
 {
@@ -96,7 +97,22 @@ void Engine::init()
     System::setGameEngine(this);
     ServerGL::setGameEngine(this);
     gameTerrain.init();
-    createCamera();
+    
+    Entity player(0,"Player");
+    
+    cameraEntity = 0;
+    
+    gMath::state s = (gMath::state){(gMath::vect){8,8,18},(gMath::vect){0,0,0},(gMath::quaternion){1,0,0,0},(gMath::vect){0,0,0}};
+    
+    gMath::componentID physComp = gamePhysics.newComponent(0, s);
+    gameInput.newComponent(0);
+    
+    gamePhysics.getComponent(physComp)->rollEnabled = false;
+    gamePhysics.getComponent(physComp)->gravityEnabled = false;
+    
+    player.addPhysicsComponent(physComp);
+    
+    objectTable.push_back(player);
 }
 
 void Engine::mainloop()
@@ -111,12 +127,12 @@ void Engine::mainloop()
         float dt = glfwGetTime() - time;
         time = glfwGetTime();
         
-        //(gamePhysics.getComponent(getPhysicsComponent(0)))->setAlpha(newAlpha);
+        gameInput.update(dt);
         
         gamePhysics.update(dt);
         gameLogic.update(dt);
         
-        //gameTerrain.draw();
+        gameTerrain.draw();
         
         gameGraphics.update(dt); //draws
         openGLServer.draw();//Graphics must be last call in animation loop
@@ -126,19 +142,6 @@ void Engine::mainloop()
 gMath::entityID Engine::createObject()
 {
     return createObject("rotatingCube");
-}
-
-gMath::entityID Engine::createCamera()
-{
-    gMath::state s = (gMath::state){(gMath::vect){0,0,1},(gMath::vect){0,0,0},(gMath::quaternion){1,0,0,0},(gMath::vect){0.5,0,0}};
-    
-    gMath::componentID physComp = gamePhysics.newComponent(0, s);
-    
-    player.addPhysicsComponent(physComp);
-    
-    objectTable.push_back(player);
-    
-    return 0;
 }
 
 gMath::entityID Engine::createObject(std::string filename, gMath::state s)

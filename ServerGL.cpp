@@ -15,7 +15,7 @@
 #define BUFFER_OFFSET(offset) ((void *)(offset))
 #define RESTART_CHAR 0xFFFFFFFF
 
-#define CHUNK_SIZE 4
+#define CHUNK_SIZE 16
 
 GLuint ServerGL::normalProgram = 0;
 GLuint ServerGL::terrainProgram = 0;
@@ -35,6 +35,10 @@ void errorCallback(int error, const char *description)
 
 ServerGL::ServerGL(): windowOpen(false), verbose(false)
 {
+    std::time_t currentTime;
+    std::time(&currentTime);
+    std::srand((int)currentTime);
+    
     glfwSetErrorCallback(errorCallback);
     if (verbose)
         std::cout << "Initiating GLFW\n";
@@ -64,7 +68,7 @@ ServerGL::ServerGL(): windowOpen(false), verbose(false)
     glfwMakeContextCurrent(window);
     
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f); //sets clear color
-    glClearDepth(1.0f);
+    glClearDepth(0.0f);
     
     
     glEnable(GL_CULL_FACE); //<-----------------------------------<<<<<<<<<<<<<<<<<<<<<<<<<<    ***CULL FACE IS HERE***
@@ -74,6 +78,8 @@ ServerGL::ServerGL(): windowOpen(false), verbose(false)
     glEnable(GL_DEPTH_TEST);
     
     glDepthMask(GL_TRUE);
+    
+    glDepthFunc(GL_GREATER);
     
     glEnable(GL_PRIMITIVE_RESTART);
     glPrimitiveRestartIndex(RESTART_CHAR);
@@ -112,8 +118,14 @@ ServerGL::~ServerGL()
 
 void ServerGL::prepareForDrawing()
 {
-    gMath::vect posC = (gameEngine->gamePhysics).getComponent((gameEngine->player).getComponentID(gMath::physicsType))->getState()->pos;
-    gMath::quaternion oC =(gameEngine->gamePhysics).getComponent((gameEngine->player).getComponentID(gMath::physicsType))->getState()->orientation;
+    gMath::vect posC = (gameEngine->gamePhysics).getComponent(gameEngine->getPhysicsComponent(gameEngine->cameraEntity))->getState()->pos;
+    gMath::quaternion oC =(gameEngine->gamePhysics).getComponent(gameEngine->getPhysicsComponent(gameEngine->cameraEntity))->getState()->orientation;
+    
+    //PhysicsComponent *inComp =(gameEngine->gamePhysics).getComponent(gameEngine->getPhysicsComponent(gameEngine->cameraEntity));
+    
+    //std::cout << "Orientation: " << oC.s << '\t' << oC.i << '\t' << oC.j << '\t' << oC.k << '\n';
+    
+    //VIEW MATRIX
     
     GLfloat znear, zfar, width, height;
     
@@ -151,6 +163,11 @@ void ServerGL::prepareForDrawing()
         }
     };
     
+    //PERSPECTIVE MATRIX
+    //THE UNIT QUATERNION ORIENTS THE CAMERA IN THE +x DIRECTION
+    //ROTATIONS ARE DONE AROUND WORLD AXES
+    //FOR ALT/AZIMUTH: 1. ROTATE AROUND Z 2. COMPUTE EYE +x DIRECTION 3. ROTATE AROUND EYE +x DIRECTION
+    
     GLfloat perspectiveMatrix[4][4] =
     {
         {
@@ -179,7 +196,7 @@ void ServerGL::prepareForDrawing()
         }
     };
     
-    
+    gMath::matrixMultiply(glTransform, perspectiveMatrix, viewMatrix);
     
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -190,15 +207,12 @@ void ServerGL::draw()
 {
     glfwSwapBuffers(window);
     glfwPollEvents();
-    //GraphicsObject::instance++;
 }
 
 void ServerGL::setGameEngine(Engine *gEngine)
 {
     gameEngine = gEngine;
 }
-
-GLubyte GraphicsObject::instance = 0;
 
 GraphicsObject::GraphicsObject()
 {
@@ -274,79 +288,18 @@ void GraphicsObject::draw(gMath::vect pos, gMath::quaternion o)
         {2*o.i*o.j + 2*o.s*o.k, o.s*o.s - o.i*o.i + o.j*o.j - o.k*o.k, 2*o.j*o.k - 2*o.s*o.i, pos.y},
         {2*o.i*o.k - 2*o.s*o.j, 2*o.j*o.k + 2*o.s*o.i, o.s*o.s - o.i*o.i - o.j*o.j + o.k*o.k, pos.z},
         {                    0,                     0,              0,                          1.0}
-    }; //matrix should be correct now. Obtained by taking the appropriate model transform
-    
-    
-    
-    
-    gMath::vect posP = (ServerGL::gameEngine->gamePhysics).getComponent((ServerGL::gameEngine->player).getComponentID(gMath::physicsType))->getState()->pos;
-    gMath::quaternion oP =(ServerGL::gameEngine->gamePhysics).getComponent((ServerGL::gameEngine->player).getComponentID(gMath::physicsType))->getState()->orientation;
-    
-    //VIEW TRANSFORM MATRIX
-    
-    GLfloat viewTransform[4][4] = {
-        {oP.s*oP.s + oP.i*oP.i - oP.j*oP.j - oP.k*oP.k, 2*oP.i*oP.j - 2*oP.s*oP.k, 2*oP.i*oP.k + 2*oP.s*oP.j, 0},
-        {2*oP.i*oP.j + 2*oP.s*oP.k, oP.s*oP.s - oP.i*oP.i + oP.j*oP.j - oP.k*oP.k, 2*oP.j*oP.k - 2*oP.s*oP.i, 0},
-        {-2*oP.i*oP.k + 2*oP.s*oP.j, -2*oP.j*oP.k - 2*oP.s*oP.i, -oP.s*oP.s + oP.i*oP.i + oP.j*oP.j - oP.k*oP.k, 0},
-        {0,                      0,                         0,                                              1.0}
     };
     
-    viewTransform[0][3] = -viewTransform[0][0]*posP.x - viewTransform[0][1]*posP.y - viewTransform[0][2]*posP.z;
-    viewTransform[1][3] = -viewTransform[1][0]*posP.x - viewTransform[1][1]*posP.y - viewTransform[1][2]*posP.z;
-    viewTransform[2][3] = -viewTransform[2][0]*posP.x - viewTransform[2][1]*posP.y - viewTransform[2][2]*posP.z;
-    
-    
-    //matrix should be correct now. Obtained by taking the matrix product of a reflection about the z axis on the left (to change to left-handed coordinates) and the appropriate view transform
-    
-    
-    
-    //MODELVIEW MATRIX = VIEW * MODEL
-    
-    GLfloat modelView[4][4];
-    
-    gMath::matrixMultiply(modelView, viewTransform, modelTransform);
-    
-    
-    //------------------------------------------------------------------------------------------------------------------------
-    
-    //PERSPECTIVE MATRIX
-    
-    GLfloat znear, zfar, width, height;
-    
-    width = height = .173;
-    
-    znear = .1f;
-    
-    zfar = 100.0;
-    
-    
-    
-    GLfloat perspective[4][4] = {
-        {2*znear/width,              0,                             0,                           0},
-        {            0, 2*znear/height,                             0,                           0},
-        {            0,              0, -(zfar + znear)/(zfar - znear), 2*zfar*znear/(zfar - znear)},
-        {            0,              0,                           1.0,                           0}
-    };
-    
-     
     //TOTAL TRANSFORM
-    //TRANSFORM = PERSPECTIVE * MODELVIEW
+    //TRANSFORM = GLTRANSFORM * MODELTRANSFORM
     
     GLfloat matrix[4][4];
-    gMath::matrixMultiply(matrix, perspective, modelView);
+    
+    gMath::matrixMultiply(matrix, ServerGL::glTransform, modelTransform);
 
     GLfloat matTrans[4][4];
     
-
-    
     gMath::matrixTranspose(matTrans, matrix);
-    
-    
-    /*
-    std::cout << "\n\nTNT\n";
-    printMatrix(matTrans);
-     
-     */
     
     glVertexAttrib4fv(2, matTrans[0]);
     glVertexAttrib4fv(3, matTrans[1]);
@@ -377,6 +330,7 @@ Chunk::~Chunk()
 
 GLuint Chunk::getBlock(unsigned char x, unsigned char y, unsigned char z)
 {
+    //std::cout << "Hello\n\n";
     return blocks[x][y][z];
 }
 
@@ -393,29 +347,29 @@ void Chunk::update()
     unsigned int vertices[CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE*6*6];
     int i = 0;
     
+    //std::cout << (int)blocks[1][1][0] << "\n\n\n";
     
-    
-    for (unsigned char x = 0; x < CHUNK_SIZE; x+=4)
+    for (unsigned char x = 0; x < CHUNK_SIZE; x++)
     {
-        for (unsigned char y = 0; y < CHUNK_SIZE; y+=4)
+        for (unsigned char y = 0; y < CHUNK_SIZE; y++)
         {
-            for (unsigned char z = 0; z < CHUNK_SIZE; z+=4)
+            for (unsigned char z = 0; z < CHUNK_SIZE; z++)
             {
-                //if (!blocks[x][y][z]) continue;
+                if (!blocks[x][y][z]) continue;
                 
-                std::cout << "x: " << x << " y: " << y << " z: " << z << " i: " << i << '\n';
+                //std::cout << "x: " << x << " y: " << y << " z: " << z << " i: " << i << '\n';
                 
                 /*
                 
                 for (int j = i; j < 24; j++)
                 {
-                    vertices[j] = gMath::vec4r(0, 0, 0, 0);
+                    vertices[j] = gMath::vec4(0, 0, 0, 0);
                     i++;
                 }
                  
                 */
                //  /*
-                vertices[i++] = gMath::vec4r(x    , y    , z    , blocks[x][y][z]);
+                vertices[i++] = gMath::vec4r(x    , y    , z    , blocks[x][y][z]);  //endian-ness
                 vertices[i++] = gMath::vec4r(x    , y    , z + 1, blocks[x][y][z]);
                 vertices[i++] = gMath::vec4r(x    , y + 1, z    , blocks[x][y][z]);
                 vertices[i++] = gMath::vec4r(x    , y + 1, z    , blocks[x][y][z]);
@@ -503,13 +457,26 @@ void Chunk::init()
      }
      }
      }*/
-    for (unsigned char x = 0; x < 16; x++)
+    
+    for (unsigned char x = 0; x < CHUNK_SIZE; x++)
     {
-        for (unsigned char y = 0; y < 16; y++)
+        //std::cout << (int)x << '\n';
+        for (unsigned char y = 0; y < CHUNK_SIZE; y++)
         {
-            for (unsigned char z = 0; z < 16; z++)
+            //unsigned char tempHeight = (unsigned char)(8*(sin(6.28319*(x + y)/(24.0))+1));
+            unsigned char tempHeight = 16;
+            if (tempHeight > 16)
             {
+                tempHeight = 16;
+            }
+            for (unsigned char z = 0; z < tempHeight; z++)
+            {
+                std::rand();
                 this->setBlock(x, y, z, std::rand()%256 );
+            }
+            for (unsigned char z = tempHeight; z < CHUNK_SIZE; z++)
+            {
+                this->setBlock(x, y, z, 0);
             }
         }
     }
@@ -533,69 +500,20 @@ void Chunk::draw()
     //MODEL
     
     GLfloat modelTransform[4][4] = {
-        {1,0,0,chunkX*1.0f},
-        {0,1,0,chunkY*1.0f},
-        {0,0,1,chunkZ*1.0f},
+        {1,0,0,chunkX*16.0f},
+        {0,1,0,chunkY*16.0f},
+        {0,0,1,chunkZ*16.0f},
         {0,0,0,1}
     };
 
-    //VIEW
-    
-    gMath::vect posP = (ServerGL::gameEngine->gamePhysics).getComponent((ServerGL::gameEngine->player).getComponentID(gMath::physicsType))->getState()->pos;
-    gMath::quaternion oP =(ServerGL::gameEngine->gamePhysics).getComponent((ServerGL::gameEngine->player).getComponentID(gMath::physicsType))->getState()->orientation;
-    
-    
-    
-    GLfloat viewTransform[4][4] = {
-        {oP.s*oP.s + oP.i*oP.i - oP.j*oP.j - oP.k*oP.k, 2*oP.i*oP.j - 2*oP.s*oP.k, 2*oP.i*oP.k + 2*oP.s*oP.j, 0},
-        {2*oP.i*oP.j + 2*oP.s*oP.k, oP.s*oP.s - oP.i*oP.i + oP.j*oP.j - oP.k*oP.k, 2*oP.j*oP.k - 2*oP.s*oP.i, 0},
-        {-2*oP.i*oP.k + 2*oP.s*oP.j, -2*oP.j*oP.k - 2*oP.s*oP.i, -oP.s*oP.s + oP.i*oP.i + oP.j*oP.j - oP.k*oP.k, 0},
-        {0,                      0,                         0,                                              1.0}
-    };
-    
-    
-    
-    
-    viewTransform[0][3] = -viewTransform[0][0]*posP.x - viewTransform[0][1]*posP.y - viewTransform[0][2]*posP.z;
-    viewTransform[1][3] = -viewTransform[1][0]*posP.x - viewTransform[1][1]*posP.y - viewTransform[1][2]*posP.z;
-    viewTransform[2][3] = -viewTransform[2][0]*posP.x - viewTransform[2][1]*posP.y - viewTransform[2][2]*posP.z;
-    
-    //MODELVIEW
-    
-    GLfloat modelView[4][4];
-    
-    gMath::matrixMultiply(modelView, viewTransform, modelTransform);
-    
-    //PERSPECTIVE
-    
-    GLfloat znear, zfar, width, height;
-    
-    width = height = .173;
-    
-    znear = .1f;
-    
-    zfar = 100.0;
-    
-    
-    
-    GLfloat perspective[4][4] = {
-        {2*znear/width,              0,                             0,                           0},
-        {            0, 2*znear/height,                             0,                           0},
-        {            0,              0, -(zfar + znear)/(zfar - znear), 2*zfar*znear/(zfar - znear)},
-        {            0,              0,                           1.0,                           0}
-    };
-    
     //TOTAL TRANSFORM
     
     GLfloat matrix[4][4];
-    gMath::matrixMultiply(matrix, perspective, modelView);
+    gMath::matrixMultiply(matrix, ServerGL::glTransform, modelTransform);
     
     GLfloat matTrans[4][4];
     
     gMath::matrixTranspose(matTrans, matrix);
-    
-    std::cout << "CHUNK\n";
-    gMath::printMatrix(matTrans);
     
     glVertexAttrib4fv(2, matTrans[0]);
     glVertexAttrib4fv(3, matTrans[1]);
