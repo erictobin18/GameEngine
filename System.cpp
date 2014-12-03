@@ -10,6 +10,7 @@
 #include "Engine.h"
 #include <math.h>
 #include <GLFW/glfw3.h>
+#include "Terrain.h"
 
 Engine *System::gameEngine;
 
@@ -100,9 +101,80 @@ void Physics::update(float dt)
         
         //cout << "Omega Components final: " << s->omega.x << ", " << s->omega.y << ", " << s->omega.z << "\n\n";
         
-        s->pos = addVect(s->pos, gMath::scalarMultiply(s->vel, dt)); // x = x + dt*(dx/dt)
+        if (components.at(i).terrainEnabled)
+        {
+            gMath::vect tempPos = addVect(s->pos, gMath::scalarMultiply(s->vel, dt));
+            
+            float posX = (int)s->pos.x;
+            float posY = (int)s->pos.y;
+            float posZ = (int)s->pos.z;
+            float posXf = s->pos.x - posX;
+            float delX = tempPos.x - s->pos.x;
+            
+            
+            
+            if (posXf < .75 && posXf + delX > .75 && (gameEngine->gameTerrain).getBlock(posX + 1,posY,posZ))
+            {
+                s->pos.x = posX + .75;
+                s->vel.x = 0.0f;
+            }
+            else if (posXf > .25 && posXf + delX < .25 && (gameEngine->gameTerrain).getBlock(posX - 1,posY,posZ))
+            {
+                s->pos.x = posX + .25;
+                s->vel.x = 0.0f;
+            }
+            else
+            {
+                s->pos.x = s->pos.x + delX;
+                s->vel.x = s->vel.x + components.at(i).getAcceleration().x * dt;
+            }
+            
+            float posYf = s->pos.y - posY;
+            float delY = tempPos.y - s->pos.y;
+            
+            if (posYf < .75 && posYf + delY > .75 && (gameEngine->gameTerrain).getBlock(posX,posY + 1,posZ))
+            {
+                s->pos.y = posY + .75;
+                s->vel.y = 0.0f;
+            }
+            else if (posYf > .25 && posYf + delY < .25 && (gameEngine->gameTerrain).getBlock(posX,posY - 1,posZ))
+            {
+                s->pos.y = posY + .25;
+                s->vel.y = 0.0f;
+            }
+            else
+            {
+                s->pos.y = s->pos.y + delY;
+                s->vel.y = s->vel.y + components.at(i).getAcceleration().y * dt;
+            }
+            
+            float posZf = s->pos.z - posZ;
+            float delZ = tempPos.z - s->pos.z;
+            
+            
+            if (posZf < .75 && posZf + delZ > .75 && (gameEngine->gameTerrain).getBlock(posX,posY,posZ + 1))
+            {
+                s->pos.z = posZ + .75;
+                s->vel.z = 0.0f;
+            }
+            else if (posZf >= .60 && posZf + delZ < .60 && (gameEngine->gameTerrain).getBlock(posX,posY,posZ - 2))
+            {
+                s->pos.z = posZ + .60;
+                s->vel.z = 0.0f + components.at(i).isJumping*4.0f;
+            }
+            else
+            {
+                s->pos.z = s->pos.z + delZ;
+                s->vel.z = s->vel.z + components.at(i).getAcceleration().z * dt;
+            }
+
+        }
         
-        s->vel = addVect(s->vel, scalarMultiply(components.at(i).getAcceleration(), dt));
+        else
+        {
+            s->pos = addVect(s->pos, gMath::scalarMultiply(s->vel, dt)); // x = x + dt*(dx/dt)
+            s->vel = addVect(s->vel, scalarMultiply(components.at(i).getAcceleration(), dt));
+        }
     }
 }
 gMath::componentID Physics::newComponent(gMath::entityID eid)
@@ -204,6 +276,7 @@ Logic::~Logic()
 gMath::vect Input::omegaUpdate = (gMath::vect){0,0,0};
 char Input::xVel = 0;
 char Input::yVel = 0;
+bool Input::isJumping = false;
 
 Input::Input() : System(), inComp(InputComponent(0,0))
 {
@@ -224,6 +297,7 @@ void Input::update(float dt)
         physComp->getState()->vel.x = xVel*(oC.s*oC.s + oC.i*oC.i - oC.j*oC.j-oC.k*oC.k)/scale + yVel*(-2*oC.i*oC.j - 2*oC.k*oC.s)/scale;
         physComp->getState()->vel.y = xVel*(2*oC.i*oC.j + 2*oC.k*oC.s)/scale + yVel*(oC.s*oC.s + oC.i*oC.i - oC.j*oC.j-oC.k*oC.k)/scale;
     }
+    physComp->isJumping = isJumping;
 }
 
 gMath::componentID Input::newComponent(gMath::entityID eid)
@@ -278,7 +352,7 @@ void Input::keyFunction(GLFWwindow * window, int key, int scancode, int action, 
             xVel = (bool)action;
             break;
         case 32: //SPACEBAR
-            
+            isJumping = (bool)action;
             break;
         default:
             break;

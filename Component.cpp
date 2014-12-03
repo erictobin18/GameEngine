@@ -24,7 +24,7 @@ gMath::entityID Component::getEntity()
     return entityIdentity;
 }
 
-PhysicsComponent::PhysicsComponent(gMath::componentID cid, gMath::entityID eid, gMath::state s): Component(cid, eid), entityState(s), rollEnabled(true),gravityEnabled(true)
+PhysicsComponent::PhysicsComponent(gMath::componentID cid, gMath::entityID eid, gMath::state s): Component(cid, eid), entityState(s), rollEnabled(true),gravityEnabled(true),terrainEnabled(true)
 {
     
 }

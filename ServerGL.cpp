@@ -15,8 +15,6 @@
 #define BUFFER_OFFSET(offset) ((void *)(offset))
 #define RESTART_CHAR 0xFFFFFFFF
 
-#define CHUNK_SIZE 16
-
 GLuint ServerGL::normalProgram = 0;
 GLuint ServerGL::terrainProgram = 0;
 
@@ -328,7 +326,7 @@ Chunk::~Chunk()
     glDeleteBuffers(1, &bufferID);
 }
 
-GLuint Chunk::getBlock(unsigned char x, unsigned char y, unsigned char z)
+GLubyte Chunk::getBlock(unsigned char x, unsigned char y, unsigned char z)
 {
     //std::cout << "Hello\n\n";
     return blocks[x][y][z];
@@ -421,16 +419,24 @@ void Chunk::update()
     }
     numElements = i;
     
+    gMath::reportGLError();
     
     
     glBindVertexArray(vertexArrayObject);
+    
+    gMath::reportGLError();
+    
     glBindBuffer(GL_ARRAY_BUFFER, bufferID);
     //for (int b = 0; b < numElements; b++)
     //{
         //std::std::cout << (vertices[b] >> 24) << '\n';
     //}
     
+    gMath::reportGLError();
+    
     glBufferData(GL_ARRAY_BUFFER, numElements * sizeof(vertices[0]), vertices, GL_STATIC_DRAW);
+    
+    gMath::reportGLError();
     
 }
 
@@ -442,6 +448,7 @@ void Chunk::needsUpdate()
 void Chunk::init()
 {
     modified = true;
+    numElements = 0;
     glGenVertexArrays(1, &vertexArrayObject);
     glGenBuffers(1, &bufferID);
     /*if (chunkX == 0 && chunkY == 0  && chunkZ == 0 )
@@ -489,13 +496,21 @@ void Chunk::draw()
     glUseProgram(ServerGL::terrainProgram);
     glBindVertexArray(vertexArrayObject);
     
+    gMath::reportGLError();
+    
     if (modified) update();
     
     if (!numElements) return;
     
+    gMath::reportGLError();
+    
     glBindBuffer(GL_ARRAY_BUFFER, bufferID);
     
+    gMath::reportGLError();
+    
     glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_FALSE, 0, BUFFER_OFFSET(0));
+    
+    gMath::reportGLError();
     
     //MODEL
     
@@ -520,9 +535,15 @@ void Chunk::draw()
     glVertexAttrib4fv(4, matTrans[2]);
     glVertexAttrib4fv(5, matTrans[3]);
     
+    gMath::reportGLError();
+    
     glEnableVertexAttribArray(0);
     
+    gMath::reportGLError();
+    
     glDrawArrays(GL_TRIANGLES, 0, numElements);
+    
+    gMath::reportGLError();
     
     glBindVertexArray(0);
     glUseProgram(ServerGL::normalProgram);

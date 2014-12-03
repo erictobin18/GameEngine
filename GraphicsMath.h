@@ -20,6 +20,8 @@
 
 #include <math.h>
 
+#define CHUNK_SIZE 16
+
 namespace gMath
 {
     typedef enum componentType {noneType = 0, physicsType = 1, graphicsType = 2, physics_and_graphicsType = 3, logicType = 4, physics_and_logicType = 5, graphics_and_logicType = 6, all = 7} componentType;

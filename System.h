@@ -87,6 +87,7 @@ public:
     static void mouseFunction(GLFWwindow * window, double xpos, double ypos);
     static void keyFunction(GLFWwindow * window, int key, int scancode, int action, int modifierKeys);
     gMath::componentID newComponent(gMath::entityID eid);
+    static bool isJumping;
     ~Input();
 protected:
     InputComponent inComp;

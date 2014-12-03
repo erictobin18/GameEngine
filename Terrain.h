@@ -21,7 +21,11 @@ public:
     void init();
     
     void draw();
-    std::vector<Chunk> chunks;
+    
+    GLuint getBlock(int x, int y, int z);
+    void setBlock(int x, int y, int z,GLubyte blockID);
+    std::vector<std::vector<std::vector<Chunk> > > chunks;
+    int originX,originY,originZ;
 };
 
 #endif

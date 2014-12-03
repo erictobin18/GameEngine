@@ -43,6 +43,9 @@ public:
     
     bool rollEnabled;
     bool gravityEnabled;
+    bool terrainEnabled;
+    
+    bool isJumping;
 protected:
     gMath::state entityState;
     gMath::vect entityAlpha;

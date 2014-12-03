@@ -69,7 +69,7 @@ public:
     Chunk(GLint x, GLint y, GLint z);
     ~Chunk();
     
-    GLuint getBlock(unsigned char x, unsigned char y, unsigned char z);
+    GLubyte getBlock(unsigned char x, unsigned char y, unsigned char z);
     void setBlock(unsigned char x, unsigned char y, unsigned char z, unsigned char blockID);
     
     void update();
