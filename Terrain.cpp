@@ -34,29 +34,33 @@ void Terrain::init()
 
 }
 
-GLuint Terrain::getBlock(int x, int y, int z)
+GLuint Terrain::getBlock(double x, double y, double z)
 {
-    int cX = (x - originX)/CHUNK_SIZE;
-    int cY = (y - originY)/CHUNK_SIZE;
-    int cZ = (z - originZ)/CHUNK_SIZE;
+    int cX = floor((x-(double)originX*CHUNK_SIZE)/CHUNK_SIZE);
+    int cY = floor((y-(double)originY*CHUNK_SIZE)/CHUNK_SIZE);
+    int cZ = floor((z-(double)originZ*CHUNK_SIZE)/CHUNK_SIZE);
     
     if (cX < 0 or cY < 0 or cZ < 0 or cZ >= chunks.size() or cX >= chunks.at(0).size() or cY >= chunks.at(0).at(0).size())
+    {
         return 0;
+    }
     else
-        return chunks.at(cZ).at(cX).at(cY).getBlock(x%CHUNK_SIZE, y%CHUNK_SIZE, z%CHUNK_SIZE);
+    {
+        return chunks.at(cZ).at(cX).at(cY).getBlock((int)x%CHUNK_SIZE, (int)y%CHUNK_SIZE, (int)z%CHUNK_SIZE);
+    }
     return 0;
 }
 
-void Terrain::setBlock(int x, int y, int z,GLubyte blockID)
+void Terrain::setBlock(double x, double y, double z,GLubyte blockID)
 {
-    int cX = (x - originX)/CHUNK_SIZE;
-    int cY = (y - originY)/CHUNK_SIZE;
-    int cZ = (z - originZ)/CHUNK_SIZE;
+    int cX = floor((x-(double)originX*CHUNK_SIZE)/CHUNK_SIZE);
+    int cY = floor((y-(double)originY*CHUNK_SIZE)/CHUNK_SIZE);
+    int cZ = floor((z-(double)originZ*CHUNK_SIZE)/CHUNK_SIZE);
     
     if (cX < 0 or cY < 0 or cZ < 0 or cZ >= chunks.size() or cX >= chunks.at(0).size() or cY >= chunks.at(0).at(0).size())
         std::cout << "WARNING: TRIED TO MODIFY BLOCK OUTSIDE WORLD\n";
     else
-        chunks.at(cZ).at(cX).at(cY).setBlock(x%CHUNK_SIZE, y%CHUNK_SIZE, z%CHUNK_SIZE, blockID);
+        chunks.at(cZ).at(cX).at(cY).setBlock((int)x%CHUNK_SIZE, (int)y%CHUNK_SIZE, (int)z%CHUNK_SIZE, blockID);
 }
 
 void Terrain::draw()

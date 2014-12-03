@@ -100,64 +100,53 @@ void Physics::update(float dt)
             s->omega = addVect(s->omega, gMath::scalarMultiply(components.at(i).getAlpha(), dt));
         }
         
-        
-        
-        
-        
         computeAccel(&(components.at(i)));
         
         if (components.at(i).terrainEnabled)
         {
-            std::cout << "pos.x: " << s->pos.x << '\n';
-            std::cout << "vel.x: " << s->vel.x << '\n';
             
             gMath::vect tempPos = addVect(s->pos, gMath::scalarMultiply(s->vel, dt));
-            
-            std::cout << "tempX: " << tempPos.x << '\n';
             
             float posX = (int)s->pos.x;
             float posY = (int)s->pos.y;
             float posZ = (int)s->pos.z;
+            
+            std::cout << "posX:  " << posX << '\n';
+            std::cout << "posY:  " << posY << '\n';
+            std::cout << "posZ:  " << posZ << '\n';
+            
+            
             float posXf = s->pos.x - posX;
             float delX = tempPos.x - s->pos.x;
             
-            std::cout << "posX:  " << posX << '\n';
             std::cout << "posXf: " << posXf << '\n';
-            std::cout << "delX:  " << delX << '\n';
+            std::cout << "delX:  " << delX <<  "\n\n";
             
-            
-            if (posXf < .75 && posXf + delX > .75 && (gameEngine->gameTerrain).getBlock(posX + 1,posY,posZ))
+            if (posXf <= .75 && posXf + delX > .75 && ((gameEngine->gameTerrain).getBlock(posX + 1,posY,posZ) or (gameEngine->gameTerrain).getBlock(posX + 1,posY,posZ - 1)))
             {
                 s->pos.x = posX + .75;
                 s->vel.x = 0.0f;
-                
-                std::cout << "pos.x: " << s->pos.x << '\n';
-                std::cout << "vel.x: " << s->vel.x << "\n\n";
             }
-            else if (posXf > .25 && posXf + delX < .25 && (gameEngine->gameTerrain).getBlock(posX - 1,posY,posZ))
+            else if (posXf >= .25 && posXf + delX < .25 && ((gameEngine->gameTerrain).getBlock(posX - 1,posY,posZ) or (gameEngine->gameTerrain).getBlock(posX - 1,posY,posZ - 1)))
             {
                 s->pos.x = posX + .25;
                 s->vel.x = 0.0f;
-                std::cout << "pos.x: " << s->pos.x << '\n';
-                std::cout << "vel.x: " << s->vel.x << "\n\n";
             }
             else
             {
                 s->pos.x = s->pos.x + delX;
                 s->vel.x = s->vel.x + components.at(i).getAcceleration().x * dt;
-                std::cout << "pos.x: " << s->pos.x << '\n';
-                std::cout << "vel.x: " << s->vel.x << "\n\n";
             }
             
             float posYf = s->pos.y - posY;
             float delY = tempPos.y - s->pos.y;
             
-            if (posYf < .75 && posYf + delY > .75 && (gameEngine->gameTerrain).getBlock(posX,posY + 1,posZ))
+            if (posYf <= .75 && posYf + delY > .75 && ((gameEngine->gameTerrain).getBlock(posX,posY + 1,posZ) or (gameEngine->gameTerrain).getBlock(posX,posY + 1,posZ - 1)))
             {
                 s->pos.y = posY + .75;
                 s->vel.y = 0.0f;
             }
-            else if (posYf > .25 && posYf + delY < .25 && (gameEngine->gameTerrain).getBlock(posX,posY - 1,posZ))
+            else if (posYf >= .25 && posYf + delY < .25 && ((gameEngine->gameTerrain).getBlock(posX,posY - 1,posZ) or (gameEngine->gameTerrain).getBlock(posX,posY - 1,posZ - 1)))
             {
                 s->pos.y = posY + .25;
                 s->vel.y = 0.0f;
@@ -172,7 +161,7 @@ void Physics::update(float dt)
             float delZ = tempPos.z - s->pos.z;
             
             
-            if (posZf < .75 && posZf + delZ > .75 && (gameEngine->gameTerrain).getBlock(posX,posY,posZ + 1))
+            if (posZf <= .75 && posZf + delZ > .75 && (gameEngine->gameTerrain).getBlock(posX,posY,posZ + 1))
             {
                 s->pos.z = posZ + .75;
                 s->vel.z = 0.0f;
@@ -314,10 +303,10 @@ void Input::update(float dt)
     
     //std::cout << "scale: " << scale << '\n';
     
-    if (physComp->getState()->vel.x*physComp->getState()->vel.x + physComp->getState()->vel.y*physComp->getState()->vel.y < 32.1)
+    if (physComp->getState()->vel.x*physComp->getState()->vel.x + physComp->getState()->vel.y*physComp->getState()->vel.y < 50.1)
     {
-        physComp->getState()->vel.x = 4*(xVel*cos(azimuth) - yVel*sin(azimuth));
-        physComp->getState()->vel.y = 4*(xVel*sin(azimuth) + yVel*cos(azimuth));
+        physComp->getState()->vel.x = 5*(xVel*cos(azimuth) - yVel*sin(azimuth));
+        physComp->getState()->vel.y = 5*(xVel*sin(azimuth) + yVel*cos(azimuth));
     }
     //physComp->isJumping = isJumping;
 }

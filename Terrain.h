@@ -22,8 +22,8 @@ public:
     
     void draw();
     
-    GLuint getBlock(int x, int y, int z);
-    void setBlock(int x, int y, int z,GLubyte blockID);
+    GLuint getBlock(double x, double y, double z);
+    void setBlock(double x, double y, double z,GLubyte blockID);
     std::vector<std::vector<std::vector<Chunk> > > chunks;
     int originX,originY,originZ;
 };
