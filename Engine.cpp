@@ -102,7 +102,7 @@ void Engine::init()
     
     cameraEntity = 0;
     
-    gMath::state s = (gMath::state){(gMath::vect){0.5,0.5,17.5},(gMath::vect){0,0,0},(gMath::quaternion){1,0,0,0},(gMath::vect){0,0,0}};
+    gMath::state s = (gMath::state){(gMath::vect){8.5,8.5,16.7},(gMath::vect){0,0,0},(gMath::quaternion){1,0,0,0},(gMath::vect){0,0,0}};
     
     gMath::componentID physComp = gamePhysics.newComponent(0, s);
     gameInput.newComponent(0);

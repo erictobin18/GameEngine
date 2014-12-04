@@ -67,23 +67,23 @@ void Physics::update(float dt)
             //orient object so "up" is in the z direction by rolling the object around its local x axis
             //First, find altitude and azimuth:
             /*
-            double arg = -2 * s->orientation.s * s->orientation.j + 2 * s->orientation.i * s->orientation.k;
-            while (arg < -1.0)
-            {
-                arg += 1.0;
-            }
-            while (arg > 1.0)
-            {
-                arg -= 1.0;
-            }
-            
-            double altitude = asin(arg);
-            double azimuth = atan((2*s->orientation.i*s->orientation.j+2*s->orientation.s*s->orientation.k)/(s->orientation.s*s->orientation.s+s->orientation.i*s->orientation.i-s->orientation.j*s->orientation.j-s->orientation.k*s->orientation.k));
-            if ((s->orientation.s*s->orientation.s+s->orientation.i*s->orientation.i-s->orientation.j*s->orientation.j-s->orientation.k*s->orientation.k) < 0)
-            {
-                azimuth = azimuth + M_PI;
-            }
-            
+             double arg = -2 * s->orientation.s * s->orientation.j + 2 * s->orientation.i * s->orientation.k;
+             while (arg < -1.0)
+             {
+             arg += 1.0;
+             }
+             while (arg > 1.0)
+             {
+             arg -= 1.0;
+             }
+             
+             double altitude = asin(arg);
+             double azimuth = atan((2*s->orientation.i*s->orientation.j+2*s->orientation.s*s->orientation.k)/(s->orientation.s*s->orientation.s+s->orientation.i*s->orientation.i-s->orientation.j*s->orientation.j-s->orientation.k*s->orientation.k));
+             if ((s->orientation.s*s->orientation.s+s->orientation.i*s->orientation.i-s->orientation.j*s->orientation.j-s->orientation.k*s->orientation.k) < 0)
+             {
+             azimuth = azimuth + M_PI;
+             }
+             
              */
             //std::cout << "ALTITUDE: " << altitude << " AZIMUTH: " << azimuth << '\n';
             
@@ -102,7 +102,7 @@ void Physics::update(float dt)
         
         computeAccel(&(components.at(i)));
         
-        if (components.at(i).terrainEnabled)
+        if (components.at(i).terrainEnabled) //TERRAIN COLLISION DETECTION
         {
             
             gMath::vect tempPos = addVect(s->pos, gMath::scalarMultiply(s->vel, dt));
@@ -111,78 +111,540 @@ void Physics::update(float dt)
             float posY = (int)s->pos.y;
             float posZ = (int)s->pos.z;
             
-            std::cout << "posX:  " << posX << '\n';
-            std::cout << "posY:  " << posY << '\n';
-            std::cout << "posZ:  " << posZ << '\n';
-            
             
             float posXf = s->pos.x - posX;
             float delX = tempPos.x - s->pos.x;
             
-            std::cout << "posXf: " << posXf << '\n';
-            std::cout << "delX:  " << delX <<  "\n\n";
-            
-            if (posXf <= .75 && posXf + delX > .75 && ((gameEngine->gameTerrain).getBlock(posX + 1,posY,posZ) or (gameEngine->gameTerrain).getBlock(posX + 1,posY,posZ - 1)))
-            {
-                s->pos.x = posX + .75;
-                s->vel.x = 0.0f;
-            }
-            else if (posXf >= .25 && posXf + delX < .25 && ((gameEngine->gameTerrain).getBlock(posX - 1,posY,posZ) or (gameEngine->gameTerrain).getBlock(posX - 1,posY,posZ - 1)))
-            {
-                s->pos.x = posX + .25;
-                s->vel.x = 0.0f;
-            }
-            else
-            {
-                s->pos.x = s->pos.x + delX;
-                s->vel.x = s->vel.x + components.at(i).getAcceleration().x * dt;
-            }
-            
             float posYf = s->pos.y - posY;
             float delY = tempPos.y - s->pos.y;
-            
-            if (posYf <= .75 && posYf + delY > .75 && ((gameEngine->gameTerrain).getBlock(posX,posY + 1,posZ) or (gameEngine->gameTerrain).getBlock(posX,posY + 1,posZ - 1)))
-            {
-                s->pos.y = posY + .75;
-                s->vel.y = 0.0f;
-            }
-            else if (posYf >= .25 && posYf + delY < .25 && ((gameEngine->gameTerrain).getBlock(posX,posY - 1,posZ) or (gameEngine->gameTerrain).getBlock(posX,posY - 1,posZ - 1)))
-            {
-                s->pos.y = posY + .25;
-                s->vel.y = 0.0f;
-            }
-            else
-            {
-                s->pos.y = s->pos.y + delY;
-                s->vel.y = s->vel.y + components.at(i).getAcceleration().y * dt;
-            }
             
             float posZf = s->pos.z - posZ;
             float delZ = tempPos.z - s->pos.z;
             
+            float xNeg = .25;
+            float xPls = .75;
             
-            if (posZf <= .75 && posZf + delZ > .75 && (gameEngine->gameTerrain).getBlock(posX,posY,posZ + 1))
+            float yNeg = .25;
+            float yPls = .75;
+            
+            float zNeg = .60;
+            float zPls = .75;
+            
+            bool checkXPls = (posXf <= xPls) && (posXf + delX > xPls);
+            bool checkXNeg = (posXf >= xNeg) && (posXf + delX < xNeg);
+            
+            bool checkYPls = (posYf <= yPls) && (posYf + delY > yPls);
+            bool checkYNeg = (posYf >= yNeg) && (posYf + delY < yNeg);
+            
+            bool checkZPls = (posZf <= zPls) && (posZf + delZ > zPls);
+            bool checkZNeg = (posZf >= zNeg) && (posZf + delZ < zNeg);
+            
+            std::cout << checkXPls + 2 * checkXNeg + 4 * checkYPls + 8 * checkYNeg + 16 * checkZPls + 32 * checkZNeg << '\n';
+            
+            bool moveX = true;
+            bool moveY = true;
+            bool moveZ = true;
+            
+            
+            
+            //CHECK IMMEDIATELY ADJACENT BLOCKS
+            
+            if (checkXPls && (gameEngine->gameTerrain.getBlock(posX + 1, posY, posZ) or gameEngine->gameTerrain.getBlock(posX + 1, posY, posZ - 1)))
             {
-                s->pos.z = posZ + .75;
+                moveX = false;
+                s->pos.x = posX + xPls;
+                s->vel.x = 0.0f;
+                checkXPls = checkXNeg = false;
+            }
+            
+            else if (checkXNeg && (gameEngine->gameTerrain.getBlock(posX - 1, posY, posZ) or gameEngine->gameTerrain.getBlock(posX - 1, posY, posZ - 1)))
+            {
+                moveX = false;
+                s->pos.x = posX + xNeg;
+                s->vel.x = 0.0f;
+                checkXPls = checkXNeg = false;
+            }
+            
+            if (checkYPls && (gameEngine->gameTerrain.getBlock(posX, posY + 1, posZ) or gameEngine->gameTerrain.getBlock(posX, posY + 1, posZ - 1)))
+            {
+                moveY = false;
+                s->pos.y = posY + yPls;
+                s->vel.y = 0.0f;
+                checkYPls = checkYNeg = false;
+            }
+            
+            else if (checkYNeg && (gameEngine->gameTerrain.getBlock(posX, posY - 1, posZ) or gameEngine->gameTerrain.getBlock(posX, posY - 1, posZ - 1)))
+            {
+                moveY = false;
+                s->pos.y = posY + yNeg;
+                s->vel.y = 0.0f;
+                checkYPls = checkYNeg = false;
+            }
+            
+            if (checkZPls && (gameEngine->gameTerrain.getBlock(posX, posY, posZ + 1) or gameEngine->gameTerrain.getBlock(posX, posY, posZ)))
+            {
+                moveZ = false;
+                s->pos.z = posZ + zPls;
                 s->vel.z = 0.0f;
+                checkZPls = checkZNeg = false;
             }
-            else if (posZf >= .60 && posZf + delZ < .60 && (gameEngine->gameTerrain).getBlock(posX,posY,posZ - 2))
+            
+            else if (checkZNeg && (gameEngine->gameTerrain.getBlock(posX, posY, posZ - 1) or gameEngine->gameTerrain.getBlock(posX, posY, posZ - 2)))
             {
-                s->pos.z = posZ + .60;
-                s->vel.z = 0.0f + components.at(i).mouseControl*Input::isJumping*5.5f;
+                moveZ = false;
+                s->pos.z = posZ + zNeg;
+                s->vel.z = 0.0f;
+                checkZPls = checkZNeg = false;
             }
-            else
+            
+            std::cout << checkXPls + 2 * checkXNeg + 4 * checkYPls + 8 * checkYNeg + 16 * checkZPls + 32 * checkZNeg << '\n';
+            std::cout << moveZ << "\n\n";
+            
+            //CHECK BLOCKS THAT ARE ADJACENT TO AN EDGE
+            
+            //X & Y
+            
+            if (checkXNeg or checkXPls or checkYNeg or checkYPls or checkZNeg or checkZPls)
+            {
+                
+                if (checkXPls && checkYPls && (gameEngine->gameTerrain.getBlock(posX + 1, posY + 1, posZ) or gameEngine->gameTerrain.getBlock(posX + 1, posY + 1, posZ - 1)))
+                {
+                    if (delX/delY > (xPls - posXf)/(yPls - posYf + .0001))
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xPls;
+                        s->vel.x = 0.0f;
+                    }
+                    else
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yPls;
+                        s->vel.y = 0.0f;
+                    }
+                    checkXPls = checkXNeg = checkYPls = checkYNeg = false;
+                }
+                
+                else if (checkXPls && checkYNeg && (gameEngine->gameTerrain.getBlock(posX + 1, posY - 1, posZ) or gameEngine->gameTerrain.getBlock(posX + 1, posY - 1, posZ - 1)))
+                {
+                    if (delX/delY > (xPls - posXf)/(yNeg - posYf - .0001))
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yNeg;
+                        s->vel.y = 0.0f;
+                    }
+                    else
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xPls;
+                        s->vel.x = 0.0f;
+                    }
+                    checkXPls = checkXNeg = checkYPls = checkYNeg = false;
+                }
+                
+                else if (checkXNeg && checkYNeg && (gameEngine->gameTerrain.getBlock(posX - 1, posY - 1, posZ) or gameEngine->gameTerrain.getBlock(posX - 1, posY - 1, posZ - 1)))
+                {
+                    if (delX/delY > (xNeg - posXf)/(yNeg - posYf - .0001))
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xNeg;
+                        s->vel.x = 0.0f;
+                    }
+                    else
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yNeg;
+                        s->vel.y = 0.0f;
+                    }
+                    checkXPls = checkXNeg = checkYPls = checkYNeg = false;
+                }
+                
+                else if (checkXNeg && checkYPls && (gameEngine->gameTerrain.getBlock(posX - 1, posY + 1, posZ) or gameEngine->gameTerrain.getBlock(posX - 1, posY + 1, posZ - 1)))
+                {
+                    if (delX/delY > (xNeg - posXf)/(yPls - posYf + .0001))
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yPls;
+                        s->vel.y = 0.0f;
+                    }
+                    else
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xNeg;
+                        s->vel.x = 0.0f;
+                    }
+                    checkXPls = checkXNeg = checkYPls = checkYNeg = false;
+                }
+                
+                //X & Z
+                
+                if (checkXPls && checkZPls && (gameEngine->gameTerrain.getBlock(posX + 1, posY, posZ + 1) or gameEngine->gameTerrain.getBlock(posX + 1, posY, posZ)))
+                {
+                    if (delX/delZ > (xPls - posXf)/(zPls - posZf + .0001))
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xPls;
+                        s->vel.x = 0.0f;
+                    }
+                    else
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zPls;
+                        s->vel.z = 0.0f;
+                    }
+                    checkXPls = checkXNeg = checkZPls = checkZNeg = false;
+                }
+                
+                else if (checkXPls && checkZNeg && (gameEngine->gameTerrain.getBlock(posX + 1, posY, posZ - 1) or gameEngine->gameTerrain.getBlock(posX + 1, posY, posZ - 2)))
+                {
+                    if (delX/delZ > (xPls - posXf)/(zNeg - posZf - .0001))
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zNeg;
+                        s->vel.z = 0.0f;
+                    }
+                    else
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xPls;
+                        s->vel.x = 0.0f;
+                    }
+                    checkXPls = checkXNeg = checkZPls = checkZNeg = false;
+                }
+                
+                else if (checkXNeg && checkZNeg && (gameEngine->gameTerrain.getBlock(posX - 1, posY, posZ - 1) or gameEngine->gameTerrain.getBlock(posX - 1, posY, posZ - 2)))
+                {
+                    if (delX/delZ > (xNeg - posXf)/(zNeg - posZf - .0001))
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xNeg;
+                        s->vel.x = 0.0f;
+                    }
+                    else
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zNeg;
+                        s->vel.z = 0.0f;
+                    }
+                    checkXPls = checkXNeg = checkZPls = checkZNeg = false;
+                }
+                
+                else if (checkXNeg && checkZPls && (gameEngine->gameTerrain.getBlock(posX - 1, posY, posZ + 1) or gameEngine->gameTerrain.getBlock(posX - 1, posY, posZ)))
+                {
+                    if (delX/delZ > (xNeg - posXf)/(zPls - posZf + .0001))
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zPls;
+                        s->vel.z = 0.0f;
+                    }
+                    else
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xNeg;
+                        s->vel.x = 0.0f;
+                    }
+                    checkXPls = checkXNeg = checkZPls = checkZNeg = false;
+                }
+                
+                //Y & Z
+                
+                if (checkYPls && checkZPls && (gameEngine->gameTerrain.getBlock(posX, posY + 1, posZ + 1) or gameEngine->gameTerrain.getBlock(posX, posY + 1, posZ)))
+                {
+                    if (delY/delZ > (yPls - posYf)/(zPls - posZf + .0001))
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yPls;
+                        s->vel.y = 0.0f;
+                    }
+                    else
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zPls;
+                        s->vel.z = 0.0f;
+                    }
+                    checkYPls = checkYNeg = checkZPls = checkZNeg = false;
+                }
+                
+                else if (checkYPls && checkZNeg && (gameEngine->gameTerrain.getBlock(posX, posY + 1, posZ - 1) or gameEngine->gameTerrain.getBlock(posX, posY + 1, posZ - 2)))
+                {
+                    if (delY/delZ > (yPls - posYf)/(zNeg - posZf - .0001))
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zNeg;
+                        s->vel.z = 0.0f;
+                    }
+                    else
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yPls;
+                        s->vel.y = 0.0f;
+                    }
+                    checkYPls = checkYNeg = checkZPls = checkZNeg = false;
+                }
+                
+                else if (checkYNeg && checkZNeg && (gameEngine->gameTerrain.getBlock(posX, posY - 1, posZ - 1) or gameEngine->gameTerrain.getBlock(posX, posY - 1, posZ - 2)))
+                {
+                    if (delY/delZ > (yNeg - posYf)/(zNeg - posZf - .0001))
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yNeg;
+                        s->vel.y = 0.0f;
+                    }
+                    else
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zNeg;
+                        s->vel.z = 0.0f;
+                    }
+                    checkYPls = checkYNeg = checkZPls = checkZNeg = false;
+                }
+                
+                else if (checkYNeg && checkZPls && (gameEngine->gameTerrain.getBlock(posX, posY - 1, posZ + 1) or gameEngine->gameTerrain.getBlock(posX, posY - 1, posZ)))
+                {
+                    if (delY/delZ > (yNeg - posYf)/(zPls - posZf + .0001))
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zPls;
+                        s->vel.z = 0.0f;
+                    }
+                    else
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yNeg;
+                        s->vel.y = 0.0f;
+                    }
+                    checkYPls = checkYNeg = checkZPls = checkZNeg = false;
+                }
+                
+            }
+            //CHECK BLOCKS THAT ARE ADJACENT TO A CORNER
+            
+            if (checkXNeg or checkXPls or checkYNeg or checkYPls or checkZNeg or checkZPls)
+            {
+                if (checkXNeg && checkYNeg && checkZNeg && (gameEngine->gameTerrain.getBlock(posX - 1, posY - 1, posZ - 1) or gameEngine->gameTerrain.getBlock(posX - 1, posY - 1, posZ -2)))
+                {
+                    if ((xNeg - posXf)/delX < (yNeg - posYf)/delY and (xNeg - posXf)/delX < (zNeg - posZf)/delZ) //intersects x = .25 first
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xNeg;
+                        s->vel.x = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else if ((yNeg - posYf)/delY < (xNeg - posXf)/delX and (yNeg - posYf)/delY < (zNeg - posZf)/delZ) //intersects y = .25 first
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yNeg;
+                        s->vel.y = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else //intersects z = .25 first
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zNeg;
+                        s->vel.z = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                }
+                
+                if (checkXNeg && checkYNeg && checkZPls && (gameEngine->gameTerrain.getBlock(posX - 1, posY - 1, posZ + 1) or gameEngine->gameTerrain.getBlock(posX - 1, posY - 1, posZ)))
+                {
+                    if ((xNeg - posXf)/delX < (yNeg - posYf)/delY and (xNeg - posXf)/delX < (zPls - posZf)/delZ) //intersects x = .25 first
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xNeg;
+                        s->vel.x = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else if ((yNeg - posYf)/delY < (xNeg - posXf)/delX and (yNeg - posYf)/delY < (zPls - posZf)/delZ) //intersects y = .25 first
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yNeg;
+                        s->vel.y = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else //intersects z = .25 first
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zPls;
+                        s->vel.z = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                }
+                
+                if (checkXNeg && checkYPls && checkZNeg && (gameEngine->gameTerrain.getBlock(posX - 1, posY + 1, posZ - 1) or gameEngine->gameTerrain.getBlock(posX - 1, posY + 1, posZ -2)))
+                {
+                    if ((xNeg - posXf)/delX < (yPls - posYf)/delY and (xNeg - posXf)/delX < (zNeg - posZf)/delZ) //intersects x = .25 first
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xNeg;
+                        s->vel.x = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else if ((yPls - posYf)/delY < (xNeg - posXf)/delX and (yPls - posYf)/delY < (zNeg - posZf)/delZ) //intersects y = .25 first
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yPls;
+                        s->vel.y = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else //intersects z = .25 first
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zNeg;
+                        s->vel.z = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                }
+
+                if (checkXNeg && checkYPls && checkZPls && (gameEngine->gameTerrain.getBlock(posX - 1, posY + 1, posZ + 1) or gameEngine->gameTerrain.getBlock(posX - 1, posY + 1, posZ)))
+                {
+                    if ((xNeg - posXf)/delX < (yPls - posYf)/delY and (xNeg - posXf)/delX < (zPls - posZf)/delZ) //intersects x = .25 first
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xNeg;
+                        s->vel.x = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else if ((yPls - posYf)/delY < (xNeg - posXf)/delX and (yPls - posYf)/delY < (zPls - posZf)/delZ) //intersects y = .25 first
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yPls;
+                        s->vel.y = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else //intersects z = .25 first
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zPls;
+                        s->vel.z = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                }
+
+                if (checkXPls && checkYNeg && checkZNeg && (gameEngine->gameTerrain.getBlock(posX + 1, posY - 1, posZ - 1) or gameEngine->gameTerrain.getBlock(posX + 1, posY - 1, posZ - 2)))
+                {
+                    if ((xPls - posXf)/delX < (yNeg - posYf)/delY and (xPls - posXf)/delX < (zNeg - posZf)/delZ) //intersects x = .25 first
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xPls;
+                        s->vel.x = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else if ((yNeg - posYf)/delY < (xPls - posXf)/delX and (yNeg - posYf)/delY < (zNeg - posZf)/delZ) //intersects y = .25 first
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yNeg;
+                        s->vel.y = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else //intersects z = .25 first
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zNeg;
+                        s->vel.z = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                }
+
+                if (checkXPls && checkYNeg && checkZPls && (gameEngine->gameTerrain.getBlock(posX + 1, posY - 1, posZ + 1) or gameEngine->gameTerrain.getBlock(posX + 1, posY - 1, posZ)))
+                {
+                    if ((xPls - posXf)/delX < (yNeg - posYf)/delY and (xPls - posXf)/delX < (zPls - posZf)/delZ) //intersects x = .25 first
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xPls;
+                        s->vel.x = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else if ((yNeg - posYf)/delY < (xPls - posXf)/delX and (yNeg - posYf)/delY < (zPls - posZf)/delZ) //intersects y = .25 first
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yNeg;
+                        s->vel.y = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else //intersects z = .25 first
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zPls;
+                        s->vel.z = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                }
+
+                if (checkXPls && checkYPls && checkZNeg && (gameEngine->gameTerrain.getBlock(posX + 1, posY + 1, posZ - 1) or gameEngine->gameTerrain.getBlock(posX + 1, posY + 1, posZ - 2)))
+                {
+                    if ((xPls - posXf)/delX < (yPls - posYf)/delY and (xPls - posXf)/delX < (zNeg - posZf)/delZ) //intersects x = .25 first
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xPls;
+                        s->vel.x = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else if ((yPls - posYf)/delY < (xPls - posXf)/delX and (yPls - posYf)/delY < (zNeg - posZf)/delZ) //intersects y = .25 first
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yPls;
+                        s->vel.y = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else //intersects z = .25 first
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zNeg;
+                        s->vel.z = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                }
+
+                if (checkXPls && checkYPls && checkZPls && (gameEngine->gameTerrain.getBlock(posX + 1, posY + 1, posZ + 1) or gameEngine->gameTerrain.getBlock(posX + 1, posY + 1, posZ)))
+                {
+                    if ((xPls - posXf)/delX < (yPls - posYf)/delY and (xPls - posXf)/delX < (zPls - posZf)/delZ) //intersects x = .25 first
+                    {
+                        moveX = false;
+                        s->pos.x = posX + xPls;
+                        s->vel.x = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else if ((yPls - posYf)/delY < (xPls - posXf)/delX and (yPls - posYf)/delY < (zPls - posZf)/delZ) //intersects y = .25 first
+                    {
+                        moveY = false;
+                        s->pos.y = posY + yPls;
+                        s->vel.y = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                    else //intersects z = .25 first
+                    {
+                        moveZ = false;
+                        s->pos.z = posZ + zPls;
+                        s->vel.z = 0.0f;
+                        checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
+                    }
+                }
+            }
+            
+            //UPDATE POSITION AND VELOCITY (FINALLY)
+            
+            if (moveX)
+            {
+                s->pos.x = s->pos.x + delX;
+                s->vel.x = s->vel.z + components.at(i).getAcceleration().x * dt;
+            }
+            if (moveY)
+            {
+                s->pos.y = s->pos.y + delY;
+                s->vel.y = s->vel.y + components.at(i).getAcceleration().y * dt;
+            }
+            if (moveZ)
             {
                 s->pos.z = s->pos.z + delZ;
                 s->vel.z = s->vel.z + components.at(i).getAcceleration().z * dt;
             }
-
         }
         else
         {
             s->pos = addVect(s->pos, gMath::scalarMultiply(s->vel, dt)); // x = x + dt*(dx/dt)
             s->vel = addVect(s->vel, scalarMultiply(components.at(i).getAcceleration(), dt));
         }
+        
     }
 }
 gMath::componentID Physics::newComponent(gMath::entityID eid)
@@ -352,13 +814,13 @@ void Input::mouseFunction(GLFWwindow * window, double xpos, double ypos)
     //float scale = 100.0f*(1.0f - 4 * oC.s*oC.s*oC.j*oC.j + 8*oC.s*oC.i*oC.j*oC.k - 4*oC.i*oC.i*oC.k*oC.k);
     
     /*
-    
-    gMath::vect omega = {0.0f,0.0f,0.0f};
-    omega.x =  (ypos-300.0f)*(-2*oC.i*oC.j - 2*oC.k*oC.s)/scale;
-    omega.y =  (ypos-300.0f)*(oC.s*oC.s + oC.i*oC.i - oC.j*oC.j-oC.k*oC.k)/scale;
-    omega.z = -(xpos-300.0f)/100.0f;
-    
-    omegaUpdate = omega;
+     
+     gMath::vect omega = {0.0f,0.0f,0.0f};
+     omega.x =  (ypos-300.0f)*(-2*oC.i*oC.j - 2*oC.k*oC.s)/scale;
+     omega.y =  (ypos-300.0f)*(oC.s*oC.s + oC.i*oC.i - oC.j*oC.j-oC.k*oC.k)/scale;
+     omega.z = -(xpos-300.0f)/100.0f;
+     
+     omegaUpdate = omega;
      */
     //std::cout << "MOUSE X: " << floor(xpos) << " MOUSE Y: " << floor(ypos) << '\n';
     //glfwSetCursorPos(window, 300, 300);
