@@ -193,7 +193,7 @@ void Physics::update(float dt)
             {
                 moveZ = false;
                 s->pos.z = posZ + zNeg;
-                s->vel.z = 0.0f;
+                s->vel.z = Input::isJumping*6;
                 checkZPls = checkZNeg = false;
             }
             
@@ -300,7 +300,7 @@ void Physics::update(float dt)
                     {
                         moveZ = false;
                         s->pos.z = posZ + zNeg;
-                        s->vel.z = 0.0f;
+                        s->vel.z = Input::isJumping*6;
                     }
                     else
                     {
@@ -323,7 +323,7 @@ void Physics::update(float dt)
                     {
                         moveZ = false;
                         s->pos.z = posZ + zNeg;
-                        s->vel.z = 0.0f;
+                        s->vel.z = Input::isJumping*6;
                     }
                     checkXPls = checkXNeg = checkZPls = checkZNeg = false;
                 }
@@ -370,7 +370,7 @@ void Physics::update(float dt)
                     {
                         moveZ = false;
                         s->pos.z = posZ + zNeg;
-                        s->vel.z = 0.0f;
+                        s->vel.z = Input::isJumping*6;
                     }
                     else
                     {
@@ -393,7 +393,7 @@ void Physics::update(float dt)
                     {
                         moveZ = false;
                         s->pos.z = posZ + zNeg;
-                        s->vel.z = 0.0f;
+                        s->vel.z = Input::isJumping*6;
                     }
                     checkYPls = checkYNeg = checkZPls = checkZNeg = false;
                 }
@@ -440,7 +440,7 @@ void Physics::update(float dt)
                     {
                         moveZ = false;
                         s->pos.z = posZ + zNeg;
-                        s->vel.z = 0.0f;
+                        s->vel.z = Input::isJumping*6;
                         checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
                     }
                 }
@@ -490,7 +490,7 @@ void Physics::update(float dt)
                     {
                         moveZ = false;
                         s->pos.z = posZ + zNeg;
-                        s->vel.z = 0.0f;
+                        s->vel.z = Input::isJumping*6;
                         checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
                     }
                 }
@@ -540,7 +540,7 @@ void Physics::update(float dt)
                     {
                         moveZ = false;
                         s->pos.z = posZ + zNeg;
-                        s->vel.z = 0.0f;
+                        s->vel.z = Input::isJumping*6;
                         checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
                     }
                 }
@@ -590,7 +590,7 @@ void Physics::update(float dt)
                     {
                         moveZ = false;
                         s->pos.z = posZ + zNeg;
-                        s->vel.z = 0.0f;
+                        s->vel.z = Input::isJumping*6;
                         checkXNeg = checkXPls = checkYNeg = checkYPls = checkZNeg = checkZPls = false;
                     }
                 }
