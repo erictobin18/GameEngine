@@ -48,8 +48,7 @@ public:
     ~Physics();
     
 protected:
-    int testBlock(int,int,int,gMath::vect,gMath::vect,gMath::vect,int, bool, bool, bool);
-    void impact(int , bool *, bool *, bool *, gMath::state *, gMath::vect, gMath::vect);
+    void collisionDetect(gMath::state *, int, float);
     
     std::vector<PhysicsComponent> components; //Physics has Components of type PhysicsComponent
 };

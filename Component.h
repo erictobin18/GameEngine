@@ -44,6 +44,8 @@ public:
     bool gravityEnabled;
     bool terrainEnabled;
     bool mouseControl;
+    
+    bool onGround;
 protected:
     gMath::state entityState;
     gMath::vect entityAlpha;
