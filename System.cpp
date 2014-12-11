@@ -157,6 +157,20 @@ void Physics::collisionDetect(gMath::state *s, int i, float dt)
         if (zMin == ceil(zMin))
             zMin += .001;
         
+        std::cout << "START OF DO LOOP\n";
+        
+        std::cout << "x0: " << x0 << '\n';
+        std::cout << "y0: " << y0 << '\n';
+        std::cout << "z0: " << z0 << '\n';
+        
+        std::cout << "delX: " << delX << '\n';
+        std::cout << "delY: " << delY << '\n';
+        std::cout << "delZ: " << delZ << '\n';
+        
+        std::cout << "xR: " << xMin << '\t' << xMax << '\n';
+        std::cout << "yR: " << yMin << '\t' << yMax << '\n';
+        std::cout << "zR: " << zMin << '\t' << zMax << '\n';
+        
         
         float intersectionTime = 1.0f;
         int intersectionFace = 0;
@@ -171,12 +185,12 @@ void Physics::collisionDetect(gMath::state *s, int i, float dt)
                 {
                     //ALL POSSIBLE BLOCKS:
                     
-                    float tminX = std::min((-x + x0 - iNeg.x - 1)/(-delX), (-x + x0 + iPls.x)/(-delX));
-                    float tmaxX = std::max((-x + x0 - iNeg.x - 1)/(-delX), (-x + x0 + iPls.x)/(-delX));
-                    float tminY = std::min((-y + y0 - iNeg.y - 1)/(-delY), (-y + y0 + iPls.y)/(-delY));
-                    float tmaxY = std::max((-y + y0 - iNeg.y - 1)/(-delY), (-y + y0 + iPls.y)/(-delY));
-                    float tminZ = std::min((-z + z0 - iNeg.z - 1)/(-delZ), (-z + z0 + iPls.z)/(-delZ));
-                    float tmaxZ = std::max((-z + z0 - iNeg.z - 1)/(-delZ), (-z + z0 + iPls.z)/(-delZ));
+                    float tminX = std::min((-x + x0 - iNeg.x - .999f)/(-delX), (-x + x0 + iPls.x - .001f)/(-delX));
+                    float tmaxX = std::max((-x + x0 - iNeg.x - .999f)/(-delX), (-x + x0 + iPls.x - .001f)/(-delX));
+                    float tminY = std::min((-y + y0 - iNeg.y - .999f)/(-delY), (-y + y0 + iPls.y - .001f)/(-delY));
+                    float tmaxY = std::max((-y + y0 - iNeg.y - .999f)/(-delY), (-y + y0 + iPls.y - .001f)/(-delY));
+                    float tminZ = std::min((-z + z0 - iNeg.z - .999f)/(-delZ), (-z + z0 + iPls.z - .001f)/(-delZ));
+                    float tmaxZ = std::max((-z + z0 - iNeg.z - .999f)/(-delZ), (-z + z0 + iPls.z - .001f)/(-delZ));
                     
                     if (!moveX)
                         tminX = -1; tmaxX = 1.0f/0.0f; //Infinity
@@ -188,8 +202,41 @@ void Physics::collisionDetect(gMath::state *s, int i, float dt)
                     
                     float tempIntersectionTime = std::max(std::max(tminX, tminY),tminZ);
                     float intersectionCheck = std::min(std::min(tmaxX,tmaxY),tmaxZ);
+                    
+                    if (gameEngine->gameTerrain.getBlock(x, y, z))
+                    {
+                        std::cout << "x0: " << x0 << '\n';
+                        std::cout << "y0: " << y0 << '\n';
+                        std::cout << "z0: " << z0 << '\n';
+                        
+                        std::cout << "delX: " << delX << '\n';
+                        std::cout << "delY: " << delY << '\n';
+                        std::cout << "delZ: " << delZ << '\n';
+                        
+                        std::cout << "x: " << x << '\n';
+                        std::cout << "y: " << y << '\n';
+                        std::cout << "z: " << z << '\n';
+                        
+                        std::cout << "xR: " << xMin << '\t' << xMax << '\n';
+                        std::cout << "yR: " << yMin << '\t' << yMax << '\n';
+                        std::cout << "zR: " << zMin << '\t' << zMax << '\n';
+                        
+                        
+                        std::cout << "tX: " << tminX << '\t' << tmaxX << '\n';
+                        std::cout << "tY: " << tminY << '\t' << tmaxY << '\n';
+                        std::cout << "tZ: " << tminZ << '\t' << tmaxZ << '\n';
+                        
+                        std::cout << "moveX: " << moveX << '\n';
+                        std::cout << "moveY: " << moveY << '\n';
+                        std::cout << "moveZ: " << moveZ << '\n';
+                    }
+                    
                     if (gameEngine->gameTerrain.getBlock(x, y, z) and (tempIntersectionTime >= 0) and (tempIntersectionTime < intersectionTime) and (tempIntersectionTime < intersectionCheck))
                     {
+                        
+                        std::cout << "TEMP INTERSECTION TIME: " << tempIntersectionTime << '\n';
+                        std::cout << "INTERSECTION TIME: " << intersectionTime << '\n';
+                        
                         //SOLID BLOCKS THAT ARE ACTUALLY INTERSECTED:
                         if (tminX > tminY and tminX > tminZ and moveX)
                         {
@@ -218,6 +265,7 @@ void Physics::collisionDetect(gMath::state *s, int i, float dt)
                             intersectionBlockZ = z;
                             intersection = true;
                         }
+                        std::cout << "INTERSECTION FACE: " << intersectionFace << '\n';
                     }
                 }
             }
@@ -260,10 +308,22 @@ void Physics::collisionDetect(gMath::state *s, int i, float dt)
                 break;
             default:
                 break;
-                
-            
         }
+        
+        std::cout << "moveX: " << moveX << '\n';
+        std::cout << "moveY: " << moveY << '\n';
+        std::cout << "moveZ: " << moveZ << '\n';
+        
+        std::cout << "X Position: " << s->pos.x << '\n';
+        std::cout << "Y Position: " << s->pos.y << '\n';
+        std::cout << "Z Position: " << s->pos.z << '\n';
+        
+        std::cout << "INTERSECTION: " << intersection << "\n\n";
+        
     } while (intersection);
+    
+    std::cout << "END OF FRAME";
+    std::cout << "\n\n\n";
     
     
     //UPDATE POSITION AND VELOCITY (FINALLY)
@@ -399,12 +459,6 @@ void Input::update(float dt)
     //Set camera updates here
     PhysicsComponent *physComp =gameEngine->gamePhysics.getComponent( gameEngine->getPhysicsComponent(gameEngine->cameraEntity));
     
-    
-    //gMath::quaternion oC = physComp->getState()->orientation;
-    //float scale = (1.0f - 4 * oC.s*oC.s*oC.j*oC.j + 8*oC.s*oC.i*oC.j*oC.k - 4*oC.i*oC.i*oC.k*oC.k)/4.5;
-    
-    //std::cout << "scale: " << scale << '\n';
-    
     if (physComp->getState()->vel.x*physComp->getState()->vel.x + physComp->getState()->vel.y*physComp->getState()->vel.y < 50.1)
     {
         physComp->getState()->vel.x = 5*(xVel*cos(azimuth) - yVel*sin(azimuth));
@@ -415,7 +469,6 @@ void Input::update(float dt)
         physComp->getState()->vel.z = 5.0;
         physComp->onGround = false;
     }
-    //physComp->isJumping = isJumping;
 }
 
 gMath::componentID Input::newComponent(gMath::entityID eid)
@@ -452,23 +505,6 @@ void Input::mouseFunction(GLFWwindow * window, double xpos, double ypos)
         azimuth -= 2*M_PI;
     }
     
-    //PhysicsComponent *cameraComponent = gameEngine->gamePhysics.getComponent( gameEngine->getPhysicsComponent(gameEngine->cameraEntity));
-    
-    //gMath::quaternion oC = cameraComponent->getState()->orientation;
-    
-    //float scale = 100.0f*(1.0f - 4 * oC.s*oC.s*oC.j*oC.j + 8*oC.s*oC.i*oC.j*oC.k - 4*oC.i*oC.i*oC.k*oC.k);
-    
-    /*
-     
-     gMath::vect omega = {0.0f,0.0f,0.0f};
-     omega.x =  (ypos-300.0f)*(-2*oC.i*oC.j - 2*oC.k*oC.s)/scale;
-     omega.y =  (ypos-300.0f)*(oC.s*oC.s + oC.i*oC.i - oC.j*oC.j-oC.k*oC.k)/scale;
-     omega.z = -(xpos-300.0f)/100.0f;
-     
-     omegaUpdate = omega;
-     */
-    //std::cout << "MOUSE X: " << floor(xpos) << " MOUSE Y: " << floor(ypos) << '\n';
-    //glfwSetCursorPos(window, 300, 300);
 }
 
 void Input::keyFunction(GLFWwindow * window, int key, int scancode, int action, int modifierKeys)
