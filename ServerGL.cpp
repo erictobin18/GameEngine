@@ -462,7 +462,7 @@ void Chunk::init()
         for (unsigned char y = 0; y < CHUNK_SIZE; y++)
         {
             //unsigned char tempHeight = (unsigned char)(8*(sin(M_PI*2*(x + y + 5)/(24.0))+1) + 1);
-            //unsigned char tempHeight =  7;
+            //unsigned char tempHeight = 2;
             unsigned char tempHeight = 14 + std::rand()%3;
             if (tempHeight > 16)
             {

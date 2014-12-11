@@ -150,12 +150,13 @@ void Physics::collisionDetect(gMath::state *s, int i, float dt)
         else if (delZ > 0)
             zMax += delZ;
         
-        if (xMin == ceil(xMin))
+        if (ceil(xMin) - xMin < .00001)
             xMin += .001;
-        if (yMin == ceil(yMin))
+        if (ceil(yMin) - yMin < .00001)
             yMin += .001;
-        if (zMin == ceil(zMin))
+        if (ceil(zMin) - zMin < .00001)
             zMin += .001;
+        
         
         std::cout << "START OF DO LOOP\n";
         
@@ -171,6 +172,9 @@ void Physics::collisionDetect(gMath::state *s, int i, float dt)
         std::cout << "yR: " << yMin << '\t' << yMax << '\n';
         std::cout << "zR: " << zMin << '\t' << zMax << '\n';
         
+        std::cout << "CEILX: " << ceil(xMin) << '\n';
+        std::cout << "CEILY: " << ceil(yMin) << '\n';
+        std::cout << "CEILZ: " << ceil(zMin) << '\n';
         
         float intersectionTime = 1.0f;
         int intersectionFace = 0;
@@ -185,12 +189,12 @@ void Physics::collisionDetect(gMath::state *s, int i, float dt)
                 {
                     //ALL POSSIBLE BLOCKS:
                     
-                    float tminX = std::min((-x + x0 - iNeg.x - .999f)/(-delX), (-x + x0 + iPls.x - .001f)/(-delX));
-                    float tmaxX = std::max((-x + x0 - iNeg.x - .999f)/(-delX), (-x + x0 + iPls.x - .001f)/(-delX));
-                    float tminY = std::min((-y + y0 - iNeg.y - .999f)/(-delY), (-y + y0 + iPls.y - .001f)/(-delY));
-                    float tmaxY = std::max((-y + y0 - iNeg.y - .999f)/(-delY), (-y + y0 + iPls.y - .001f)/(-delY));
-                    float tminZ = std::min((-z + z0 - iNeg.z - .999f)/(-delZ), (-z + z0 + iPls.z - .001f)/(-delZ));
-                    float tmaxZ = std::max((-z + z0 - iNeg.z - .999f)/(-delZ), (-z + z0 + iPls.z - .001f)/(-delZ));
+                    float tminX = std::min((-x + x0 - iNeg.x - 1)/(-delX), (-x + x0 + iPls.x)/(-delX));
+                    float tmaxX = std::max((-x + x0 - iNeg.x - 1)/(-delX), (-x + x0 + iPls.x)/(-delX));
+                    float tminY = std::min((-y + y0 - iNeg.y - 1)/(-delY), (-y + y0 + iPls.y)/(-delY));
+                    float tmaxY = std::max((-y + y0 - iNeg.y - 1)/(-delY), (-y + y0 + iPls.y)/(-delY));
+                    float tminZ = std::min((-z + z0 - iNeg.z - 1)/(-delZ), (-z + z0 + iPls.z)/(-delZ));
+                    float tmaxZ = std::max((-z + z0 - iNeg.z - 1)/(-delZ), (-z + z0 + iPls.z)/(-delZ));
                     
                     if (!moveX)
                         tminX = -1; tmaxX = 1.0f/0.0f; //Infinity
@@ -202,6 +206,7 @@ void Physics::collisionDetect(gMath::state *s, int i, float dt)
                     
                     float tempIntersectionTime = std::max(std::max(tminX, tminY),tminZ);
                     float intersectionCheck = std::min(std::min(tmaxX,tmaxY),tmaxZ);
+                    
                     
                     if (gameEngine->gameTerrain.getBlock(x, y, z))
                     {
@@ -230,8 +235,9 @@ void Physics::collisionDetect(gMath::state *s, int i, float dt)
                         std::cout << "moveY: " << moveY << '\n';
                         std::cout << "moveZ: " << moveZ << '\n';
                     }
+                     
                     
-                    if (gameEngine->gameTerrain.getBlock(x, y, z) and (tempIntersectionTime >= 0) and (tempIntersectionTime < intersectionTime) and (tempIntersectionTime < intersectionCheck))
+                    if (gameEngine->gameTerrain.getBlock(x, y, z) and (tempIntersectionTime >= -0.001) and (tempIntersectionTime < intersectionTime) and (tempIntersectionTime < intersectionCheck))
                     {
                         
                         std::cout << "TEMP INTERSECTION TIME: " << tempIntersectionTime << '\n';
@@ -310,6 +316,7 @@ void Physics::collisionDetect(gMath::state *s, int i, float dt)
                 break;
         }
         
+        
         std::cout << "moveX: " << moveX << '\n';
         std::cout << "moveY: " << moveY << '\n';
         std::cout << "moveZ: " << moveZ << '\n';
@@ -319,6 +326,8 @@ void Physics::collisionDetect(gMath::state *s, int i, float dt)
         std::cout << "Z Position: " << s->pos.z << '\n';
         
         std::cout << "INTERSECTION: " << intersection << "\n\n";
+         
+         
         
     } while (intersection);
     
